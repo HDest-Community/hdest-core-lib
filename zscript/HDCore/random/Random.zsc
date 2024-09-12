@@ -1,0 +1,28 @@
+extend class HDCore {
+
+    /**
+     * Rolls a random number between 0 and the sum total of all given weights.
+     * Depending on where in the total the number is rolled wthin that range,
+     * the weight that falls on that value is picked and returned.
+     * @param {Array<int>} weights The array of weights to roll against
+     * @param {int} [defaultValue=0] The value to return by default
+     * @returns {int} The index of the given set of weights that was rolled
+     */
+    static int getWeightedRandom(out Array<int> weights, int defaultValue = 0) {
+
+        // Add up the sum total of all given weights
+        int sum = 0;
+        forEach (w : weights) sum += w;
+
+        // Roll against that sum and find the index it fell within
+        int rng = random[weightrand](0, sum);
+        for (let i = 0; i < weights.size(); i++) {
+            if (rng < weights[i]) return i;
+
+            rng -= weights[i];
+        }
+
+        // All else fails, return the default value
+        return defaultValue;
+    }
+}

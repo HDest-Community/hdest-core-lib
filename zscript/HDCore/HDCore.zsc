@@ -1,0 +1,12 @@
+/**
+ * Various Constants
+ */
+ const HDCONST_PI = 3.1415926535897932384626433832795;
+ 
+ /**
+ * The Main Library Class,
+ * all utility functions will extend this class.
+ */
+class HDCore play {
+
+}

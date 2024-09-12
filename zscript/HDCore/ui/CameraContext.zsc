@@ -1,0 +1,17 @@
+struct HDCameraContext ui {
+    Actor      camera;
+    Vector3    pos;
+    Vector3    viewAngles;
+    double     fracTic;
+    float      cameraFOV;
+    HDGMMatrix worldToClip;
+    
+    void Init(RenderEvent e) {
+        camera      = e.camera;
+        pos         = e.viewPos;
+        viewAngles  = (e.viewAngle, e.viewPitch, e.viewRoll);
+        fracTic     = e.fracTic;
+        cameraFOV   = Players[consolePlayer].fov;
+        worldToClip = HDGMMatrix.worldToClip(pos, viewAngles.x, viewAngles.y, viewAngles.z, cameraFOV, Screen.getAspectRatio());
+    }
+}

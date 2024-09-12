@@ -1,0 +1,1214 @@
+class HDGMVariable {
+	private uint id;
+
+	static HDGMVariable internalCreate(uint curId) {
+		let ret = new();
+		ret.id = curId;
+		return ret;
+	}
+
+	uint getId() { return self.id; }
+}
+class HDGMVariableHasher : HDGMHasher {
+	override uint hash(Object o) { return HDGMVariable(o).getId(); }
+	override bool eq(Object o0, Object o1) {
+		return HDGMVariable(o0).getId() == HDGMVariable(o1).getId();
+	}
+}
+
+struct HDGMVariableManager {
+	private uint curId;
+
+	HDGMVariable createVariable() {
+		let ret = HDGMVariable.internalCreate(self.curId);
+		self.curId += 1;
+		return ret;
+	}
+}
+
+class HDGMTerm {
+	HDGMVariable variable;
+	double coefficient;
+
+	static HDGMTerm create(HDGMVariable variable, double coefficient) {
+		let ret = new();
+		ret.variable = variable;
+		ret.coefficient = coefficient;
+		return ret;
+	}
+}
+
+class HDGMExpr {
+	Array<HDGMTerm> terms;
+	double constant;
+
+	static HDGMExpr fromConstant(double v) {
+		let ret = new();
+		ret.constant = v;
+		return ret;
+	}
+	static HDGMExpr c(double v) { return HDGMExpr.fromConstant(v); }
+
+	static HDGMExpr fromTerm(HDGMTerm term) {
+		let ret = new();
+		ret.terms.push(term);
+		return ret;
+	}
+
+	static HDGMExpr fromVariable(HDGMVariable variable) {
+		let ret = new();
+		ret.terms.push(HDGMTerm.create(variable, 1.0));
+		return ret;
+	}
+	static HDGMExpr v(HDGMVariable variable) { return HDGMExpr.fromVariable(variable); }
+
+	static HDGMExpr create() {
+		let ret = new();
+		return ret;
+	}
+
+	void negate() {
+		self.constant = -self.constant;
+		for (let i = 0; i < self.terms.size(); i++) {
+			let t = self.terms[i];
+			t.coefficient = -t.coefficient;
+		}
+	}
+
+	HDGMExpr addAssignVariable(HDGMVariable variable, double coefficient = 1.0) {
+		self.terms.push(HDGMTerm.create(variable, coefficient));
+		return self;
+	}
+	HDGMExpr addAssignConstant(double constant) {
+		self.constant += constant;
+		return self;
+	}
+	HDGMExpr addAssignExpression(HDGMExpr e) {
+		for (let i = 0; i < e.terms.size(); i++) {
+			self.terms.push(e.terms[i]);
+		}
+		self.constant += e.constant;
+		return self;
+	}
+	HDGMExpr mulAssign(double coeff) {
+		for (let i = 0; i < self.terms.size(); i++) {
+			self.terms[i].coefficient *= coeff;
+		}
+		self.constant *= coeff;
+		return self;
+	}
+}
+
+struct HDGMStrength {
+	static double create(double a, double b, double c, double w) {
+		return
+			clamp(a * w, 0.0, 1000.0) * 1000000.0 +
+			clamp(b * w, 0.0, 1000.0) * 1000.0 +
+			clamp(c * w, 0.0, 1000.0);
+	}
+
+	const REQUIRED = 1001001000.0;
+	const STRONG = 1000000.0;
+	const MEDIUM = 1000.0;
+	const WEAK = 1.0;
+
+	static double clip(double s) {
+		return clamp(s, 0.0, REQUIRED);
+	}
+}
+
+enum HDGMRel {
+	HDGMRel_LEq,
+	HDGMRel_Eq,
+	HDGMRel_GEq,
+}
+
+struct HDGMConstraintManager {
+	private uint curId;
+
+	HDGMConstraint createConstraint(HDGMExpr e, HDGMRel op, double strength) {
+		let ret = HDGMConstraint.internalCreate(e, op, strength, self.curId);
+		self.curId += 1;
+		return ret;
+	}
+}
+
+class HDGMConstraint {
+	private HDGMExpr expression;
+	private double strength;
+	private HDGMRel op;
+	private uint id;
+
+	static HDGMConstraint internalCreate(HDGMExpr e, HDGMRel op, double strength, uint curId) {
+		let ret = new();
+		ret.expression = e;
+		ret.op = op;
+		ret.strength = strength;
+		ret.id = curId;
+		return ret;
+	}
+
+	HDGMExpr getExpr() { return self.expression; }
+	HDGMRel getOp() { return self.op; }
+	double getStrength() { return self.strength; }
+	uint getId() { return self.id; }
+}
+class HDGMConstraintHasher : HDGMHasher {
+	override uint hash(Object o) { return HDGMConstraint(o).getId(); }
+	override bool eq(Object o0, Object o1) {
+		return HDGMConstraint(o0).getId() == HDGMConstraint(o1).getId();
+	}
+}
+
+class HDGMConstraintBuilderWithRhs {
+	HDGMExpr lhs;
+	HDGMExpr rhs;
+	HDGMRel rel;
+	double strength;
+}
+
+enum HDGMSymbolKind {
+	HDGMSymbolKind_Invalid,
+	HDGMSymbolKind_External,
+	HDGMSymbolKind_Slack,
+	HDGMSymbolKind_Error,
+	HDGMSymbolKind_Dummy,
+}
+
+class HDGMSymbol {
+	uint id;
+	HDGMSymbolKind kind;
+
+	static HDGMSymbol invalid() {
+		let ret = new();
+		ret.id = 0;
+		ret.kind = HDGMSymbolKind_Invalid;
+		return ret;
+	}
+
+	static HDGMSymbol create(uint id, HDGMSymbolKind kind) {
+		let ret = new();
+		ret.id = id;
+		ret.kind = kind;
+		return ret;
+	}
+
+	HDGMSymbol clone() {
+		let ret = new();
+		ret.id = self.id;
+		ret.kind = self.kind;
+		return ret;
+	}
+
+	String repr() {
+		let ret = "Symbol(";
+		ret.appendFormat("%d, ", self.id);
+		switch (self.kind) {
+			case HDGMSymbolKind_Invalid:  ret.appendFormat("Invalid"); break;
+			case HDGMSymbolKind_External: ret.appendFormat("External"); break;
+			case HDGMSymbolKind_Slack:    ret.appendFormat("Slack"); break;
+			case HDGMSymbolKind_Error:    ret.appendFormat("Error"); break;
+			case HDGMSymbolKind_Dummy:    ret.appendFormat("Dummy"); break;
+		}
+		ret.appendFormat(")");
+		return ret;
+	}
+}
+
+class HDGMSymbolHasher : HDGMHasher {
+	override uint hash(Object o) {
+		let o = HDGMSymbol(o);
+		let seed = o.id;
+		hashCombine(seed, o.kind);
+		return seed;
+	}
+	override bool eq(Object o0, Object o1) {
+		let o0 = HDGMSymbol(o0);
+		let o1 = HDGMSymbol(o1);
+
+		return
+			o0.id == o1.id &&
+			o0.kind == o1.kind;
+	}
+}
+
+class HDGMRow {
+	HDGMHashMap/*<Symbol, BoxedDouble>*/ cells;
+	double constant;
+
+	static HDGMRow create(double constant) {
+		let ret = new();
+		ret.cells = HDGMHashMap.create(new("HDGMSymbolHasher"));
+		ret.constant = constant;
+		return ret;
+	}
+
+	HDGMRow clone() {
+		let ret = new();
+		ret.cells = HDGMHashMap.create(new("HDGMSymbolHasher"));
+		let iter = self.cells.iter();
+		while (true) {
+			Object ko, vo;
+			[ko, vo] = iter.next();
+			if (ko is "HDGMHashUnoccupied") { break; }
+
+			let k = HDGMSymbol(ko);
+			let v = HDGMBoxedDouble(vo);
+
+			ret.cells.insert(k.clone(), v.clone());
+		}
+		ret.constant = self.constant;
+		return ret;
+	}
+
+	double add(double v) {
+		self.constant += v;
+		return self.constant;
+	}
+
+	void insertSymbol(HDGMSymbol s, double coefficient) {
+		let g = self.cells.get(s);
+		if (g is "HDGMHashUnoccupied") {
+			if (!HDGMGlobalMaths.nearZero(coefficient)) {
+				self.cells.insert(s, HDGMBoxedDouble.create(coefficient));
+			}
+		} else {
+			let g = HDGMBoxedDouble(g);
+			g.val += coefficient;
+			if (HDGMGlobalMaths.nearZero(g.val)) {
+				self.cells.remove(s);
+			}
+		}
+	}
+
+	bool insertRow(HDGMRow other, double coefficient) {
+		let constantDiff = other.constant * coefficient;
+		self.constant += constantDiff;
+		let iter = other.cells.iter();
+		while (true) {
+			Object ko, vo;
+			[ko, vo] = iter.next();
+			if (ko is "HDGMHashUnoccupied") { break; }
+
+			let s = HDGMSymbol(ko);
+			let v = HDGMBoxedDouble(vo).val;
+
+			self.insertSymbol(s, v * coefficient);
+		}
+		return constantDiff != 0.0;
+	}
+
+	void remove(HDGMSymbol s) {
+		self.cells.remove(s);
+	}
+
+	void reverseSign() {
+		self.constant = -self.constant;
+		let iter = self.cells.iter();
+		while (true) {
+			Object ko, vo;
+			[ko, vo] = iter.next();
+			if (ko is "HDGMHashUnoccupied") { break; }
+			let v = HDGMBoxedDouble(vo);
+			v.val = -v.val;
+		}
+	}
+
+	void solveForSymbol(HDGMSymbol s) {
+		let e = HDGMBoxedDouble(self.cells.remove(s)).val;
+		let coeff = -1.0 / e;
+		self.constant *= coeff;
+		let iter = self.cells.iter();
+		while (true) {
+			Object ko, vo;
+			[ko, vo] = iter.next();
+			if (ko is "HDGMHashUnoccupied") { break; }
+			let v = HDGMBoxedDouble(vo);
+			v.val *= coeff;
+		}
+	}
+
+	void solveForSymbols(HDGMSymbol lhs, HDGMSymbol rhs) {
+		self.insertSymbol(lhs, -1.0);
+		self.solveForSymbol(rhs);
+	}
+
+	double coefficientFor(HDGMSymbol s) {
+		let v = self.cells.get(s);
+		return (!(v is "HDGMHashUnoccupied")) ? HDGMBoxedDouble(v).val : 0.0;
+	}
+
+	bool substitute(HDGMSymbol s, HDGMRow row) {
+		let e = self.cells.remove(s);
+		if (!(e is "HDGMHashUnoccupied")) {
+			let coeff = HDGMBoxedDouble(e).val;
+			return self.insertRow(row, coeff);
+		} else {
+			return false;
+		}
+	}
+}
+
+enum HDGMAddConstraintError {
+	HDGMAddConstraintError_None,
+	HDGMAddConstraintError_DuplicateConstraint,
+	HDGMAddConstraintError_UnsatisfiableConstraint,
+}
+
+enum HDGMRemoveConstraintError {
+	HDGMRemoveConstraintError_None,
+	HDGMRemoveConstraintError_UnknownConstraint,
+}
+
+enum HDGMAddEditVariableError {
+	HDGMAddEditVariableError_None,
+	HDGMAddEditVariableError_DuplicateEditVariable,
+	HDGMAddEditVariableError_BadRequiredStrength,
+}
+
+enum HDGMRemoveEditVariableError {
+	HDGMRemoveEditVariableError_None,
+	HDGMRemoveEditVariableError_UnknownEditVariable,
+}
+
+enum HDGMSuggestValueError {
+	HDGMSuggestValueError_None,
+	HDGMSuggestValueError_UnknownEditVariable,
+}
+
+class HDGMTag {
+	HDGMSymbol marker;
+	HDGMSymbol other;
+
+	static HDGMTag create(HDGMSymbol marker = NULL, HDGMSymbol other = NULL) {
+		let ret = new();
+		ret.marker = marker;
+		ret.other = other;
+		return ret;
+	}
+}
+
+class HDGMEditInfo {
+	HDGMTag tag;
+	HDGMConstraint constraint;
+	double constant;
+
+	static HDGMEditInfo create(HDGMTag tag, HDGMConstraint constraint, double constant) {
+		let ret = new();
+		ret.tag = tag;
+		ret.constraint = constraint;
+		ret.constant = constant;
+		return ret;
+	}
+}
+
+class HDGMVarDataEntry {
+	double value;
+	HDGMSymbol symbol;
+	uint count;
+
+	static HDGMVarDataEntry create(double value, HDGMSymbol symbol, uint count) {
+		let ret = new();
+		ret.value = value;
+		ret.symbol = symbol;
+		ret.count = count;
+		return ret;
+	}
+}
+
+class HDGMPublicChangesEntry {
+	HDGMVariable variable;
+	double value;
+
+	static HDGMPublicChangesEntry create(HDGMVariable variable, double value) {
+		let ret = new();
+		ret.variable = variable;
+		ret.value = value;
+		return ret;
+	}
+}
+
+class HDGMSolver {
+	private HDGMHashMap/*<Constraint, Tag>*/ cns;
+	private HDGMHashMap/*<Variable, VarDataEntry>*/ varData;
+	private HDGMHashMap/*<Symbol, Variable>*/ varForSymbol;
+	private Array<HDGMPublicChangesEntry> publicChanges;
+	private HDGMHashSet/*<Variable>*/ changed;
+	private bool shouldClearChanges;
+	private HDGMHashMap/*<Symbol, Row>*/ rows;
+	private HDGMHashMap/*<Variable, EditInfo>*/ edits;
+	private Array<HDGMSymbol> infeasibleRows;
+	private HDGMRow objective;
+	private /* Nullable */ HDGMRow artificial;
+	private uint idTick;
+
+	private HDGMVariableManager variableManager;
+	HDGMConstraintManager constraintManager;
+
+	static HDGMSolver create() {
+		let constraintHasher = new("HDGMConstraintHasher");
+		let variableHasher = new("HDGMVariableHasher");
+		let symbolHasher = new("HDGMSymbolHasher");
+
+		let ret = new();
+		ret.cns = HDGMHashMap.create(constraintHasher);
+		ret.varData = HDGMHashMap.create(variableHasher);
+		ret.varForSymbol = HDGMHashMap.create(symbolHasher);
+		/* ret.publicChanges = default; */
+		ret.changed = HDGMHashSet.create(variableHasher);
+		ret.shouldClearChanges = false;
+		ret.rows = HDGMHashMap.create(symbolHasher);
+		ret.edits = HDGMHashMap.create(variableHasher);
+		/* ret.infeasibleRows = default; */
+		ret.objective = HDGMRow.create(0.0);
+		ret.artificial = NULL;
+		ret.idTick = 1;
+
+		return ret;
+	}
+
+	HDGMVariable createVariable() {
+		return self.variableManager.createVariable();
+	}
+
+	static void assertNoErr(int errcode) {
+		if (errcode != 0) { throwAbortException("err %d", errcode); }
+	}
+
+	HDGMAddConstraintError, HDGMConstraint addConstraintFromRelation(
+		HDGMExpr lhs,
+		Name op,
+		HDGMExpr rhs,
+		double strength = HDGMStrength.REQUIRED
+	) {
+		rhs.negate();
+		lhs.addAssignExpression(rhs);
+		if (op != '==' && op != '<=' && op != '>=') {
+			throwAbortException("invalid op string '%s'", op);
+		}
+		let op = (op == '==') ? HDGMRel_Eq : (op == '<=') ? HDGMRel_Leq : HDGMRel_Geq;
+		let constraint = self.constraintManager.createConstraint(lhs, op, strength);
+		return self.addConstraint(constraint), constraint;
+	}
+
+	HDGMAddConstraintError addConstraint(HDGMConstraint constraint) {
+		if (self.cns.containsKey(constraint)) {
+			return HDGMAddConstraintError_DuplicateConstraint;
+		}
+
+		HDGMRow row; HDGMTag tag;
+		[row, tag] = self.createRow(constraint);
+		let subject = chooseSubject(row, tag);
+
+		if (subject.kind == HDGMSymbolKind_Invalid && allDummies(row)) {
+			if (!HDGMGlobalMaths.nearZero(row.constant)) {
+				return HDGMAddConstraintError_UnsatisfiableConstraint;
+			} else {
+				subject = tag.marker;
+			}
+		}
+		if (subject.kind == HDGMSymbolKind_Invalid) {
+			if (!self.addWithArtificialVariable(row)) {
+				return HDGMAddConstraintError_UnsatisfiableConstraint;
+			}
+		} else {
+			row.solveForSymbol(subject);
+			self.substitute(subject, row);
+
+			if (subject.kind == HDGMSymbolKind_External && row.constant != 0.0) {
+				let v = HDGMVariable(self.varForSymbol.get(subject));
+				self.varChanged(v);
+			}
+			self.rows.insert(subject, row);
+		}
+
+		self.cns.insert(constraint, tag);
+
+		let objective = self.objective;
+		self.optimise(objective);
+
+		return HDGMAddConstraintError_None;
+	}
+
+	HDGMRemoveConstraintError removeConstraint(HDGMConstraint constraint) {
+		let t = self.cns.remove(constraint);
+		if (t is "HDGMHashUnoccupied") {
+			return HDGMRemoveConstraintError_UnknownConstraint;
+		}
+		let tag = HDGMTag(t);
+
+		self.removeConstraintEffects(constraint, tag);
+
+		if (self.rows.remove(tag.marker) is "HDGMHashUnoccupied") {
+			HDGMSymbol leaving; HDGMRow row;
+			[leaving, row] = self.getMarkerLeavingRow(tag.marker);
+			row.solveForSymbols(leaving, tag.marker);
+			self.substitute(tag.marker, row);
+		}
+
+		let objective = self.objective;
+		self.optimise(objective);
+
+		let cexpr = constraint.getExpr();
+		for (let i = 0; i < cexpr.terms.size(); i++) {
+			let term = cexpr.terms[i];
+			if (!HDGMGlobalMaths.nearZero(term.coefficient)) {
+				let shouldRemove = false;
+				let v = self.varData.get(term.variable);
+				if (!(v is "HDGMHashUnoccupied")) {
+					let v = HDGMVarDataEntry(v);
+					v.count -= 1;
+					shouldRemove = v.count == 0;
+				}
+				if (shouldRemove) {
+					self.varForSymbol.remove(HDGMVarDataEntry(self.varData.get(term.variable)).symbol);
+					self.varData.remove(term.variable);
+				}
+			}
+		}
+
+		return HDGMRemoveConstraintError_None;
+	}
+
+	bool hasConstraint(HDGMConstraint constraint) {
+		return self.cns.containsKey(constraint);
+	}
+
+	HDGMAddEditVariableError addEditVariable(HDGMVariable v, double strength) {
+		if (self.edits.containsKey(v)) {
+			return HDGMAddEditVariableError_DuplicateEditVariable;
+		}
+		let strength = HDGMStrength.clip(strength);
+		if (strength == HDGMStrength.REQUIRED) {
+			return HDGMAddEditVariableError_BadRequiredStrength;
+		}
+		let cn = self.constraintManager.createConstraint(
+			HDGMExpr.fromTerm(HDGMTerm.create(v, 1.0)),
+			HDGMRel_Eq,
+			strength
+		);
+		{
+			let err = self.addConstraint(cn);
+			if (err != 0) { throwAbortException("shouldn't happen"); }
+		}
+		self.edits.insert(
+			v,
+			HDGMEditInfo.create(
+				HDGMTag(self.cns.get(cn)),
+				cn,
+				0.0
+			)
+		);
+
+		return HDGMAddEditVariableError_None;
+	}
+
+	HDGMRemoveEditVariableError removeEditVariable(HDGMVariable v) {
+		let e = self.edits.remove(v);
+		if (!(e is "HDGMHashUnoccupied")) {
+			let constraint = HDGMEditInfo(e).constraint;
+			let err = self.removeConstraint(constraint);
+			if (err == HDGMRemoveConstraintError_UnknownConstraint) {
+				throwAbortException("Edit constraint not in system.");
+			}
+			return HDGMRemoveEditVariableError_None;
+		} else {
+			return HDGMRemoveEditVariableError_UnknownEditVariable;
+		}
+	}
+
+	bool hasEditVariable(HDGMVariable v) {
+		return self.edits.containsKey(v);
+	}
+
+	HDGMSuggestValueError suggestValue(HDGMVariable variable, double value) {
+		let i = self.edits.get(variable);
+		if (i is "HDGMHashUnoccupied") {
+			return HDGMSuggestValueError_UnknownEditVariable;
+		}
+		let info = HDGMEditInfo(i);
+		let infoTagMarker = info.tag.marker;
+		let infoTagOther = info.tag.other;
+		let delta = value - info.constant;
+		info.constant = value;
+
+		{
+			let rm = self.rows.get(infoTagMarker);
+			let ro = self.rows.get(infoTagOther);
+			if (!(rm is "HDGMHashUnoccupied")) {
+				let row = HDGMRow(rm);
+				if (row.add(-delta) < 0.0) {
+					infeasibleRows.push(infoTagMarker);
+				}
+			} else if (!(ro is "HDGMHashUnoccupied")) {
+				let row = HDGMRow(ro);
+				if (row.add(delta) < 0.0) {
+					infeasibleRows.push(infoTagOther);
+				}
+			} else {
+				let iter = self.rows.iter();
+				while (true) {
+					Object ko, vo;
+					[ko, vo] = iter.next();
+					if (ko is "HDGMHashUnoccupied") { break; }
+
+					let symbol = HDGMSymbol(ko);
+					let row = HDGMRow(vo);
+
+					let coeff = row.coefficientFor(infoTagMarker);
+					let diff = delta * coeff;
+					if (diff != 0.0 && symbol.kind == HDGMSymbolKind_External) {
+						let v = HDGMVariable(self.varForSymbol.get(symbol));
+						if (self.shouldClearChanges) {
+							self.changed.clear();
+							self.shouldClearChanges = false;
+						}
+						self.changed.insert(v);
+					}
+					if (
+						coeff != 0.0 &&
+						row.add(diff) < 0.0 &&
+						symbol.kind != HDGMSymbolKind_External
+					) {
+						infeasibleRows.push(symbol);
+					}
+				}
+			}
+		}
+
+		self.dualOptimise();
+
+		return HDGMSuggestValueError_None;
+	}
+
+	private void varChanged(HDGMVariable v) {
+		if (self.shouldClearChanges) {
+			self.changed.clear();
+			self.shouldClearChanges = false;
+		}
+		self.changed.insert(v);
+	}
+
+	void fetchChanges(out Array<HDGMPublicChangesEntry> ret) {
+		if (self.shouldClearChanges) {
+			self.changed.clear();
+			self.shouldClearChanges = false;
+		} else {
+			self.shouldClearChanges = true;
+		}
+		self.publicChanges.clear();
+
+		let iter = self.changed.iter();
+		while (true) {
+			let vo = iter.next();
+			if (vo is "HDGMHashUnoccupied") { break; }
+			let v = HDGMVariable(vo);
+			
+			let vd = self.varData.get(v);
+			if (!(vd is "HDGMHashUnoccupied")) {
+				let varData = HDGMVarDataEntry(vd);
+				let r = self.rows.get(varData.symbol);
+				let newValue = 0.0;
+				if (!(r is "HDGMHashUnoccupied")) {
+					newValue = HDGMRow(r).constant;
+				}
+				let oldValue = varData.value;
+				if (oldValue != newValue) {
+					self.publicChanges.push(
+						HDGMPublicChangesEntry.create(v, newValue)
+					);
+					varData.value = newValue;
+				}
+			}
+		}
+
+		ret.copy(self.publicChanges);
+	}
+
+	void reset() {
+		self.rows.clear();
+		self.cns.clear();
+		self.varData.clear();
+		self.varForSymbol.clear();
+		self.changed.clear();
+		self.shouldClearChanges = false;
+		self.edits.clear();
+		self.infeasibleRows.clear();
+		self.objective = HDGMRow.create(0.0);
+		self.artificial = NULL;
+		self.idTick = 1;
+	}
+
+	private HDGMSymbol getVarSymbol(HDGMVariable v) {
+		HDGMVarDataEntry value;
+		let vd = self.varData.get(v);
+		if (!(vd is "HDGMHashUnoccupied")) {
+			value = HDGMVarDataEntry(vd);
+		} else {
+			let s = HDGMSymbol.create(self.idTick, HDGMSymbolKind_External);
+			self.varForSymbol.insert(s, v);
+			self.idTick += 1;
+			value = HDGMVarDataEntry.create(double.NAN, s, 0);
+			self.varData.insert(v, value);
+		}
+		value.count += 1;
+		return value.symbol;
+	}
+
+	private HDGMRow, HDGMTag createRow(HDGMConstraint constraint) {
+		let expr = constraint.getExpr();
+		let row = HDGMRow.create(expr.constant);
+		for (let i = 0; i < expr.terms.size(); i++) {
+			let term = expr.terms[i]; 
+			if (!HDGMGlobalMaths.nearZero(term.coefficient)) {
+				let symbol = self.getVarSymbol(term.variable);
+				let o = self.rows.get(symbol);
+				if (!(o is "HDGMHashUnoccupied")) {
+					let otherRow = HDGMRow(o);
+					row.insertRow(otherRow, term.coefficient);
+				} else {
+					row.insertSymbol(symbol, term.coefficient);
+				}
+			}
+		}
+
+		let objective = self.objective;
+
+		HDGMTag tag;
+		let constraintOp = constraint.getOp();
+		switch (constraintOp) {
+		case HDGMRel_Geq:
+		case HDGMRel_Leq: {
+			let coeff = (constraintOp == HDGMRel_Leq) ? 1.0 : -1.0;
+			let slack = HDGMSymbol.create(self.idTick, HDGMSymbolKind_Slack);
+			self.idTick += 1;
+			row.insertSymbol(slack, coeff);
+			let constraintStrength = constraint.getStrength();
+			if (constraintStrength < HDGMStrength.REQUIRED) {
+				let error = HDGMSymbol.create(self.idTick, HDGMSymbolKind_Error);
+				self.idTick += 1;
+				row.insertSymbol(error, -coeff);
+				objective.insertSymbol(error, constraintStrength);
+				tag = HDGMTag.create(
+					marker: slack,
+					other: error
+				);
+			} else {
+				tag = HDGMTag.create(
+					marker: slack,
+					other: HDGMSymbol.invalid()
+				);
+			}
+			break;
+		}
+		case HDGMRel_Eq: {
+			let constraintStrength = constraint.getStrength();
+			if (constraintStrength < HDGMStrength.REQUIRED) {
+				let errplus = HDGMSymbol.create(self.idTick, HDGMSymbolKind_Error);
+				self.idTick += 1;
+				let errminus = HDGMSymbol.create(self.idTick, HDGMSymbolKind_Error);
+				self.idTick += 1;
+				row.insertSymbol(errplus,  -1.0);
+				row.insertSymbol(errminus,  1.0);
+				objective.insertSymbol(errplus, constraintStrength);
+				objective.insertSymbol(errminus, constraintStrength);
+				tag = HDGMTag.create(
+					marker: errplus,
+					other: errminus
+				);
+			} else {
+				let dummy = HDGMSymbol.create(self.idTick, HDGMSymbolKind_Dummy);
+				self.idTick += 1;
+				row.insertSymbol(dummy, 1.0);
+				tag = HDGMTag.create(
+					marker: dummy,
+					other: HDGMSymbol.invalid()
+				);
+			}
+			break;
+		}
+		default:
+			throwAbortException("shouldn't happen");
+		}
+
+		if (row.constant < 0.0) {
+			row.reverseSign();
+		}
+		return row, tag;
+	}
+
+	static private HDGMSymbol chooseSubject(HDGMRow row, HDGMTag tag) {
+		let iter = row.cells.iter();
+		while (true) {
+			let ko = iter.next();
+			if (ko is "HDGMHashUnoccupied") { break; }
+			let s = HDGMSymbol(ko);
+
+			if (s.kind == HDGMSymbolKind_External) {
+				return s;
+			}
+		}
+		if (tag.marker.kind == HDGMSymbolKind_Slack || tag.marker.kind == HDGMSymbolKind_Error) {
+			if (row.coefficientFor(tag.marker) < 0.0) {
+				return tag.marker;
+			}
+		}
+		if (tag.other.kind == HDGMSymbolKind_Slack || tag.other.kind == HDGMSymbolKind_Error) {
+			if (row.coefficientFor(tag.other) < 0.0) {
+				return tag.other;
+			}
+		}
+		return HDGMSymbol.invalid();
+	}
+
+	private bool addWithArtificialVariable(HDGMRow row) {
+		let art = HDGMSymbol.create(self.idTick, HDGMSymbolKind_Slack);
+		self.idTick += 1;
+		self.rows.insert(art, row.clone());
+		self.artificial = row.clone();
+
+		let artificial = self.artificial;
+		self.optimise(artificial);
+		let success = HDGMGlobalMaths.nearZero(artificial.constant);
+		self.artificial = NULL;
+
+		let r = self.rows.remove(art);
+		if (!(r is "HDGMHashUnoccupied")) {
+			let row = HDGMRow(r);
+			if (row.cells.isEmpty()) {
+				return success;
+			}
+			let entering = anyPivotableSymbol(row);
+			if (entering.kind == HDGMSymbolKind_Invalid) {
+				return false;
+			}
+			row.solveForSymbols(art, entering);
+			self.substitute(entering, row);
+			self.rows.insert(entering, row);
+		}
+
+		let iter = self.rows.iter();
+		while (true) {
+			Object ko, vo;
+			[ko, vo] = iter.next();
+			if (ko is "HDGMHashUnoccupied") { break; }
+
+			let row = HDGMRow(vo);
+
+			row.remove(art);
+		}
+		self.objective.remove(art);
+		return success;
+	}
+
+	private void substitute(HDGMSymbol symbol, HDGMRow row) {
+		let iter = self.rows.iter();
+		while (true) {
+			Object ko, vo;
+			[ko, vo] = iter.next();
+			if (ko is "HDGMHashUnoccupied") { break; }
+
+			let otherSymbol = HDGMSymbol(ko);
+			let otherRow = HDGMRow(vo);
+
+			let constantChanged = otherRow.substitute(symbol, row);
+			if (otherSymbol.kind == HDGMSymbolKind_External && constantChanged) {
+				let v = HDGMVariable(self.varForSymbol.get(otherSymbol));
+				if (self.shouldClearChanges) {
+					self.changed.clear();
+					self.shouldClearChanges = false;
+				}
+				self.changed.insert(v);
+			}
+			if (otherSymbol.kind != HDGMSymbolKind_External && otherRow.constant < 0.0) {
+				self.infeasibleRows.push(otherSymbol);
+			}
+		}
+		self.objective.substitute(symbol, row);
+		if (self.artificial != NULL) {
+			let artificial = self.artificial;
+			artificial.substitute(symbol, row);
+		}
+	}
+
+	private void optimise(HDGMRow objective) {
+		while (true) {
+			let entering = getEnteringSymbol(objective);
+			if (entering.kind == HDGMSymbolKind_Invalid) {
+				return;
+			}
+			HDGMSymbol leaving;
+			HDGMRow row;
+			[leaving, row] = self.getLeavingRow(entering);
+			if (leaving == NULL) {
+				throwAbortException("internal solver error: the objective is unbounded");
+			}
+			row.solveForSymbols(leaving, entering);
+			self.substitute(entering, row);
+			if (entering.kind == HDGMSymbolKind_External && row.constant != 0.0) {
+				let v = HDGMVariable(self.varForSymbol.get(entering));
+				self.varChanged(v);
+			}
+			self.rows.insert(entering, row);
+		}
+	}
+
+	private void dualOptimise() {
+		while (self.infeasibleRows.size() != 0u) {
+			let leaving = self.infeasibleRows[self.infeasibleRows.size() - 1];
+			self.infeasibleRows.pop();
+
+			HDGMRow row;
+			let e = self.rows.get(leaving);
+			if (!(e is "HDGMHashUnoccupied")) {
+				let entry = HDGMRow(e);
+				if (entry.constant < 0.0) {
+					row = entry;
+					self.rows.remove(leaving);
+				} else {
+					row = NULL;
+				}
+			} else {
+				row = NULL;
+			}
+			if (row != NULL) {
+				let entering = self.getDualEnteringSymbol(row);
+				if (entering.kind == HDGMSymbolKind_Invalid) {
+					throwAbortException("internal solver error: dual optimise failed");
+				}
+				row.solveForSymbols(leaving, entering);
+				self.substitute(entering, row);
+				if (entering.kind == HDGMSymbolKind_External && row.constant != 0.0) {
+					let v = HDGMVariable(self.varForSymbol.get(entering));
+					self.varChanged(v);
+				}
+				self.rows.insert(entering, row);
+			}
+		}
+	}
+
+	private HDGMSymbol getEnteringSymbol(HDGMRow objective) {
+		let iter = objective.cells.iter();
+		while (true) {
+			Object ko, vo;
+			[ko, vo] = iter.next();
+			if (ko is "HDGMHashUnoccupied") { break; }
+
+			let symbol = HDGMSymbol(ko);
+			let value = HDGMBoxedDouble(vo).val;
+
+			if (symbol.kind != HDGMSymbolKind_Dummy && value < 0.0) {
+				return symbol;
+			}
+		}
+		return HDGMSymbol.invalid();
+	}
+
+	private HDGMSymbol getDualEnteringSymbol(HDGMRow row) {
+		let entering = HDGMSymbol.invalid();
+		let ratio = double.INFINITY;
+		let objective = self.objective;
+		let iter = row.cells.iter();
+		while (true) {
+			Object ko, vo;
+			[ko, vo] = iter.next();
+			if (ko is "HDGMHashUnoccupied") { break; }
+
+			let symbol = HDGMSymbol(ko);
+			let value = HDGMBoxedDouble(vo).val;
+
+			if (value > 0.0 && symbol.kind != HDGMSymbolKind_Dummy) {
+				let coeff = objective.coefficientFor(symbol);
+				let r = coeff / value;
+				if (r < ratio) {
+					ratio = r;
+					entering = symbol;
+				}
+			}
+		}
+		return entering;
+	}
+
+	private static HDGMSymbol anyPivotableSymbol(HDGMRow row) {
+		let iter = row.cells.iter();
+		while (true) {
+			Object ko, vo;
+			[ko, vo] = iter.next();
+			if (ko is "HDGMHashUnoccupied") { break; }
+
+			let symbol = HDGMSymbol(ko);
+
+			if (symbol.kind == HDGMSymbolKind_Slack || symbol.kind == HDGMSymbolKind_Error) {
+				return symbol;
+			}
+		}
+		return HDGMSymbol.invalid();
+	}
+
+	private HDGMSymbol, HDGMRow getLeavingRow(HDGMSymbol entering) {
+		let ratio = double.INFINITY;
+		HDGMSymbol found = NULL;
+		let iter = self.rows.iter();
+		while (true) {
+			Object ko, vo;
+			[ko, vo] = iter.next();
+			if (ko is "HDGMHashUnoccupied") { break; }
+
+			let symbol = HDGMSymbol(ko);
+			let row = HDGMRow(vo);
+
+			if (symbol.kind != HDGMSymbolKind_External) {
+				let temp = row.coefficientFor(entering);
+				if (temp < 0.0) {
+					let tempRatio = -row.constant / temp;
+					if (tempRatio < ratio) {
+						ratio = tempRatio;
+						found = symbol;
+					}
+				}
+			}
+		}
+		if (found != NULL) {
+			return found, HDGMRow(self.rows.remove(found));
+		} else {
+			return NULL, NULL;
+		}
+	}
+
+	private HDGMSymbol, HDGMRow getMarkerLeavingRow(HDGMSymbol marker) {
+		let r1 = double.INFINITY;
+		let r2 = r1;
+		HDGMSymbol first = NULL;
+		HDGMSymbol second = NULL;
+		HDGMSymbol third = NULL;
+		let iter = self.rows.iter();
+		while (true) {
+			Object ko, vo;
+			[ko, vo] = iter.next();
+			if (ko is "HDGMHashUnoccupied") { break; }
+
+			let symbol = HDGMSymbol(ko);
+			let row = HDGMRow(vo);
+
+			let c = row.coefficientFor(marker);
+			if (c == 0.0) {
+				continue;
+			}
+			if (symbol.kind == HDGMSymbolKind_External) {
+				third = symbol;
+			} else if (c < 0.0) {
+				let r = -row.constant / c;
+				if (r < r1) {
+					r1 = r;
+					first = symbol;
+				}
+			} else {
+				let r = row.constant / c;
+				if (r < r2) {
+					r2 = r;
+					second = symbol;
+				}
+			}
+		}
+		let s =
+			(first != NULL)
+			? first
+			: (second != NULL)
+			  ? second
+			  : third;
+		if (s != NULL) {
+			if (s.kind == HDGMSymbolKind_External && HDGMRow(self.rows.get(s)).constant != 0.0) {
+				let v = HDGMVariable(self.varForSymbol.get(s));
+				self.varChanged(v);
+			}
+			let r = self.rows.remove(s);
+			if (!(r is "HDGMHashUnoccupied")) {
+				return s, HDGMRow(r);
+			} else {
+				return NULL, NULL;
+			}
+		} else {
+			return NULL, NULL;
+		}
+	}
+
+	private void removeConstraintEffects(HDGMConstraint cn, HDGMTag tag) {
+		if (tag.marker.kind == HDGMSymbolKind_Error) {
+			self.removeMarkerEffects(tag.marker, cn.getStrength());
+		} else if (tag.other.kind == HDGMSymbolKind_Error) {
+			self.removeMarkerEffects(tag.other, cn.getStrength());
+		}
+	}
+
+	private void removeMarkerEffects(HDGMSymbol marker, double strength) {
+		let r = self.rows.get(marker);
+		if (!(r is "HDGMHashUnoccupied")) {
+			let row = HDGMRow(r);
+			self.objective.insertRow(row, -strength);
+		} else {
+			self.objective.insertSymbol(marker, -strength);
+		}
+	}
+
+	private static bool allDummies(HDGMRow row) {
+		let iter = row.cells.iter();
+		while (true) {
+			let ko = iter.next();
+			if (ko is "HDGMHashUnoccupied") { break; }
+			let s = HDGMSymbol(ko);
+
+			if (s.kind != HDGMSymbolKind_Dummy) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	static void printRow(HDGMRow row) {
+		let ret = "row = Row {\n    cells: {\n";
+
+		let iter = row.cells.iter();
+		while (true) {
+			Object ko, vo;
+			[ko, vo] = iter.next();
+			if (ko is "HDGMHashUnoccupied") { break; }
+
+			let symbol = HDGMSymbol(ko);
+			let val = HDGMBoxedDouble(vo).val;
+
+			ret.appendFormat("        %s: %f,\n", symbol.repr(), val);
+		}
+		ret.appendFormat("    },\n    constant: %f,\n}", row.constant);
+		Console.printf(ret);
+	}
+
+	private void printRows() {
+		let ret = "self.rows = {\n";
+		let iter = self.rows.iter();
+		while (true) {
+			Object ko, vo;
+			[ko, vo] = iter.next();
+			if (ko is "HDGMHashUnoccupied") { break; }
+
+			let symbol = HDGMSymbol(ko);
+			let row = HDGMRow(vo);
+
+			ret.appendFormat("    %s: Row {\n        cells: {\n", symbol.repr());
+
+			let iter = row.cells.iter();
+			while (true) {
+				Object ko, vo;
+				[ko, vo] = iter.next();
+				if (ko is "HDGMHashUnoccupied") { break; }
+
+				let symbol = HDGMSymbol(ko);
+				let val = HDGMBoxedDouble(vo).val;
+
+				ret.appendFormat("            %s: %f,\n", symbol.repr(), val);
+			}
+			ret.appendFormat("        },\n        constant: %f,\n    },\n", row.constant);
+		}
+		ret.appendFormat("}");
+		Console.printf(ret);
+	}
+}

@@ -1,0 +1,116 @@
+extend class HDCore {
+    
+    /**
+     * Draws a collection of debug information about the given actor
+     * @param {Actor} a The actor to draw around
+     * @param {int} [lifetime=1] The number of tics the particles should exist for
+     * @param {double} [size=1.0] The size of the particles
+     * @param {bool} [fullbright=true] If true, will render the particles in full brightness, regardless of the current sector ligting
+     * @param {double} [density=1.0] The ratio of particles to map units to use when drawing
+     */
+    static void drawActorDebug(Actor a, int lifetime = 1, double size = 1.0, bool fullbright = true, double density = 1.0) {
+        drawCollisionBox(a, lifetime: lifetime, size: size, fullbright: fullbright, density: density);
+        drawXYZ(a, lifetime: lifetime, size: size, fullbright: fullbright, density: density);
+    }
+
+    /**
+     * Draws a box around the given actor to help with debugging collision
+     * @param {Actor} a The actor to draw around
+     * @param {Color} [color=0xFF0000] The color of the particles to draw
+     * @param {int} [lifetime=1] The number of tics the particles should exist for
+     * @param {double} [size=1.0] The size of the particles
+     * @param {bool} [fullbright=true] If true, will render the particles in full brightness, regardless of the current sector ligting
+     * @param {double} [density=1.0] The ratio of particles to map units to use when drawing
+     */
+    static void drawCollisionBox(Actor a, Color color = 0xFFFFFF, int lifetime = 1, double size = 1.0, bool fullbright = true, double density = 1.0) {
+
+        // Draw the corners
+        HDF.Particle(a, color, a.pos + ( 0,         0,        0           ), lifetime, size, a.vel, fullbright);
+        HDF.Particle(a, color, a.pos + ( 0,         0,        a.height    ), lifetime, size, a.vel, fullbright);
+        HDF.Particle(a, color, a.pos + ( 0,         0,        a.height / 2), lifetime, size, a.vel, fullbright);
+        HDF.Particle(a, color, a.pos + ( a.radius,  0,        a.height / 2), lifetime, size, a.vel, fullbright);
+        HDF.Particle(a, color, a.pos + (-a.radius,  0,        a.height / 2), lifetime, size, a.vel, fullbright);
+        HDF.Particle(a, color, a.pos + ( 0,         a.radius, a.height / 2), lifetime, size, a.vel, fullbright);
+        HDF.Particle(a, color, a.pos + ( 0,        -a.radius, a.height / 2), lifetime, size, a.vel, fullbright);
+
+        // Draw the horizontal lines
+        for (double i = -a.radius; i <= a.radius; i += (size / density)) {
+            HDF.Particle(a, color, a.pos + ( a.radius,  i,        0       ), lifetime, size, a.vel, fullbright);
+            HDF.Particle(a, color, a.pos + (-a.radius,  i,        0       ), lifetime, size, a.vel, fullbright);
+            HDF.Particle(a, color, a.pos + ( i,         a.radius, 0       ), lifetime, size, a.vel, fullbright);
+            HDF.Particle(a, color, a.pos + ( i,        -a.radius, 0       ), lifetime, size, a.vel, fullbright);
+            HDF.Particle(a, color, a.pos + ( a.radius,  i,        a.height), lifetime, size, a.vel, fullbright);
+            HDF.Particle(a, color, a.pos + (-a.radius,  i,        a.height), lifetime, size, a.vel, fullbright);
+            HDF.Particle(a, color, a.pos + ( i,         a.radius, a.height), lifetime, size, a.vel, fullbright);
+            HDF.Particle(a, color, a.pos + ( i,        -a.radius, a.height), lifetime, size, a.vel, fullbright);
+        }
+
+        // Draw the vertical lines
+        for (let i = 0.0; i <= a.height; i += (size / density)) {
+            HDF.Particle(a, color, a.pos + ( a.radius,  a.radius, i), lifetime, size, a.vel, fullbright);
+            HDF.Particle(a, color, a.pos + ( a.radius, -a.radius, i), lifetime, size, a.vel, fullbright);
+            HDF.Particle(a, color, a.pos + (-a.radius,  a.radius, i), lifetime, size, a.vel, fullbright);
+            HDF.Particle(a, color, a.pos + (-a.radius, -a.radius, i), lifetime, size, a.vel, fullbright);
+        }
+    }
+
+    /**
+     * Draws three bars made of particles from the origin (or center) of the given actor.
+     * @param {Actor} a The actor to draw for
+     * @param {double} [length=32] The number of map units to draw each bar
+     * @param {Color} [xColor=0xFF0000] The color of the particles to draw on the X-Axis
+     * @param {Color} [yColor=0x00FF00] The color of the particles to draw on the Y-Axis
+     * @param {Color} [zColor=0x0000FF] The color of the particles to draw on the Z-Axis
+     * @param {bool} [lifetime=1] The number of tics the particles should exist for
+     * @param {double} [size=1.0] The size of the particles
+     * @param {bool} [fullbright=true] If true, will render the particles in full brightness, regardless of the current sector ligting
+     * @param {bool} [fromCenter=false] If true, will render the particles from the center of the given actor rather than its orgiin
+     * @param {double} [density=1.0] The number of map units to increment for each particle
+     */
+    static void drawXYZ(Actor a, double length = 16.0, Color xColor = 0xFF0000, Color yColor = 0x00FF00, Color zColor = 0x0000FF, int lifetime = 1, double size = 1.0, bool fullbright = true, bool fromCenter = false, double density = 1.0) {
+        let pos = a.pos + (0, 0, fromCenter ? a.height / 2 : a.height);
+
+        for (let i = 0.0; i < length; i += (size / density)) {
+            HDF.Particle(a, xColor, pos + (i * cos(a.pitch) * cos(a.angle), i * sin(a.angle), i * sin(-a.pitch)), lifetime, size, a.vel, fullbright);
+            HDF.Particle(a, yColor, pos + (i * sin(a.angle),               -i * cos(a.angle), 0                ), lifetime, size, a.vel, fullbright);
+            HDF.Particle(a, zColor, pos + (i * sin(a.pitch),                0,                i * cos( a.pitch)), lifetime, size, a.vel, fullbright);
+        }
+    }
+
+    /**
+     * Draws a circle at the center of the given sector based on the area of that sector.
+     * @param {Sector} s The sector to draw for
+     * @param {Color} [xColor=0xFFFFFF] The color of the particles to draw
+     * @param {bool} [lifetime=1] The number of tics the particles should exist for
+     * @param {double} [size=1.0] The size of the particles
+     * @param {bool} [fullbright=true] If true, will render the particles in full brightness, regardless of the current sector ligting
+     * @param {double} [density=1.0] The number of degrees to rotate for each particle
+     */
+    static void drawSectorDebug(Sector s, Color color = 0xFFFFFF, int lifetime = 1, double size = 1.0, bool fullbright = true, double density = 1.0) {
+        double ceil, floor;
+        Sector sec;
+        [ceil, sec] = s.highestCeilingAt(s.centerspot);
+        [floor, sec] = s.lowestFloorAt(s.centerspot);
+
+        Vector3 pos = (s.centerspot.x, s.centerspot.y, floor + ((ceil - floor) / 2));
+        double radius = sqrt(HDCore.getSectorArea(s) / HDCONST_PI);
+
+        
+        FSpawnParticleParams fp;
+
+        fp.flags = fullbright&SPF_FULLBRIGHT;
+        fp.color1 = color;
+        fp.lifetime = lifetime;
+        fp.pos = pos;
+        fp.size = size;
+        fp.startalpha = 1.0;
+
+        Level.SpawnParticle(fp);
+
+        for (let i = 0.0; i < 360.0; i += (size / density)) {
+            fp.pos = pos + ((cos(i) * radius), sin(i) * radius, 0);
+
+            Level.SpawnParticle(fp);
+        }
+    }
+}

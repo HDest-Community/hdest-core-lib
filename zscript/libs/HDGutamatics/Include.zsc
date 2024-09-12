@@ -1,0 +1,8 @@
+#include "./GlobalMaths.zsc"
+#include "./Matrix.zsc"
+#include "./Matrix3.zsc"
+#include "./Matrix4.zsc"
+#include "./Quaternion.zsc"
+#include "./VectorUtil.zsc"
+#include "./HashMap.zsc"
+#include "./Constraints.zsc"

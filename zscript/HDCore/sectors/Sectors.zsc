@@ -1,0 +1,75 @@
+extend class HDCore {
+    
+    /**
+     * Returns details about the given sector's size.
+     * @param {Sector} s The Sector to calculate
+     * @returns {double} The area of the sector
+     * @returns {double} The circumference of the sector
+     * @returns {double} The average length of all linedefs in the sector
+     */
+    static clearscope double, double, double getSectorSize(Sector s) {
+        let c = HDCore.getSectorCircumference(s);
+        return HDCore.getSectorArea(s), c, c / s.lines.size();
+    }
+    
+    /**
+     * Returns the given sector's area in map units.
+     * @param {Sector} s The Sector to calculate
+     * @returns {double} 
+     */
+    static clearscope double getSectorArea(Sector s) {
+        let a = 0.0;
+
+        forEach (l : s.lines) a += (l.v1.p.x * l.v2.p.y) - (l.v1.p.y * l.v2.p.x);
+
+        return abs(a / 2.0);
+    }
+    
+    /**
+     * Returns the given sector's height in map units.
+     * @param {Sector} s The Sector to calculate
+     * @returns {double} 
+     */
+    static clearscope double getSectorHeight(Sector s) {
+        double ceil, floor;
+        [ceil, s] = s.highestCeilingAt(s.centerspot);
+        [floor, s] = s.lowestFloorAt(s.centerspot);
+
+        return ceil - floor;
+    }
+
+    /**
+     * Returns the given sector's volume in map units.
+     * @param {Sector} s The Sector to calculate
+     * @returns {double} 
+     */
+    static clearscope double getSectorVolume(Sector s) {
+        return getSectorArea(s) * getSectorHeight(s);
+    }
+
+    /**
+     * Returns the given sector's circumference.
+     * @param {Sector} s The Sector to calculate
+     * @returns {double} 
+     */
+    static clearscope double getSectorCircumference(Sector s) {
+        let c = 0.0;
+
+        forEach (l : s.lines) c += l.delta.length();
+
+        return c;
+    }
+    
+    /**
+     * Returns the given sector's center point in 3D space.
+     * @param {Sector} s The Sector to calculate
+     * @returns {double} 
+     */
+    static clearscope Vector3 getSectorCenter(Sector s) {
+        double ceil, floor;
+        [ceil, s] = s.highestCeilingAt(s.centerspot);
+        [floor, s] = s.lowestFloorAt(s.centerspot);
+
+        return (s.centerspot.x, s.centerspot.y, floor + ((ceil - floor) / 2));
+    }
+}

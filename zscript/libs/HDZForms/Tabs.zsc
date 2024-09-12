@@ -1,0 +1,224 @@
+/// An element which allows the user to switch between multiple
+/// [frames](ZF_Frame) by clicking on tabs.
+///
+/// Tabs should be added to the element via [`addTab`] after creation.
+class HDZFTabs : HDZFElementContainer {
+	private void config(
+		double tabHeight, double tabLabelMargin, Font tabFont = NULL, double tabTextScale = 1.0,
+		HDZFBoxTextures tabNormal = NULL, HDZFBoxTextures tabHover = NULL, HDZFBoxTextures tabActive = NULL
+	) {
+		self.setBoxes = false;
+
+		setTabHeight(tabHeight);
+		setTabLabelMargin(tabLabelMargin);
+		setTabFont(tabFont);
+		setTabTextScale(tabTextScale);
+		setTabNormalTexture(tabNormal);
+		setTabHoverTexture(tabHover);
+		setTabActiveTexture(tabActive);
+		setAlpha(1.0);
+
+		self.setBoxes = true;
+
+		setTabLabelBoxes();
+	}
+
+	/// Returns a newly created tabs element.
+	///
+	/// The position used is relative to whatever the element is packed into
+	/// later.
+	///
+	/// The tabs section of the element will have height `tabHeight`, with tab
+	/// buttons with `tabLabelMargin` pixels of space between the text and
+	/// borders (horizontally).
+	///
+	/// If `tabFont` is `NULL`, then `smallfont` is used instead.
+	///
+	/// The background for inactive tabs is `tabNormal`, with the background
+	/// for active tabs being `tabActive`. When an inactive tab is hovered, it
+	/// will use `tabHover` instead.
+	///
+	/// After creation, [`addTab`] should be used to add tabs.
+	static HDZFTabs create(
+		Vector2 pos, Vector2 size,
+		double tabHeight, double tabLabelMargin, Font tabFont = NULL, double tabTextScale = 1.0,
+		HDZFBoxTextures tabNormal = NULL, HDZFBoxTextures tabHover = NULL, HDZFBoxTextures tabActive = NULL
+	) {
+		let ret = new("HDZFTabs");
+
+		ret.setBox(pos, size);
+		ret.curTab = new("HDZFRadioController");
+		ret.config(tabHeight, tabLabelMargin, tabFont, tabTextScale, tabNormal, tabHover, tabActive);
+
+		return ret;
+	}
+
+	private Array<HDZFRadioButton> tabLabels;
+	private Array<HDZFFrame> tabFrames;
+	private HDZFRadioController curTab;
+
+	private double tabHeight;
+	/// Returns the height of the tabs section.
+	double getTabHeight() { return self.tabHeight; }
+	/// Sets the height of the tabs section;
+	void setTabHeight(double tabHeight) { self.tabHeight = tabHeight; setTabLabelBoxes(); }
+
+	private double tabLabelMargin;
+	/// Returns the horizontal margin between tab buttons and their boxes'
+	/// borders.
+	double getTabLabelMargin() { return self.tabLabelMargin; }
+	/// Sets the horizontal margin between tab buttons and their boxes'
+	/// borders.
+	void setTabLabelMargin(double tabLabelMargin) { self.tabLabelMargin = tabLabelMargin; setTabLabelBoxes(); }
+
+	private Font tabFont;
+	/// Returns the font the tab buttons will use for drawing their text.
+	Font getTabFont() { return self.tabFont; }
+	/// Returns the font the tab buttons will use for drawing their text.
+	///
+	/// If this is `NULL`, then `smallfont` is used instead.
+	void setTabFont(Font tabFont) {
+		if (tabFont == NULL) {
+			self.tabFont = smallfont;
+		}
+		else {
+			self.tabFont = tabFont;
+		}
+		setTabLabelBoxes();
+	}
+
+	private double tabTextScale;
+	/// Returns the scaling factor for the drawn tab button text.
+	double getTabTextScale() { return self.tabTextScale; }
+	/// Sets the scaling factor for the drawn tab button text.
+	void setTabTextScale(double tabTextScale) { self.tabTextScale = tabTextScale; setTabLabelBoxes(); }
+
+	private HDZFBoxTextures tabNormal;
+	/// Returns the box textures used for an inactive, unhovered tab.
+	HDZFBoxTextures getTabNormalTexture() { return self.tabNormal; }
+	/// Sets the box textures used for an inactive, unhovered tab.
+	void setTabNormalTexture(HDZFBoxTextures tabNormal) { self.tabNormal = tabNormal; setTabLabelBoxes(); }
+
+	private HDZFBoxTextures tabHover;
+	/// Returns the box textures used for an inactive, hovered tab.
+	HDZFBoxTextures getTabHoverTexture() { return self.tabHover; }
+	/// Sets the box textures used for an inactive, hovered tab.
+	void setTabHoverTexture(HDZFBoxTextures tabHover) { self.tabHover = tabHover; setTabLabelBoxes(); }
+
+	private HDZFBoxTextures tabActive;
+	/// Returns the box textures used for an active tab.
+	HDZFBoxTextures getTabActiveTexture() { return self.tabActive; }
+	/// Sets the box textures used for an active tab.
+	void setTabActiveTexture(HDZFBoxTextures tabActive) { self.tabActive = tabActive; setTabLabelBoxes(); }
+
+	private uint tabFocus;
+
+	private int lastTab;
+
+	private bool setBoxes;
+	private void setTabLabelBoxes() {
+		if (setBoxes) {
+			double curX = 0.0;
+			for (int i = 0; i < tabLabels.size(); i++) {
+				let l = tabLabels[i];
+				l.setBox((curX, 0.0), (tabFont.stringWidth(l.getText()) * tabTextScale + 2.0 * tabLabelMargin, tabHeight));
+				l.config(curTab, i, tabNormal, tabHover, tabActive, NULL, l.getText(), tabFont, tabTextScale);
+				curX += l.box.size.x;
+			}
+		}
+	}
+	
+	override void getFocusAABB(HDZFAABB box) {
+		let label = tabLabels[tabFocus];
+		box.pos = label.relToMainFrame((0, 0));
+		box.size = label.box.size;
+	}
+
+	override void beenFocused(HDZFNavEventType type) {
+		switch (type) {
+		case HDZFNavEventType_Left: tabFocus = tabLabels.size() - 1; break;
+
+		case HDZFNavEventType_Right:
+		case HDZFNavEventType_Tab:
+			tabFocus = 0; break;
+
+		case HDZFNavEventType_Down:
+		case HDZFNavEventType_Up:
+			tabFocus = curTab.curVal; break;
+		}
+	}
+
+	private void showCorrectTab() {
+		for (int i = 0; i < tabFrames.size(); i++) {
+			if (i == curTab.curVal) { tabFrames[i].show(); }
+			else { tabFrames[i].hide(); }
+		}
+	}
+
+	/// Adds a tab to the element, with `label` displayed on the button.
+	///
+	/// After addition, the tab frame can be modified by getting it from
+	/// [`getTabFrame`].
+	void addTab(string label) {
+		let button = HDZFRadioButton.create((0, 0), (0, 0), curTab, 0, text: label);
+		let frame = HDZFFrame.create((0.0, tabHeight), (box.size.x, box.size.y - tabHeight));
+
+		button.master = self;
+		frame.master = self;
+
+		elements.push(button);
+		elements.push(frame);
+
+		tabLabels.push(button);
+		tabFrames.push(frame);
+
+		setTabLabelBoxes();
+
+		showCorrectTab();
+	}
+
+	/// Returns the tab frame at the given index.
+	HDZFFrame getTabFrame(int index) {
+		return tabFrames[index];
+	}
+
+	override void topDrawer() {
+		if (curTab.curVal != lastTab) {
+			lastTab = curTab.curVal;
+			showCorrectTab();
+		}
+		Super.topDrawer();
+	}
+
+	override void drawer() {
+		if (curTab.curVal != lastTab) {
+			lastTab = curTab.curVal;
+			showCorrectTab();
+		}
+		Super.drawer();
+	}
+
+	override bool onNavEvent(HDZFNavEventType type, bool fromController) {
+		if (isFocused() && isEnabled()) {
+			switch (type) {
+			case HDZFNavEventType_Right:
+				if (tabFocus != tabLabels.size() - 1) {
+					tabFocus += 1;
+					return true;
+				}
+				break;
+			case HDZFNavEventType_Left:
+				if (tabFocus != 0) {
+					tabFocus -= 1;
+					return true;
+				}
+				break;
+			case HDZFNavEventType_Confirm:
+				curTab.curVal = tabFocus;
+				break;
+			}
+		}
+		return Super.onNavEvent(type, fromController);
+	}
+
+}
