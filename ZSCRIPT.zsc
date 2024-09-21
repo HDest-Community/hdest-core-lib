@@ -12,3 +12,6 @@ version "4.12"
 #include "zscript/HDCore/debug/Debug.zsc"
 #include "zscript/HDCore/random/Random.zsc"
 #include "zscript/HDCore/sectors/Sectors.zsc"
+
+// Event Handlers
+// #include "zscript/HDCore/events/SpawnHandler.zsc"
