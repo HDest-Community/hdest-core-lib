@@ -32,6 +32,8 @@ class HDCoreSpawnTable play {
         table.isPersistent = persists;
         table.replace = replace;
 
+        table.clearEntries();
+
         return table;
     }
 
@@ -89,24 +91,22 @@ class HDCoreSpawnTableEntry play {
     /**
      * Creates an entry for a given thing by name and its chances of spawning within the table.
      * @param {name} name The className of the thing that might spawn
-     * @param {int} chance The relative weight/bias of the thing in the table.
+     * @param {int} weight The relative weight/bias of the thing in the table.
      * @returns {HDCoreSpawnTableEntry} The newly created table entry.
      */
-    static HDCoreSpawnTableEntry create(name name, int chance) {
+    static HDCoreSpawnTableEntry create(name name, int weight) {
         HDCoreSpawnTableEntry entry = HDCoreSpawnTableEntry(new('HDCoreSpawnTableEntry'));
 
         entry.name = name;
-        entry.chance = chance;
+        entry.weight = weight;
 
         return entry;
     }
 
     string toString() {
         return String.format(
-            "{ name=%s, chance=%s }",
-               name,    chance >= 0
-                          ? "1/"..(chance + 1)
-                          : "never"
+            "{ name=%s, weight=%s }",
+               name,    weight
         );
     }
 }
@@ -135,12 +135,28 @@ class HDCoreSpawnHandler : EventHandler {
     // List of all spawn tables.
     Array<HDCoreSpawnTable> spawnTables;
 
+    bool initialized;
+
     HDCoreSpawnTable getSpawnTable(name name, bool persists = false, bool replace = true) {
-        foreach (table : spawnTables) if ((table.tableName == name || table.spawnName == name) && table.isPersistent == persists && table.replace == replace) return table;
+        if (spawnTables.size()) {
+            foreach (table : spawnTables) {
+                if ((table.tableName == name || table.spawnName == name) && table.isPersistent == persists && table.replace == replace) {
+                    return table;
+                }
+            }
+        }
+
+        return null;
     }
 
     void getSpawnTables(out Array<HDCoreSpawnTable> tables, name name, bool replace = true) {
-        foreach (table : spawnTables) if ((table.tableName == name || table.spawnName == name) && table.replace == replace) tables.push(table);
+        if (spawnTables.size()) {
+            foreach (table : spawnTables) {
+                if ((table.tableName == name || table.spawnName == name) && table.replace == replace) {
+                    tables.push(table);
+                }
+            }
+        }
     }
 
     // Appends the given Spawn Table with the handler, or registers it if it does not yet exist
@@ -154,17 +170,19 @@ class HDCoreSpawnHandler : EventHandler {
                 .." Table for "..table.spawnName.." named '"..table.tableName
                 .."': [";
 
-            foreach (entry : table.entries) msg = msg..", "..entry.toString();
+                if (table.entries.size()) foreach (entry : table.entries) msg = msg..", "..entry.toString();
 
             console.printf(msg.."]");
         }
 
         // If we find an existing table, simply append the entries
-        foreach (spawnTable : spawnTables) {
-            if (table.equals(spawnTable)) {
-                spawnTable.entries.append(table.entries);
+        if (spawnTables.size()) {
+            foreach (spawnTable : spawnTables) {
+                if (table.equals(spawnTable)) {
+                    spawnTable.entries.append(table.entries);
 
-                return;
+                    return;
+                }
             }
         }
 
@@ -175,6 +193,8 @@ class HDCoreSpawnHandler : EventHandler {
     // Add a new entry to an existing Spawn Table
     void addSpawnTableEntry(name name, HDCoreSpawnTableEntry entry, bool persists = false, bool replace = true) {
         Array<HDCoreSpawnTable> tables;
+        tables.clear();
+
         getSpawnTables(tables, name, replace);
         foreach (spawnTable : tables) if (spawnTable.isPersistent == persists) spawnTable.addEntry(entry);
     }
@@ -182,7 +202,11 @@ class HDCoreSpawnHandler : EventHandler {
     // Tries to replace the item during spawning.
     bool tryReplaceThing(ReplaceEvent e, HDCoreSpawnTable table) {
         Array<int> weights;
-        let entry = table.entries[HDCore.getWeightedRandom(table.getWeights(weights))];
+        weights.clear();
+
+        table.getWeights(weights);
+
+        let entry = table.entries[HDCore.getWeightedRandom(weights)];
 
         if (entry && entry.name != e.replacee) {
             if (hd_debug) console.printf(e.replacee.getClassName().." -> "..entry.name);
@@ -198,7 +222,11 @@ class HDCoreSpawnHandler : EventHandler {
     // Tries to create the Enemy via random spawning.
     bool tryCreateThing(Actor a, HDCoreSpawnTable table) {
         Array<int> weights;
-        let entry = table.entries[HDCore.getWeightedRandom(table.getWeights(weights))];
+        weights.clear();
+
+        table.getWeights(weights);
+
+        let entry = table.entries[HDCore.getWeightedRandom(weights)];
 
         if (entry && entry.name != a.getClassName()) {
             if (hd_debug) console.printf(a.getClassName().." + "..entry.name);
@@ -211,16 +239,24 @@ class HDCoreSpawnHandler : EventHandler {
         return false;
     }
 
-    // override void worldLoaded(WorldEvent e) {
+    void init() {
+        if (initialized) return;
 
-    //     // Populates the main arrays if they haven't been already.
-    //     if (!cvarsAvailable) init();
-    // }
+        spawnTables.clear();
+
+        initialized = true;
+    }
+
+    override void worldLoaded(WorldEvent e) {
+
+        // Populates the main arrays if they haven't been already.
+        if (!initialized) init();
+    }
 
     override void checkReplacement(ReplaceEvent e) {
 
         // Populates the main arrays if they haven't been already.
-        // if (!cvarsAvailable) init();
+        if (!initialized) init();
 
         // If there's nothing to replace or if the replacement is final, quit.
         if (!e.replacee || e.isFinal) return;
@@ -237,7 +273,7 @@ class HDCoreSpawnHandler : EventHandler {
     override void worldThingSpawned(WorldEvent e) {
 
         // Populates the main arrays if they haven't been already.
-        // if (!cvarsAvailable) init();
+        if (!initialized) init();
 
         // If thing spawned doesn't exist, quit.
         if (!e.thing) return;
@@ -258,6 +294,8 @@ class HDCoreSpawnHandler : EventHandler {
 
         // Iterate through the list of replacement tables for the current thing
         Array<HDCoreSpawnTable> tables;
+        tables.clear();
+
         getSpawnTables(tables, name);
         foreach (table : tables) {
 
@@ -277,6 +315,8 @@ class HDCoreSpawnHandler : EventHandler {
 
         // Iterate through the list of non-replacement tables for the current thing
         Array<HDCoreSpawnTable> tables;
+        tables.clear();
+
         getSpawnTables(tables, name, false);
         foreach (table : tables) {
 
