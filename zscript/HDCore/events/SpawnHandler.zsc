@@ -133,18 +133,14 @@ class HDCoreSpawnHandler : EventHandler {
     };
 
     // List of all spawn tables.
-    array<HDCoreSpawnTable> spawnTables;
+    Array<HDCoreSpawnTable> spawnTables;
 
     HDCoreSpawnTable getSpawnTable(name name, bool persists = false, bool replace = true) {
         foreach (table : spawnTables) if ((table.tableName == name || table.spawnName == name) && table.isPersistent == persists && table.replace == replace) return table;
     }
 
-    Array<HDCoreSpawnTable> getSpawnTables(name name, bool replace = true) {
-        Array<HDCoreSpawnTable> tables;
-
+    void getSpawnTables(out Array<HDCoreSpawnTable> tables, name name, bool replace = true) {
         foreach (table : spawnTables) if ((table.tableName == name || table.spawnName == name) && table.replace == replace) tables.push(table);
-
-        return tables;
     }
 
     // Appends the given Spawn Table with the handler, or registers it if it does not yet exist
@@ -178,7 +174,9 @@ class HDCoreSpawnHandler : EventHandler {
 
     // Add a new entry to an existing Spawn Table
     void addSpawnTableEntry(name name, HDCoreSpawnTableEntry entry, bool persists = false, bool replace = true) {
-        foreach (spawnTable : getSpawnTables(name, replace)) if (spawnTable.isPersistent == persists) spawnTable.addEntry(entry);
+        Array<HDCoreSpawnTable> tables;
+        getSpawnTables(tables, name, replace);
+        foreach (spawnTable : tables) if (spawnTable.isPersistent == persists) spawnTable.addEntry(entry);
     }
 
     // Tries to replace the item during spawning.
@@ -259,7 +257,9 @@ class HDCoreSpawnHandler : EventHandler {
         bool prespawn = !(Level.maptime > 1);
 
         // Iterate through the list of replacement tables for the current thing
-        foreach (table : getSpawnTables(name)) {
+        Array<HDCoreSpawnTable> tables;
+        getSpawnTables(tables, name);
+        foreach (table : tables) {
 
             if (prespawn || table.isPersistent) {
                 if (hd_debug) console.printf("Attempting to replace "..name.." with entry in "..table.tableName.."...");
@@ -276,7 +276,9 @@ class HDCoreSpawnHandler : EventHandler {
         bool prespawn = !(level.maptime > 1);
 
         // Iterate through the list of non-replacement tables for the current thing
-        foreach (table : getSpawnTables(name, false)) {
+        Array<HDCoreSpawnTable> tables;
+        getSpawnTables(tables, name, false);
+        foreach (table : tables) {
 
             // if currently in pre-spawn or configured to be persistent,
             // and original thing being spawned is not an owned item,
