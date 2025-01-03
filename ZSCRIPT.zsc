@@ -6,6 +6,7 @@ version "4.12"
 
 // Global Classes
 #include "zscript/HDCore/ui/CameraContext.zsc"
+#include "zscript/HDCore/ui/VectorPrefabs.zsc"
 
 // HDCoreLib
 #include "zscript/HDCore/HDCore.zsc"
@@ -13,6 +14,7 @@ version "4.12"
 #include "zscript/HDCore/random/Random.zsc"
 #include "zscript/HDCore/sectors/Sectors.zsc"
 #include "zscript/HDCore/ui/DrawBar.zsc"
+#include "zscript/HDCore/ui/DrawPrefabs.zsc"
 
 // Event Handlers
 #include "zscript/HDCore/events/SpawnHandler.zsc"

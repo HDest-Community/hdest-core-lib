@@ -1,0 +1,22 @@
+extend class HDCore {
+
+    static ui void drawSpentShell(HDStatusBar sb, Color color, Vector2 pos, int rotation = 0, float scale = 1.0, int flags = 0) {
+        HDVectorPrefab.create('spentShell', rotation).draw(sb, color, pos, scale, flags);
+    }
+
+    static ui void drawSimpleShell(HDStatusBar sb, Color color, Vector2 pos, int rotation = 0, float scale = 1.0, int flags = 0) {
+        HDVectorPrefab.create('simpleShell', rotation).draw(sb, color, pos, scale, flags);
+    }
+
+    static ui void drawFancyShell(HDStatusBar sb, Color color, Vector2 pos, int rotation = 0, float scale = 1.0, int flags = 0) {
+        HDVectorPrefab.create('fancyShell', rotation).draw(sb, color, pos, scale, flags);
+    }
+
+    static ui void drawFancySlug(HDStatusBar sb, Color color, Vector2 pos, int rotation = 0, float scale = 1.0, int flags = 0) {
+        HDVectorPrefab.create('fancySlug', rotation).draw(sb, color, pos, scale, flags);
+    }
+
+    static ui void drawRocquette(HDStatusBar sb, Color color, Vector2 pos, int rotation = 0, float scale = 1.0, int flags = 0) {
+        HDVectorPrefab.create('rocquette', rotation).draw(sb, color, pos, scale, flags);
+    }
+}

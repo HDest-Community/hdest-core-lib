@@ -1,0 +1,81 @@
+class HDVectorPrefab ui {
+
+    Vector4 rects[32];
+
+    static HDVectorPrefab create(name prefabName, int rotation = 0) {
+        let prefab = new('HDVectorPrefab');
+
+        if (prefab) {
+            switch (prefabName) {
+                case 'spentShell':
+                    prefab.rects[0] = (0, 0, 2, 3);
+                    break;
+                case 'simpleShell':
+                    prefab.rects[0] = (0, 0, 2, 3);
+                    prefab.rects[1] = (3, 0, 5, 3);
+                    break;
+                case 'fancyShell':
+                    prefab.rects[0] = (0, 0, 2, 3);
+                    prefab.rects[1] = (3, 0, 1, 1);
+                    prefab.rects[2] = (5, 0, 1, 1);
+                    prefab.rects[3] = (7, 0, 1, 1);
+                    prefab.rects[4] = (4, 1, 1, 1);
+                    prefab.rects[5] = (6, 1, 1, 1);
+                    prefab.rects[6] = (3, 2, 1, 1);
+                    prefab.rects[7] = (5, 2, 1, 1);
+                    prefab.rects[8] = (7, 2, 1, 1);
+                    break;
+                case 'fancySlug':
+                    prefab.rects[0] = (0, 0, 2, 3);
+                    prefab.rects[1] = (3, 0, 4, 3);
+                    prefab.rects[2] = (7, 1, 1, 1);
+                    break;
+                case 'rocquette':
+                    prefab.rects[0] = (6.5, 0, 1.5, 3);
+                    prefab.rects[1] = (0,   1, 8,   1);
+                    prefab.rects[2] = (1,   0, 4,   3);
+                    break;
+                default:
+                    console.printF('Unknown Vector Prefab: "'..prefabName..'"');
+                    break;
+            }
+
+            if (rotation) {
+                for (let i = 0; i < prefab.rects.size(); i++) {
+                    let rect = prefab.rects[i];
+                    if (rect == (0,0,0,0)) break;
+
+                    switch (rotation) {
+                        case 1:
+                            prefab.rects[i] = (-rect.y, rect.x, -rect.w, rect.z);
+                            break;
+                        case 2:
+                            prefab.rects[i] = (-rect.x, -rect.y, -rect.z, -rect.w);
+                            break;
+                        case 3:
+                            prefab.rects[i] = (rect.y, -rect.x, rect.w, -rect.z);
+                            break;
+                        default:
+                            prefab.rects[i] = rect;
+                            break;
+                    }
+                }
+            }
+        }
+
+        return prefab;
+    }
+
+    void draw(HDStatusBar sb, Color color, Vector2 pos, float scale, int flags) {
+        foreach (rect : rects) {
+            if (rect == (0,0,0,0)) break;
+
+            sb.fill(
+                color,
+                pos.x + (rect.x * scale), pos.y + (rect.y * scale),
+                rect.z * scale, rect.w * scale,
+                flags
+            );
+        }
+    }
+}
