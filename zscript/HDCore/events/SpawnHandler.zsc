@@ -1,116 +1,3 @@
-class HDCoreSpawnTable play {
-
-    // Unique Name of the table.
-    name tableName;
-
-    // Name of thing to react to being spawned.
-    name spawnName;
-
-    // List of entries of things to spawn.
-    Array<HDCoreSpawnTableEntry> entries;
-
-    // Whether or not to use this table beyond initial map spawn.
-    bool isPersistent;
-
-    // Whether or not to replace the original thing or just spawn alongside it.
-    bool replace;
-
-    /**
-     * Creates a spawn table for a given thing by name, as well as an optional unique table name,
-     * whether the entries are considered after initial map spawn, and whether the table replaces the original thing.
-     * @param {name} spawnName The className of the thing that might spawn.
-     * @param {name} [tableName] An optional name to give the table, defaults to spawnName.
-     * @param {bool} [persists=false] If true, the table will be considered even after the map has initially spawned all actors.
-     * @param {bool} [replace=true] If true, the selected entry in the table will replace the original actor.
-     * @returns {HDCoreSpawnTable} The newly created table.
-     */
-    static HDCoreSpawnTable create(name spawnName, name tableName = '', bool persists = false, bool replace = true) {
-        HDCoreSpawnTable table = HDCoreSpawnTable(new('HDCoreSpawnTable'));
-
-        table.tableName = tableName != '' ? tableName : spawnName;
-        table.spawnName = spawnName;
-        table.isPersistent = persists;
-        table.replace = replace;
-
-        table.clearEntries();
-
-        return table;
-    }
-
-    bool equals(HDCoreSpawnTable other) {
-        return (tableName == other.tableName || spawnName == other.spawnName) && isPersistent == other.isPersistent && replace == other.replace;
-    }
-
-    string toString() {
-
-        let entriesStr = "[";
-
-        foreach (entry : entries) entriesStr = entriesStr..", "..entry.toString();
-
-        entriesStr = entriesStr.."]";
-
-        return String.format(
-            "{ tableName=%s, spawnName=%s, entries=%s, isPersistent=%b, replace=%b }",
-               tableName,    spawnName,    entriesStr, isPersistent,    replace
-        );
-    }
-
-    void addEntry(HDCoreSpawnTableEntry entry) {
-        entries.push(entry);
-    }
-
-    void addEntries(Array<HDCoreSpawnTableEntry> arr) {
-        entries.append(arr);
-    }
-
-    void removeEntry(name name) {
-        HDCoreSpawnTableEntry tableEntry;
-        
-        foreach (entry : entries) if (entry.name == name) tableEntry = entry;
-        
-        entries.delete(entries.find(tableEntry));
-    }
-
-    void clearEntries() {
-        entries.clear();
-    }
-
-    void getWeights(out Array<int> weights) {
-        foreach (entry : entries) weights.push(entry.weight);
-    }
-}
-
-class HDCoreSpawnTableEntry play {
-
-    // Name of thing to spawn
-    name name;
-
-    // The relative weight that this thing will spawn within the table
-    int weight;
-
-    /**
-     * Creates an entry for a given thing by name and its chances of spawning within the table.
-     * @param {name} name The className of the thing that might spawn
-     * @param {int} weight The relative weight/bias of the thing in the table.
-     * @returns {HDCoreSpawnTableEntry} The newly created table entry.
-     */
-    static HDCoreSpawnTableEntry create(name name, int weight) {
-        HDCoreSpawnTableEntry entry = HDCoreSpawnTableEntry(new('HDCoreSpawnTableEntry'));
-
-        entry.name = name;
-        entry.weight = weight;
-
-        return entry;
-    }
-
-    string toString() {
-        return String.format(
-            "{ name=%s, weight=%s }",
-               name,    weight
-        );
-    }
-}
-
 class HDCoreSpawnHandler : EventHandler {
 
     // List of persistent classes to completely ignore.
@@ -243,6 +130,14 @@ class HDCoreSpawnHandler : EventHandler {
         if (initialized) return;
 
         spawnTables.clear();
+
+        Array<string> hdcInfoLump;
+        hdcInfoLump.clear();
+
+        HDCore.ReadHDCoreInfo(hdcInfoLump);
+
+        console.printf('Read HDCINFO Lumps!  Read '..hdcInfoLump.size()..' Lines!');
+        if (hd_debug) for (int i = 0; i < hdcInfoLump.size(); i++) console.printf(i.." "..hdcInfoLump[i].." EOL");
 
         initialized = true;
     }

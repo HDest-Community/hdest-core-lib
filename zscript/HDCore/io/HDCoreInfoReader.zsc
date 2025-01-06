@@ -1,0 +1,182 @@
+extend class HDCore {
+    
+    static void ReadHDCoreInfo(out Array<string> arr) {
+        //console.printf("ran ReadHDCoreInfo()");
+        string rawLumpText;
+        int lumpNum;
+
+        while ((lumpNum = Wads.findLump("HDCINFO", lumpNum + 1, Wads.GlobalNamespace)) >= 0) {
+            Array<string> lumplines;
+            lumplines.Clear();
+
+            rawLumpText = Wads.readLump(lumpNum);
+            rawLumpText.split(lumplines, "\n", TOK_KEEPEMPTY);
+
+            for (int i = 0; i < lumplines.Size(); i++) {
+                string line = lumplines[i];
+
+                // Remove comments
+                int commentIdx = line.IndexOf("//");
+                if (commentIdx == 0) {
+                    line = "";
+                } else if (commentIdx > 0) {
+                    line = line.Left(commentIdx);
+                }
+
+                // Remove newline and return characters
+                line.Replace("\r", "");
+                line.Replace("\n", "");
+                line.Replace("\f", ""); // Is this correct or even needed?
+
+                // Remove spaces
+                line.Replace(";", ""); //testing
+                line.Replace(" ", "");
+
+                // Set back to lump
+                lumplines[i] = line;
+
+                // Remove blank lines
+                // if (lumplines[i].Length() <= 0) { lumplines.Delete(i); }
+                // WHAT THE FUCK WHY DOES THIS AFFECT IT
+            }
+
+            arr.Append(lumplines);
+        }
+    }
+}
+
+
+// private void ParseGroups()
+// {
+//     if (repkup_debug) Console.PrintF("Reloading repkup_groups.txt...");
+
+//     // Get all the stuff
+//     Array<string> contents;
+
+//     let lumpNum = -1;
+//     while ((lumpNum = Wads.FindLump("repkup_groups", lumpNum + 1)) >= 0)
+//     {
+//         Array<string> lumpLines;
+//         lumpLines.Clear();
+
+//         let lt = Wads.ReadLump(lumpNum);
+//         lt.split(lumpLines, "\n");
+
+//         foreach (line : lumpLines)
+//         {
+//             // Remove excess newline and return characters
+//             line.Replace("\r", "");
+//             line.Replace("\n", "");
+
+//             // Remove tabs & spaces
+//             line.Replace("\t", "");
+//             line.Replace(" ", "");
+
+//             if (line != "") {
+//                 contents.push(line);
+//                 if (hd_debug) Console.PrintF("Adding Line '"..line.."'... ");
+//             }
+//         }
+//     }
+
+//     // Format = ITEM_CLASS:SPRITE:TRANSLATION:FRAMES:FRAME_TIME:FLAGS
+//     for (int i = 0; i < contents.Size(); i++)
+//     {
+//         Array<string> temp;
+//         Array<string> iTemp;
+//         Array<string> cTemp;
+
+//         contents[i].Split(temp, ":");
+//         // Does it have enough arguments?
+//         if (temp.Size() < 5)
+//         {
+//             if (temp.Size() != 0 && i != (contents.Size() - 1))
+//             {
+//                 if (repkup_debug)
+//                 {
+//                     Console.PrintF("Group at line "..i + 1..." provided "..temp.Size().." arguments, but a minimum of 4 is required.");
+//                     Console.PrintF("Ignoring group at line"..i + 1);
+//                 }
+//             }
+//             continue;
+//         }
+
+//         // Just in case
+//         bool isNull = false;
+//         for (int a = 0; a < temp.Size(); a++)
+//         {
+//             if (temp[a] == "")
+//             {
+//                 if (repkup_debug)
+//                 {
+//                     Console.PrintF("Group at line "..i + 1..." provided "..temp.Size().." arguments, but argument "..a + 1..." is null.");
+//                     Console.PrintF("Ignoring group at line "..i + 1);
+//                 }
+
+//                 isNull = true;
+//                 break;
+//             }
+//         }
+
+//         // Skip if an argument is null
+//         if (isNull) continue;
+
+//         let t = new("REItemInfo");
+//         temp[0].Split(cTemp, ",");
+//         t.Sprite = temp[1];
+//         t.CustomTranslation = temp[2];
+//         temp[3].Split(iTemp, ",");
+//         t.FrameTime = temp[4].ToInt(10);
+
+//         if (temp.Size() > 5)
+//         {
+//             let flag = temp[5];
+
+//             if (flag == "USEICON")
+//             {
+//                 t.UseIcon = true;
+
+//             }
+//             else if (flag == "USECUSTOM")
+//             {
+//                 if (temp.Size() > 6)
+//                 {
+//                     t.UseCustom = true;
+//                     t.CustomTex = TexMan.CheckForTexture(temp[6]);
+//                 }
+//                 else if (repkup_debug)
+//                 {
+//                     Console.PrintF(string.Format("Group at line %d used flag \"USECUSTOM\", but didn't provide an argument afterwards.\nIgnoring flag.", i + 1));
+//                 }
+//             }
+//             else if (repkup_debug) 
+//             {
+//                 Console.PrintF(string.Format("Group at line %d used an invalid flag.\nIgnoring flag.", i + 1));
+//             }
+//         }
+
+//         // If there's an invalid class, just remove it
+//         foreach (c : cTemp)
+//         {
+//             if (CheckClass(c))
+//                 t.Classes.Push(c);
+
+//             foreach (j : _infoList)
+//             {
+//                 let prevClass = j.Classes.Find(c);
+//                 if (prevClass < j.Classes.Size())
+//                 {
+//                     j.Classes.Delete(prevClass);
+//                     // break;
+//                 }
+//             }
+//         }
+
+//         foreach (i : iTemp)
+//         {
+//             t.Frames.Push(i.ToInt(10));
+//         }
+
+//         _infoList.Push(t);
+//     }
+// }
