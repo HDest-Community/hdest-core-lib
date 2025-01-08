@@ -50,7 +50,7 @@ class HDCoreSpawnTable play {
         entriesStr = entriesStr.."]";
 
         return String.format(
-            "{ tableName=%s, spawnName=%s, entries=%s, isPersistent=%b, replace=%b }",
+            "{ tableName=%s, spawnName=%s, entries=%s, isPersistent=%i, replace=%i }",
                tableName,    spawnName,    entriesStr, isPersistent,    replace
         );
     }
@@ -65,9 +65,9 @@ class HDCoreSpawnTable play {
 
     void removeEntry(name name) {
         HDCoreSpawnTableEntry tableEntry;
-        
+
         foreach (entry : entries) if (entry.name == name) tableEntry = entry;
-        
+
         entries.delete(entries.find(tableEntry));
     }
 
@@ -84,7 +84,7 @@ class HDCoreSpawnTable play {
         let entry = entries[HDCore.getWeightedRandom(weights)];
 
         if (entry is 'HDCoreSpawnTableNestedEntry') return HDCoreSpawnTableNestedEntry(entry)._table.getEntry();
-        
+
         return entry;
     }
 
@@ -140,7 +140,7 @@ class HDCoreSpawnTableSingleEntry : HDCoreSpawnTableEntry {
 
     override string toString() {
         return String.format(
-            "{ name=%s, value=%s, weight=%s }",
+            "{ name=%s, value=%s, weight=%i }",
                name,  getValue(), weight
         );
     }
@@ -163,7 +163,7 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
         entry._table = table;
 
         entry.name   = table.tableName;
-        entry.weight = weight ? weight : entry.getWeight();
+        entry.weight = weight > 0 ? weight : entry.getWeight();
 
         return entry;
     }
@@ -184,7 +184,7 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
 
     override string toString() {
         return String.format(
-            "{ name=%s, table=%s, weight=%s }",
+            "{ name=%s, table=%s, weight=%i }",
                name, _table.toString(), getWeight()
         );
     }

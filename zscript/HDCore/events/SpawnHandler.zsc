@@ -134,12 +134,73 @@ class HDCoreSpawnHandler : EventHandler {
         Array<string> hdcInfoLump;
         hdcInfoLump.clear();
 
-        HDCore.ReadHDCoreInfo(hdcInfoLump);
+        HDCore.readHDCoreInfo(hdcInfoLump);
 
-        console.printf('Read HDCINFO Lumps!  Read '..hdcInfoLump.size()..' Lines!');
-        if (hd_debug) for (int i = 0; i < hdcInfoLump.size(); i++) console.printf(i.." "..hdcInfoLump[i].." EOL");
+        Array<HDCoreInfoLumpCommand> cmds;
+        cmds.clear();
+
+        HDCore.parseHDCoreInfo(hdcInfoLump, cmds);
+
+        if (hd_debug) forEach(cmd : cmds) console.printF(cmd.toString());
+        
+        loadSpawnTables(cmds);
+
+        if (hd_debug) forEach(table : spawnTables) console.printF(table.toString());
 
         initialized = true;
+    }
+
+    void loadSpawnTables(Array<HDCoreInfoLumpCommand> cmds) {
+        forEach (cmd : cmds) {
+            switch (cmd.command) {
+                case 'newSpawnTable':
+                    let table = HDCoreSpawnTable.create(
+                        cmd.getNameArg("spawnName"),
+                        cmd.getNameArg("tableName"),
+                        cmd.getBoolArg("persists"),
+                        cmd.getBoolArg("replaces", true)
+                    );
+
+                    if (table) addSpawnTable(table);
+                    break;
+                case 'addSpawnTableSingleEntry':
+                    let entry = HDCoreSpawnTableSingleEntry.create(
+                        cmd.getNameArg("name"),
+                        cmd.getIntArg("weight")
+                    );
+
+                    if (entry) addSpawnTableEntry(
+                        cmd.getNameArg("tableName"),
+                        entry,
+                        cmd.getBoolArg("persists"),
+                        cmd.getBoolArg("replaces", true)
+                    );
+                    break;
+                case 'addSpawnTableNestedEntry':
+                    let nestedTable = getSpawnTable(
+                        cmd.getNameArg("name"),
+                        cmd.getBoolArg("persists"),
+                        cmd.getBoolArg("replaces", true)
+                    );
+
+                    if (nestedTable) {
+                        let entry = HDCoreSpawnTableNestedEntry.create(
+                            nestedTable,
+                            cmd.getIntArg("weight")
+                        );
+        
+                        if (entry) addSpawnTableEntry(
+                            cmd.getNameArg("tableName"),
+                            entry,
+                            cmd.getBoolArg("persists"),
+                            cmd.getBoolArg("replaces", true)
+                        );
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     override void worldLoaded(WorldEvent e) {
