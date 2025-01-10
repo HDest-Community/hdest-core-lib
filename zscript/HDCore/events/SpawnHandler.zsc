@@ -77,6 +77,14 @@ class HDCoreSpawnHandler : EventHandler {
         spawnTables.push(table);
     }
 
+    void removeSpawnTable(name name, bool persists = false, bool replace = true) {
+        Array<HDCoreSpawnTable> tables;
+        tables.clear();
+
+        getSpawnTables(tables, name, replace);
+        foreach (spawnTable : tables) if (spawnTable.isPersistent == persists) spawnTables.delete(spawnTables.find(spawnTable));
+    }
+
     // Add a new entry to an existing Spawn Table
     void addSpawnTableEntry(name name, HDCoreSpawnTableEntry entry, bool persists = false, bool replace = true) {
         Array<HDCoreSpawnTable> tables;
@@ -86,41 +94,39 @@ class HDCoreSpawnHandler : EventHandler {
         foreach (spawnTable : tables) if (spawnTable.isPersistent == persists) spawnTable.addEntry(entry);
     }
 
-    // Tries to replace the item during spawning.
+    // Tries to replace the thing during spawning.
     bool tryReplaceThing(ReplaceEvent e, HDCoreSpawnTable table) {
-        Array<int> weights;
-        weights.clear();
+        let entry = table.getRandomEntry();
 
-        table.getWeights(weights);
-
-        let entry = table.entries[HDCore.getWeightedRandom(weights)];
-
-        if (entry && entry.name != e.replacee) {
-            if (hd_debug) console.printf(e.replacee.getClassName().." -> "..entry.name);
-
-            e.replacement = entry.name;
-
-            return true;
+        if (entry) {
+            let replacement = entry.getValue();
+    
+            if (replacement != e.replacee) {
+                if (hd_debug) console.printf(e.replacee.getClassName().." -> "..entry.name);
+    
+                e.replacement = replacement;
+    
+                return true;
+            }
         }
 
         return false;
     }
 
-    // Tries to create the Enemy via random spawning.
+    // Tries to create the thing via random spawning.
     bool tryCreateThing(Actor a, HDCoreSpawnTable table) {
-        Array<int> weights;
-        weights.clear();
+        let entry = table.getRandomEntry();
 
-        table.getWeights(weights);
+        if (entry) {
+            let value = entry.getValue();
 
-        let entry = table.entries[HDCore.getWeightedRandom(weights)];
-
-        if (entry && entry.name != a.getClassName()) {
-            if (hd_debug) console.printf(a.getClassName().." + "..entry.name);
-
-            Actor.Spawn(entry.name, a.pos);
-
-            return true;
+            if (value != a.getClassName()) {
+                if (hd_debug) console.printf(a.getClassName().." + "..value);
+    
+                Actor.Spawn(value, a.pos);
+    
+                return true;
+            }
         }
 
         return false;
@@ -183,19 +189,81 @@ class HDCoreSpawnHandler : EventHandler {
                         cmd.getBoolArg("replaces", true)
                     );
 
-                    if (nestedTable) {
-                        let entry = HDCoreSpawnTableNestedEntry.create(
-                            nestedTable,
-                            cmd.getIntArg("weight")
-                        );
-        
-                        if (entry) addSpawnTableEntry(
-                            cmd.getNameArg("tableName"),
-                            entry,
-                            cmd.getBoolArg("persists"),
-                            cmd.getBoolArg("replaces", true)
-                        );
+                    if (!nestedTable) HDCoreSpawnTable.create(
+                        cmd.getNameArg("name"),
+                        cmd.getNameArg("name"),
+                        cmd.getBoolArg("persists"),
+                        cmd.getBoolArg("replaces", true)
+                    );
+
+                    let entry = HDCoreSpawnTableNestedEntry.create(
+                        nestedTable,
+                        cmd.getIntArg("weight")
+                    );
+    
+                    if (entry) addSpawnTableEntry(
+                        cmd.getNameArg("tableName"),
+                        entry,
+                        cmd.getBoolArg("persists"),
+                        cmd.getBoolArg("replaces", true)
+                    );
+                    break;
+                case 'removeSpawnTableEntry':
+                    let table = getSpawnTable(
+                        cmd.getNameArg("tableName"),
+                        cmd.getBoolArg("persists"),
+                        cmd.getBoolArg("replaces", true)
+                    );
+
+                    if (table) table.removeEntry(cmd.getNameArg("name"));
+                    break;
+                case 'clearSpawnTable':
+                    let table = getSpawnTable(
+                        cmd.getNameArg("tableName"),
+                        cmd.getBoolArg("persists"),
+                        cmd.getBoolArg("replaces", true)
+                    );
+
+                    if (table) table.clearEntries();
+                    break;
+                case 'appendSpawnTableEntries':
+                    let sourceTable = getSpawnTable(
+                        cmd.getNameArg("sourceTableName"),
+                        cmd.getBoolArg("persists"),
+                        cmd.getBoolArg("replaces", true)
+                    );
+                    
+                    let destTable = getSpawnTable(
+                        cmd.getNameArg("destTableName"),
+                        cmd.getBoolArg("persists"),
+                        cmd.getBoolArg("replaces", true)
+                    );
+
+                    if (sourceTable && destTable) destTable.addEntries(sourceTable.entries);
+                    break;
+                case 'setSpawnTableEntryWeight':
+                    let table = getSpawnTable(
+                        cmd.getNameArg("tableName"),
+                        cmd.getBoolArg("persists"),
+                        cmd.getBoolArg("replaces", true)
+                    );
+
+                    if (table) {
+                        let entry = table.getEntry(cmd.getNameArg("name"));
+                        let weight = cmd.getIntArg("weight");
+
+                        if (entry) entry.weight = weight > 0 ? weight : entry.getWeight();
                     }
+                    break;
+                case 'removeSpawnTable':
+                    removeSpawnTable(
+                        cmd.getNameArg("name"),
+                        cmd.getBoolArg("persists"),
+                        cmd.getBoolArg("replaces", true)
+                    );
+                    break;
+                case 'removeAllSpawnTables':
+                    spawnTables.clear();
                     break;
                 default:
                     break;

@@ -1,0 +1,73 @@
+// ---------------------------------
+// HDCoreLib Custom Lump Command API
+// ---------------------------------
+
+
+// Add a new empty Spawn Table
+// - spawnName   = ClassName of thing to be replaced or add spawns to
+// - [tableName] = Custom name of SpawnTable (Defaults to "spawnName")
+// - [persists]  = If true, entry will be used beyond initial map spawns (Defaults to false)
+// - [replaces]  = If true, entry will replace the "spawnName", instead of spawn alongside it (Defaults to true)
+//
+// newSpawnTable => {"spawnName":"DoomImp","tableName":"impTest"}
+
+// Add a single entry to an existing table
+// - tableName  = Name of SpawnTable
+// - name       = ClassName of thing to replace with or spawn
+// - weight     = The bias of this entry
+// - [persists] = Used to find spawnTable with matching property value (Defaults to false)
+// - [replaces] = Used to find spawnTable with matching property value (Defaults to true)
+//
+// addSpawnTableSingleEntry => {"tableName":"impTest","name":"WitheredSpawner","weight":"69"}
+
+// Add a nested table entry to an existing table
+// - tableName  = Name of spawnTable to add new entry to
+// - name       = Name of SpawnTable (spawnName is inherited)
+// - [persists] = Used to find spawnTable with matching property value (Defaults to false)
+// - [replaces] = Used to find spawnTable with matching property value (Defaults to true)
+//
+// addSpawnTableNestedEntry => {"tableName":"impTest","name":"zombiemanTest"}
+
+// Remove an entry from an existing table
+// - tableName  = Name of spawnTable to remove entry from
+// - [persists] = Used to find spawnTable with matching property value (Defaults to false)
+// - [replaces] = Used to find spawnTable with matching property value (Defaults to true)
+//
+// removeSpawnTableEntry => {"tableName":"impTest","name":"DoggySpawner"}
+
+// Remove all entries from an existing table
+// - tableName  = Name of spawnTable to clear
+// - [persists] = Used to find spawnTable with matching property value (Defaults to false)
+// - [replaces] = Used to find spawnTable with matching property value (Defaults to true)
+//
+// clearSpawnTable => {"tableName":"impTest"}
+
+// Append all entries from sourceTable into destTable
+// - sourcetableName = Name of spawnTable to copy entries from
+// - desttableName   = Name of spawnTable to copy entries into
+// - [persists]      = Used to find spawnTables with matching property value (Defaults to false)
+// - [replaces]      = Used to find spawnTables with matching property value (Defaults to true)
+//
+// appendSpawnTableEntries => {"sourceTableName":"impTest","destTableName":"zombiemanTest"}
+
+// Set the bias/weight of a single entry in an existing table
+// - tableName  = Name of SpawnTable
+// - name       = ClassName of thing used to find the entry to modify
+// - weight     = The new bias of this entry.  If set to 0 or less, the entry will recalculate its weight automatically.
+//                For single entries, the weight simply stays the same
+//                For nested entries, the weight is recalculated as the sum of the weights of its entries
+// - [persists] = Used to find spawnTable with matching property value (Defaults to false)
+// - [replaces] = Used to find spawnTable with matching property value (Defaults to true)
+//
+// setSpawnTableEntryWeight => {"tableName":"impTest","name":"WitheredSpawner","weight":"420"}
+
+// Remove an existing table entirely
+// - tableName  = Name of spawnTable to remove
+// - [persists] = Used to find spawnTable with matching property value (Defaults to false)
+// - [replaces] = Used to find spawnTable with matching property value (Defaults to true)
+//
+// removeSpawnTable => {"tableName":"impTest"}
+
+// Remove all existing spawn tables
+//
+// removeSpawnTable => {}

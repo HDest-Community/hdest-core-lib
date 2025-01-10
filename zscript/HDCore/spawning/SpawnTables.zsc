@@ -75,7 +75,15 @@ class HDCoreSpawnTable play {
         entries.clear();
     }
 
-    HDCoreSpawnTableEntry getEntry() {
+    HDCoreSpawnTableEntry getEntry(name name) {
+        HDCoreSpawnTableEntry tableEntry;
+
+        foreach (entry : entries) if (entry.name == name) tableEntry = entry;
+
+        return tableEntry;
+    }
+
+    HDCoreSpawnTableEntry getRandomEntry() {
         Array<int> weights;
         weights.clear();
 
