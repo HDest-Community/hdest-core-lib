@@ -159,7 +159,7 @@ class HDCoreSpawnHandler : EventHandler {
     void loadSpawnTables(Array<HDCoreInfoLumpCommand> cmds) {
         forEach (cmd : cmds) {
             switch (cmd.command) {
-                case 'newSpawnTable':
+                case 'newSpawnTable': {
                     let table = HDCoreSpawnTable.create(
                         cmd.getNameArg("spawnName"),
                         cmd.getNameArg("tableName"),
@@ -169,7 +169,8 @@ class HDCoreSpawnHandler : EventHandler {
 
                     if (table) addSpawnTable(table);
                     break;
-                case 'addSpawnTableSingleEntry':
+                }
+                case 'addSpawnTableSingleEntry': {
                     let entry = HDCoreSpawnTableSingleEntry.create(
                         cmd.getNameArg("name"),
                         cmd.getIntArg("weight")
@@ -182,7 +183,8 @@ class HDCoreSpawnHandler : EventHandler {
                         cmd.getBoolArg("replaces", true)
                     );
                     break;
-                case 'addSpawnTableNestedEntry':
+                }
+                case 'addSpawnTableNestedEntry': {
                     let nestedTable = getSpawnTable(
                         cmd.getNameArg("name"),
                         cmd.getBoolArg("persists"),
@@ -208,7 +210,8 @@ class HDCoreSpawnHandler : EventHandler {
                         cmd.getBoolArg("replaces", true)
                     );
                     break;
-                case 'removeSpawnTableEntry':
+                }
+                case 'removeSpawnTableEntry': {
                     let table = getSpawnTable(
                         cmd.getNameArg("tableName"),
                         cmd.getBoolArg("persists"),
@@ -217,7 +220,8 @@ class HDCoreSpawnHandler : EventHandler {
 
                     if (table) table.removeEntry(cmd.getNameArg("name"));
                     break;
-                case 'clearSpawnTable':
+                }
+                case 'clearSpawnTable': {
                     let table = getSpawnTable(
                         cmd.getNameArg("tableName"),
                         cmd.getBoolArg("persists"),
@@ -226,7 +230,8 @@ class HDCoreSpawnHandler : EventHandler {
 
                     if (table) table.clearEntries();
                     break;
-                case 'appendSpawnTableEntries':
+                }
+                case 'appendSpawnTableEntries': {
                     let sourceTable = getSpawnTable(
                         cmd.getNameArg("sourceTableName"),
                         cmd.getBoolArg("persists"),
@@ -241,7 +246,8 @@ class HDCoreSpawnHandler : EventHandler {
 
                     if (sourceTable && destTable) destTable.addEntries(sourceTable.entries);
                     break;
-                case 'setSpawnTableEntryWeight':
+                }
+                case 'setSpawnTableEntryWeight': {
                     let table = getSpawnTable(
                         cmd.getNameArg("tableName"),
                         cmd.getBoolArg("persists"),
@@ -255,16 +261,19 @@ class HDCoreSpawnHandler : EventHandler {
                         if (entry) entry.weight = weight > 0 ? weight : entry.getWeight();
                     }
                     break;
-                case 'removeSpawnTable':
+                }
+                case 'removeSpawnTable': {
                     removeSpawnTable(
                         cmd.getNameArg("name"),
                         cmd.getBoolArg("persists"),
                         cmd.getBoolArg("replaces", true)
                     );
                     break;
-                case 'removeAllSpawnTables':
+                }
+                case 'removeAllSpawnTables': {
                     spawnTables.clear();
                     break;
+                }
                 default:
                     break;
             }

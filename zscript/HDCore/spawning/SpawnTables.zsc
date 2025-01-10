@@ -91,7 +91,7 @@ class HDCoreSpawnTable play {
 
         let entry = entries[HDCore.getWeightedRandom(weights)];
 
-        if (entry is 'HDCoreSpawnTableNestedEntry') return HDCoreSpawnTableNestedEntry(entry)._table.getEntry();
+        if (entry is 'HDCoreSpawnTableNestedEntry') return HDCoreSpawnTableNestedEntry(entry)._table.getRandomEntry();
 
         return entry;
     }
@@ -177,7 +177,7 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
     }
 
     override name getValue() {
-        let entry = _table.getEntry();
+        let entry = _table.getRandomEntry();
 
         return entry.getValue();
     }
