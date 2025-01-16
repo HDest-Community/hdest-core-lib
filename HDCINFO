@@ -3,6 +3,10 @@
 // ---------------------------------
 
 
+
+// SPAWN TABLES
+// ------------
+
 // Add a new empty Spawn Table
 // - spawnName   = ClassName of thing to be replaced or add spawns to
 // - [tableName] = Custom name of SpawnTable (Defaults to "spawnName")
@@ -71,3 +75,28 @@
 // Remove all existing spawn tables
 //
 // removeSpawnTable => {}
+
+
+
+// AMMO ASSOCIATIONS
+// -----------------
+
+// Add a new ammo association entry
+// - ammoName = Name of the ammo to check against when adding things that use it
+//
+// newAmmo => {"ammoName":"FourMilAmmo"}
+
+// Add a new weapon association to the given ammo type
+// - ammoName   = Name of the ammo to associate
+// - weaponName = Name of the weapon to associate with the ammo
+// 
+// addAmmoWeapon => {"ammoName":"HDPistolAmmo","weaponName":"MyCoolPistol"}
+
+// Remove an existing ammo association entry
+// - ammoName = Name of the ammo to remove
+//
+// removeAmmo => {"ammoName":"SevenMilAmmo"}
+
+// Remove all existing ammo associations
+//
+// removeAllAmmo => {}

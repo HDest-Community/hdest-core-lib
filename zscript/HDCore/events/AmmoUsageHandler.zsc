@@ -1,0 +1,174 @@
+class HDCoreAmmoUsesHandler : EventHandler {
+
+    // List of persistent classes to completely ignore.
+    // This -should- mean this mod has no performance impact.
+    static const string blacklist[] = {
+        'HDSmoke',
+        'BloodTrail',
+        'CheckPuff',
+        'WallChunk',
+        'HDBulletPuff',
+        'HDFireballTail',
+        'ReverseImpBallTail',
+        'HDSmokeChunk',
+        'ShieldSpark',
+        'HDFlameRed',
+        'HDMasterBlood',
+        'PlantBit',
+        'HDBulletActor',
+        'HDLadderSection'
+    };
+
+    // List of weapon-ammo associations.
+    // Used for ammo-use association on ammo spawn (happens very often).
+    array<HDCoreSpawnAmmo> ammoSpawnList;
+
+    bool initialized;
+
+    HDCoreSpawnAmmo getAmmo(name ammoName) {
+        HDCoreSpawnAmmo ammoSpawn;
+
+        if (ammoSpawnList.size()) {
+            forEach (ammo : ammoSpawnList) if (ammo.ammoName == ammoName) return ammo;
+        }
+
+        return null;
+    }
+
+    // appends an entry to ammoSpawnList;
+    void addAmmo(HDCoreSpawnAmmo ammo) {
+
+        if (hd_debug) {
+
+            let msg = "Adding Ammo Association Entry for "..ammo.ammoName..": [";
+
+            if (ammo.weaponNames.size()) forEach (weaponName : ammo.weaponNames) msg = msg..", "..weaponName;
+
+            console.printF(msg.."]");
+        }
+
+        let existingAmmo = getAmmo(ammo.ammoName);
+
+        // If we find an existing Ammo Association, simply merge the two lists
+        if (existingAmmo) {
+            existingAmmo.weaponNames.append(ammo.weaponNames);
+
+            return;
+        }
+
+        // Otherwise, add the association to the registry
+        ammoSpawnList.push(ammo);
+    }
+
+    void removeAmmo(name ammoName) {
+        let ammo = getAmmo(ammoName);
+
+        if (ammo) ammoSpawnList.delete(ammoSpawnList.find(ammo));
+    }
+
+    // appends an entry to ammoSpawnList;
+    void addAmmoWeapon(name ammoName, name weaponName) {
+
+        if (hd_debug) console.printF("Adding \""..weaponName.."\" to Ammo Association Entry for "..ammoName);
+        
+        let existingAmmo = getAmmo(ammoName);
+
+        // If we find an existing Ammo Association, simply add the new entry
+        if (existingAmmo) {
+
+            existingAmmo.weaponNames.push(weaponName);
+
+            return;
+        }
+
+        // OTherwise, create the association and add it to the registry
+        let ammo = HDCoreSpawnAmmo.create(ammoName);
+        ammo.weaponNames.push(weaponName);
+
+        ammoSpawnList.push(ammo);
+    }
+
+
+    void init() {
+        if (initialized) return;
+
+        ammoSpawnList.clear();
+
+        Array<HDCoreInfoLumpCommand> cmds;
+        cmds.clear();
+        
+        HDCore.getHDCoreInfoCommands(cmds);
+
+        if (hd_debug) forEach(cmd : cmds) console.printF(cmd.toString());
+        
+        loadAmmoUses(cmds);
+
+        if (hd_debug) forEach(ammo : ammoSpawnList) console.printF(ammo.toString());
+
+        initialized = true;
+    }
+
+    void loadAmmoUses(Array<HDCoreInfoLumpCommand> cmds) {
+        forEach (cmd : cmds) {
+            switch (cmd.command) {
+                case 'newAmmo': {
+                    let ammo = HDCoreSpawnAmmo.create(cmd.getNameArg("ammoName"));
+
+                    if (ammo) addAmmo(ammo);
+                    break;
+                }
+                case 'addAmmoWeapon': {
+                    addAmmoWeapon(cmd.getNameArg("ammoName"), cmd.getNameArg("weaponName"));
+
+                    break;
+                }
+                case 'removeAmmo': {
+                    removeAmmo(cmd.getNameArg("ammoName"));
+
+                    break;
+                }
+                case 'removeAllAmmo': {
+                    ammoSpawnList.clear();
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    }
+
+    override void worldLoaded(WorldEvent e) {
+
+        // Populates the main arrays if they haven't been already.
+        if (!initialized) init();
+    }
+
+    override void worldThingSpawned(WorldEvent e) {
+
+        // Populates the main arrays if they haven't been already.
+        if (!initialized) init();
+
+        // If thing spawned doesn't exist, quit.
+        if (!e.thing) return;
+
+        // If thing spawned is blacklisted, quit.
+        foreach (bl : blacklist) if (e.thing is bl) return;
+
+        // Pointers for specific classes.
+        let ammo = HDAmmo(e.thing);
+
+        // If the thing spawned is an ammunition, add any and all items that can use this.
+        if (ammo) handleAmmoUses(ammo);
+    }
+
+    private void handleAmmoUses(HDAmmo ammo) {
+        foreach (ammoSpawn : ammoSpawnList) if (ammo.getClassName() == ammoSpawn.ammoName) {
+            if (hd_debug) {
+                console.printF("Adding the following to the list of items that use "..ammo.getClassName().."");
+                foreach (weapon : ammoSpawn.weaponNames) console.printF("* "..weapon);
+            }
+
+            forEach(weaponName : ammoSpawn.weaponNames) ammo.itemsThatUseThis.push(weaponName);
+        }
+    }
+}

@@ -137,15 +137,10 @@ class HDCoreSpawnHandler : EventHandler {
 
         spawnTables.clear();
 
-        Array<string> hdcInfoLump;
-        hdcInfoLump.clear();
-
-        HDCore.readHDCoreInfo(hdcInfoLump);
-
         Array<HDCoreInfoLumpCommand> cmds;
         cmds.clear();
-
-        HDCore.parseHDCoreInfo(hdcInfoLump, cmds);
+        
+        HDCore.getHDCoreInfoCommands(cmds);
 
         if (hd_debug) forEach(cmd : cmds) console.printF(cmd.toString());
         

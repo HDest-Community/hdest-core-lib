@@ -1,0 +1,37 @@
+// Struct for passing useinformation to ammunition.
+class HDCoreSpawnAmmo play {
+    // ID by string for the header ammo.
+    name ammoName;
+
+    // ID by string for weapons using that ammo.
+    Array<name> weaponNames;
+
+    /**
+     * Creates an association for the given ammo and the list of weapons or other items/things that use them.
+     * @param {name} ammoName The className of the ammo used in the association.
+     * @returns {HDCoreSpawnAmmo} The newly created ammo association.
+     */
+    static HDCoreSpawnAmmo create(name ammoName) {
+        HDCoreSpawnAmmo ammo = HDCoreSpawnAmmo(new('HDCoreSpawnAmmo'));
+
+        ammo.ammoName = ammoName;
+        ammo.weaponNames.clear();
+
+        return ammo;
+    }
+
+    bool equals(HDCoreSpawnAmmo other) {
+        return other.ammoName == ammoName;
+    }
+
+    string toString() {
+
+        let weapons = "[";
+
+        foreach (weaponName : weaponNames) weapons = weapons..", "..weaponName;
+
+        weapons = weapons.."]";
+
+        return String.format("{ ammoName=%s, weaponNames=%s }", ammoName, weapons);
+    }
+}

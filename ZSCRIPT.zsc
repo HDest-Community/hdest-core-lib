@@ -14,9 +14,11 @@ version "4.12"
 #include "zscript/HDCore/io/HDCoreInfoReader.zsc"
 #include "zscript/HDCore/random/Random.zsc"
 #include "zscript/HDCore/sectors/Sectors.zsc"
+#include "zscript/HDCore/spawning/AmmoAssociations.zsc"
 #include "zscript/HDCore/spawning/SpawnTables.zsc"
 #include "zscript/HDCore/ui/DrawBar.zsc"
 #include "zscript/HDCore/ui/DrawPrefabs.zsc"
 
 // Event Handlers
+#include "zscript/HDCore/events/AmmoUsageHandler.zsc"
 #include "zscript/HDCore/events/SpawnHandler.zsc"

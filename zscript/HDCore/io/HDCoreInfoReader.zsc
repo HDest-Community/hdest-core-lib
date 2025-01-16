@@ -61,8 +61,21 @@ class HDCoreInfoLumpCommand {
 }
 
 extend class HDCore {
+
+    static void getHDCoreInfoCommands(out Array<HDCoreInfoLumpCommand> arr) {
+        
+        // Initialize a temp array of raw command strings
+        Array<string> lumpLines;
+        lumplines.clear();
+
+        // Read the HDCINFO lumps into the temp list of raw commands
+        readHDCoreInfo(lumpLines);
+
+        // Parse the HDCore Lumps into the cache of commands
+        parseHDCoreInfo(lumpLines, arr);
+    }
     
-    static void ReadHDCoreInfo(out Array<string> arr) {
+    static void readHDCoreInfo(out Array<string> arr) {
         string rawLumpText;
         int lumpNum;
 
