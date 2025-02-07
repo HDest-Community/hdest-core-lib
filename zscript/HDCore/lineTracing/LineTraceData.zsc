@@ -1,0 +1,33 @@
+class HDCoreLineTraceData {
+    int hitType;
+
+    double distance;
+
+    Actor hitActor;
+    Line hitLine;
+    Sector hitSector;
+
+    static HDCoreLineTraceData Create(FLineTraceData newData) {
+        let data = new ('HDCoreLineTraceData');
+
+        if (data) {
+            data.hitType   = newData.hitType;
+            data.distance  = newData.distance;
+            data.hitActor  = newData.hitActor;
+            data.hitLine   = newData.hitLine;
+            data.hitSector = newData.hitSector;
+        }
+
+        return data;
+    }
+
+    HDCoreLineTraceData Update(FLineTraceData newData) {
+        hitType   = newData.hitType;
+        distance  = newData.distance;
+        hitActor  = newData.hitActor;
+        hitLine   = newData.hitLine;
+        hitSector = newData.hitSector;
+
+        return self;
+    }
+}
