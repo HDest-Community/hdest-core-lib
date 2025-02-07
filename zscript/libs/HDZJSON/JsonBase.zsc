@@ -1,0 +1,155 @@
+class HDZJJsonElementOrError {}
+
+class HDZJJsonElement : HDZJJsonElementOrError abstract
+{
+	abstract string Serialize();
+	abstract string GetPrettyName();
+}
+
+class HDZJJsonNumber : HDZJJsonElement abstract
+{
+	abstract HDZJJsonNumber Negate();
+	abstract double  asDouble();
+	abstract int asInt();
+	
+	override string GetPrettyName()
+	{
+		return "Number";
+	}
+}
+
+class HDZJJsonInt : HDZJJsonNumber
+{
+	int i;
+	
+	static HDZJJsonInt make(int i = 0)
+	{
+		let elem = new("HDZJJsonInt");
+		elem.i = i;
+		return elem;
+	}
+	override HDZJJsonNumber Negate()
+	{
+		i = -i;
+		return self;
+	}
+	override string Serialize()
+	{
+		return ""..i;
+	}
+	
+	override double asDouble()
+	{
+		return double(i);
+	}
+	
+	override int asInt()
+	{
+		return i;
+	}
+}
+
+class HDZJJsonDouble : HDZJJsonNumber
+{
+	double d;
+	
+	static HDZJJsonDouble Make(double d = 0)
+	{
+		HDZJJsonDouble elem = new("HDZJJsonDouble");
+		elem.d = d;
+		return elem;
+	}
+	override HDZJJsonNumber Negate()
+	{
+		d = -d;
+		return self;
+	}
+	override string Serialize()
+	{
+		return ""..d;
+	}
+	
+	override double asDouble()
+	{
+		return d;
+	}
+	
+	override int asInt()
+	{
+		return int(d);
+	}
+}
+
+class HDZJJsonBool : HDZJJsonElement
+{
+	bool b;
+	
+	static HDZJJsonBool Make(bool b = false)
+	{
+		HDZJJsonBool elem = new("HDZJJsonBool");
+		elem.b = b;
+		return elem;
+	}
+	
+	override string Serialize()
+	{
+		return b? "true" : "false";
+	}
+	
+	override string GetPrettyName()
+	{
+		return "Bool";
+	}
+}
+
+class HDZJJsonString : HDZJJsonElement
+{
+	string s;
+	
+	static HDZJJsonString make(string s = "")
+	{
+		HDZJJsonString elem = new("HDZJJsonString");
+		elem.s=s;
+		return elem;
+	}
+	
+	override string Serialize()
+	{
+		return HDZJJSON.serialize_string(s);
+	}
+	
+	override string GetPrettyName()
+	{
+		return "String";
+	}
+}
+
+class HDZJJsonNull : HDZJJsonElement
+{
+	static HDZJJsonNull Make()
+	{
+		return new("HDZJJsonNull");
+	}
+	
+	override string Serialize()
+	{
+		return "null";
+	}
+	
+	override string GetPrettyName()
+	{
+		return "Null";
+	}
+}
+
+class HDZJJsonError : HDZJJsonElementOrError
+{
+	String what;
+	
+	static HDZJJsonError make(string s)
+	{
+		HDZJJsonError err = new("HDZJJsonError");
+		err.what = s;
+		return err;
+	}
+}

@@ -3,6 +3,7 @@ version "4.12"
 // Bundled Libraries
 #include "zscript/libs/HDZForms/include.zsc"
 #include "zscript/libs/HDGutamatics/include.zsc"
+#include "zscript/libs/HDZJSON/include.zsc"
 
 // Global Classes
 #include "zscript/HDCore/commands/HDCoreCommand.zsc"
