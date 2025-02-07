@@ -1,0 +1,81 @@
+class HDCoreBPSpawnPoolHandler : EventHandler {
+
+    // List of Inventory Classes to remove from Backpack Spawns
+    Array< Class<Inventory> > backpackBlacklist;
+
+    bool initialized;
+
+    // Populates the blacklist.
+    void init() {
+
+        if (initialized) return;
+
+        backpackBlacklist.clear();
+
+        Array<HDCoreCommand> cmds;
+        cmds.clear();
+        
+        HDCore.getHDCoreInfoCommands(cmds);
+
+        if (hd_debug) forEach(cmd : cmds) console.printF(cmd.toString());
+        
+        loadBPSpawnPoolBlacklist(cmds);
+
+        if (hd_debug) forEach(bl : backpackBlacklist) console.printF(bl.getClassName());
+
+        initialized = true;
+    }
+
+    void loadBPSpawnPoolBlacklist(Array<HDCoreCommand> cmds) {
+        forEach (cmd : cmds) {
+            switch (cmd.command) {
+                case 'addBPSpawnPoolBlacklist': {
+                    let item = cmd.getNameArg("name");
+                    Class<Inventory> invClass = item;
+
+                    if (!invClass) break;
+
+                    if (backpackBlacklist.find(invClass) >= backpackBlacklist.size()) backpackBlacklist.push(invClass);
+
+                    break;
+                }
+                case 'removeBPSpawnPoolBlacklist': {
+                    let item = cmd.getNameArg("name");
+                    Class<Inventory> invClass = item;
+
+                    if (!invClass) break;
+
+                    let index = backpackBlacklist.find(invClass);
+                    if (index < backpackBlacklist.size()) backpackBlacklist.delete(index);
+
+                    break;
+                }
+                case 'clearBPSpawnPoolBlacklist': {
+                    backpackBlacklist.clear();
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    }
+
+    override void worldLoaded(WorldEvent e) {
+
+        // Populates the main arrays if they haven't been already.
+        if (!initialized) init();
+
+        // If there are no configured BP Blacklist items, quit.
+        if (!backpackBlacklist.size()) return;
+
+        handleBackpackSpawnPool();
+    }
+
+    private void handleBackpackSpawnPool() {
+        foreach (bl : backpackBlacklist) {
+            if (hd_debug) console.printf("Removing "..bl.getClassName().." from Backpack Spawn Pool");
+
+            BPSpawnPool.removeItem(bl);
+        }
+    }
+}

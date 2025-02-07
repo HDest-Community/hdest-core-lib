@@ -100,3 +100,41 @@
 // Remove all existing ammo associations
 //
 // removeAllAmmo => {}
+
+
+
+// AMMO BOX SPAWN POOL BLACKLISTING
+// --------------------------------
+
+// Add a new ammo to the blacklist
+// - ammoName = Name of the ammo to add
+//
+// addAmmoBoxBlacklist => {"ammoName":"FourMilAmmo"}
+
+// Remove an existing ammo from the blacklist
+// - ammoName = Name of the ammo to remove
+//
+// removeAmmoBoxBlacklist => {"ammoName":"SevenMilAmmo"}
+
+// Remove all existing ammo from blacklist
+//
+// clearAmmoBoxBlacklist => {}
+
+
+
+// BACKPACK SPAWN POOL BLACKLISTING
+// --------------------------------
+
+// Add a new item to the blacklist
+// - name = Name of the item to add
+//
+// addBPSpawnPoolBlacklist => {"name":"HDBlursphere"}
+
+// Remove an existing item from the blacklist
+// - name = Name of the item to remove
+//
+// removeBPSpawnPoolBlacklist => {"name":"HDMegaSphere"}
+
+// Remove all existing items from blacklist
+//
+// clearBPSpawnPoolBlacklist => {}

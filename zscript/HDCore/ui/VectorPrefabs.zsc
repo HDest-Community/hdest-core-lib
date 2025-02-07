@@ -31,9 +31,9 @@ class HDVectorPrefab ui {
                     prefab.rects[2] = (7, 1, 1, 1);
                     break;
                 case 'rocquette':
-                    prefab.rects[0] = (6.5, 0, 1.5, 3);
+                    prefab.rects[0] = (0,   0, 1.5, 3);
                     prefab.rects[1] = (0,   1, 8,   1);
-                    prefab.rects[2] = (1,   0, 4,   3);
+                    prefab.rects[2] = (3,   0, 4,   3);
                     break;
                 default:
                     console.printF('Unknown Vector Prefab: "'..prefabName..'"');
@@ -43,7 +43,9 @@ class HDVectorPrefab ui {
             if (rotation) {
                 for (let i = 0; i < prefab.rects.size(); i++) {
                     let rect = prefab.rects[i];
-                    if (rect == (0,0,0,0)) break;
+
+                    // If we hit a non-visible rectangle, skip
+                    if (rect.z == 0 || rect.w == 0) continue;
 
                     switch (rotation) {
                         case 1:
@@ -68,7 +70,9 @@ class HDVectorPrefab ui {
 
     void draw(HDStatusBar sb, Color color, Vector2 pos, float scale, int flags) {
         foreach (rect : rects) {
-            if (rect == (0,0,0,0)) break;
+
+            // If we hit a non-visible rectangle, skip
+            if (rect.z == 0 || rect.w == 0) continue;
 
             sb.fill(
                 color,

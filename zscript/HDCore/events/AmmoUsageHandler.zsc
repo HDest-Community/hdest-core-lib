@@ -21,7 +21,7 @@ class HDCoreAmmoUsesHandler : EventHandler {
 
     // List of weapon-ammo associations.
     // Used for ammo-use association on ammo spawn (happens very often).
-    array<HDCoreSpawnAmmo> ammoSpawnList;
+    Array<HDCoreSpawnAmmo> ammoSpawnList;
 
     bool initialized;
 
@@ -94,7 +94,7 @@ class HDCoreAmmoUsesHandler : EventHandler {
 
         ammoSpawnList.clear();
 
-        Array<HDCoreInfoLumpCommand> cmds;
+        Array<HDCoreCommand> cmds;
         cmds.clear();
         
         HDCore.getHDCoreInfoCommands(cmds);
@@ -108,7 +108,7 @@ class HDCoreAmmoUsesHandler : EventHandler {
         initialized = true;
     }
 
-    void loadAmmoUses(Array<HDCoreInfoLumpCommand> cmds) {
+    void loadAmmoUses(Array<HDCoreCommand> cmds) {
         forEach (cmd : cmds) {
             switch (cmd.command) {
                 case 'newAmmo': {
@@ -137,16 +137,13 @@ class HDCoreAmmoUsesHandler : EventHandler {
         }
     }
 
-    override void worldLoaded(WorldEvent e) {
-
-        // Populates the main arrays if they haven't been already.
-        if (!initialized) init();
-    }
-
     override void worldThingSpawned(WorldEvent e) {
 
         // Populates the main arrays if they haven't been already.
         if (!initialized) init();
+
+        // If there are no configured ammo spawns, quit.
+        if (!ammoSpawnList.size()) return;
 
         // If thing spawned doesn't exist, quit.
         if (!e.thing) return;

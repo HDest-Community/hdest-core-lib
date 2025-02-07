@@ -1,0 +1,62 @@
+class HDCoreCommand {
+    name command;
+
+    Dictionary args;
+
+    static HDCoreCommand create(name command, string argsStr = "") {
+        let cmd = HDCoreCommand(new('HDCoreCommand'));
+
+        if (cmd) {
+            cmd.command = command;
+
+            if (argsStr.length() > 0) {
+                cmd.args = Dictionary.fromString(argsStr);
+            } else {
+                cmd.args = Dictionary.create();
+            }
+        }
+
+        return cmd;
+    }
+
+    bool hasArg(string key) {
+        return args.at(key) != 'None';
+    }
+
+    string getStringArg(string key, string defaultValue = "") {
+        string value = args.at(key);
+        return hasArg(key) ? value : defaultValue;
+    }
+
+    name getNameArg(string key, name defaultValue = '') {
+        name value = args.at(key);
+        return hasArg(key) ? value : defaultValue;
+    }
+
+    int getIntArg(string key, int defaultValue = 0) {
+        string value = args.at(key);
+        return hasArg(key) ? value.toInt(10) : defaultValue;
+    }
+
+    double getDoubleArg(string key, double defaultValue = 0.0) {
+        string value = args.at(key);
+        return hasArg(key) ? value.toDouble() : defaultValue;
+    }
+
+    bool getBoolArg(string key, bool defaultValue = false) {
+        string value = args.at(key);
+        return hasArg(key) ? value == 'true' : defaultValue;
+    }
+
+    bool equals(HDCoreCommand other) {
+        return command == other.command && args.toString() == other.args.toString();
+    }
+
+    string toString() {
+        return String.format(
+            "{ command=%s, args=%s }",
+                command,    args.toString()
+        );
+    }
+}
+

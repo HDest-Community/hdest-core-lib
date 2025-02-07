@@ -1,78 +1,16 @@
-class HDCoreInfoLumpCommand {
-    name command;
-
-    Dictionary args;
-
-    static HDCoreInfoLumpCommand create(name command, string argsStr = "") {
-        let cmd = HDCoreInfoLumpCommand(new('HDCoreInfoLumpCommand'));
-
-        if (cmd) {
-            cmd.command = command;
-
-            if (argsStr.length() > 0) {
-                cmd.args = Dictionary.fromString(argsStr);
-            } else {
-                cmd.args = Dictionary.create();
-            }
-        }
-
-        return cmd;
-    }
-
-    bool hasArg(string key) {
-        return args.at(key) != 'None';
-    }
-
-    string getStringArg(string key, string defaultValue = "") {
-        string value = args.at(key);
-        return hasArg(key) ? value : defaultValue;
-    }
-
-    name getNameArg(string key, name defaultValue = '') {
-        name value = args.at(key);
-        return hasArg(key) ? value : defaultValue;
-    }
-
-    int getIntArg(string key, int defaultValue = 0) {
-        string value = args.at(key);
-        return hasArg(key) ? value.toInt(10) : defaultValue;
-    }
-
-    double getDoubleArg(string key, double defaultValue = 0.0) {
-        string value = args.at(key);
-        return hasArg(key) ? value.toDouble() : defaultValue;
-    }
-
-    bool getBoolArg(string key, bool defaultValue = false) {
-        string value = args.at(key);
-        return hasArg(key) ? value == 'true' : defaultValue;
-    }
-
-    bool equals(HDCoreInfoLumpCommand other) {
-        return command == other.command && args.toString() == other.args.toString();
-    }
-
-    string toString() {
-        return String.format(
-            "{ command=%s, args=%s }",
-                command,    args.toString()
-        );
-    }
-}
-
 extend class HDCore {
 
-    static void getHDCoreInfoCommands(out Array<HDCoreInfoLumpCommand> arr) {
+    static void getHDCoreInfoCommands(out Array<HDCoreCommand> arr) {
         
         // Initialize a temp array of raw command strings
-        Array<string> lumpLines;
-        lumplines.clear();
+        Array<string> cmds;
+        cmds.clear();
 
         // Read the HDCINFO lumps into the temp list of raw commands
-        readHDCoreInfo(lumpLines);
+        readHDCoreInfo(cmds);
 
         // Parse the HDCore Lumps into the cache of commands
-        parseHDCoreInfo(lumpLines, arr);
+        parseHDCoreInfo(cmds, arr);
     }
     
     static void readHDCoreInfo(out Array<string> arr) {
@@ -116,7 +54,7 @@ extend class HDCore {
         }
     }
 
-    static void parseHDCoreInfo(Array<string> input, out Array<HDCoreInfoLumpCommand> output) {
+    static void parseHDCoreInfo(Array<string> input, out Array<HDCoreCommand> output) {
         output.clear();
 
         Array<string> tokens;
@@ -130,11 +68,11 @@ extend class HDCore {
                 tokens[0].stripLeftRight();
                 tokens[1].stripLeftRight();
 
-                output.push(HDCoreInfoLumpCommand.create(tokens[0], tokens[1]));
+                output.push(HDCoreCommand.create(tokens[0], tokens[1]));
             } else if (tokens.size()) {
                 tokens[0].stripLeftRight();
 
-                output.push(HDCoreInfoLumpCommand.create(tokens[0]));
+                output.push(HDCoreCommand.create(tokens[0]));
             }
         }
     }

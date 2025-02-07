@@ -1,0 +1,96 @@
+class HDCoreAmmoBoxSpawnPoolHandler : EventHandler {
+
+    // List of Inventory Classes to remove from Ammo Box Spawns
+    Array< Class<Inventory> > ammoBoxBlacklist;
+
+    // Cache of Ammo Box Loot Table
+    private HDAmBoxList ammoBoxList;
+
+    bool initialized;
+
+    // Populates the blacklist.
+    void init() {
+
+        if (initialized) return;
+
+        ammoBoxBlacklist.clear();
+
+        Array<HDCoreCommand> cmds;
+        cmds.clear();
+        
+        HDCore.getHDCoreInfoCommands(cmds);
+
+        if (hd_debug) forEach(cmd : cmds) console.printF(cmd.toString());
+        
+        loadAmmoBoxBlacklist(cmds);
+
+        if (hd_debug) forEach(bl : ammoBoxBlacklist) console.printF(bl.getClassName());
+
+        initialized = true;
+    }
+
+    void loadAmmoBoxBlacklist(Array<HDCoreCommand> cmds) {
+        forEach (cmd : cmds) {
+            switch (cmd.command) {
+                case 'addAmmoBoxBlacklist': {
+                    let ammo = cmd.getNameArg("ammoName");
+                    Class<Inventory> invClass = ammo;
+
+                    if (!invClass) break;
+
+                    if (ammoBoxBlacklist.find(invClass) >= ammoBoxBlacklist.size()) ammoBoxBlacklist.push(invClass);
+
+                    break;
+                }
+                case 'removeAmmoBoxBlacklist': {
+                    let ammo = cmd.getNameArg("ammoName");
+                    Class<Inventory> invClass = ammo;
+
+                    if (!invClass) break;
+
+                    let index = ammoBoxBlacklist.find(invClass);
+                    if (index < ammoBoxBlacklist.size()) ammoBoxBlacklist.delete(index);
+
+                    break;
+                }
+                case 'clearAmmoBoxBlacklist': {
+                    ammoBoxBlacklist.clear();
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    }
+
+    override void worldThingSpawned(WorldEvent e) {
+
+        // Populates the main arrays if they haven't been already.
+        if (!initialized) init();
+
+        // If the Ammo Box Blacklist is empty, quit.
+        if (!ammoBoxBlacklist.size()) return;
+
+        // Handle Ammo Box Loot Table Filtering
+        if (e.thing is 'HDAmBox') handleAmmoBoxLootTable();
+    }
+
+    private void handleAmmoBoxLootTable() {
+
+        // If the AmmoBox List hasn't been cached, attempt to get it
+        if (!ammoBoxList) ammoBoxList = HDAmBoxList.Get();
+
+        // If it still hasn't been cached, quit.
+        if (!ammoBoxList) return;
+
+        foreach (bl : ammoBoxBlacklist) {
+            let index = ammoBoxList.invClasses.find(bl.getClassName());
+
+            if (index < ammoBoxList.invClasses.Size()) {
+                if (hd_debug) console.printF("Removing "..bl.getClassName().." from Ammo Box Loot Table");
+
+                ammoBoxList.invClasses.delete(index);
+            }
+        }
+    }
+}

@@ -137,7 +137,7 @@ class HDCoreSpawnHandler : EventHandler {
 
         spawnTables.clear();
 
-        Array<HDCoreInfoLumpCommand> cmds;
+        Array<HDCoreCommand> cmds;
         cmds.clear();
         
         HDCore.getHDCoreInfoCommands(cmds);
@@ -151,7 +151,7 @@ class HDCoreSpawnHandler : EventHandler {
         initialized = true;
     }
 
-    void loadSpawnTables(Array<HDCoreInfoLumpCommand> cmds) {
+    void loadSpawnTables(Array<HDCoreCommand> cmds) {
         forEach (cmd : cmds) {
             switch (cmd.command) {
                 case 'newSpawnTable': {

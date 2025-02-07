@@ -5,6 +5,7 @@ version "4.12"
 #include "zscript/libs/HDGutamatics/include.zsc"
 
 // Global Classes
+#include "zscript/HDCore/commands/HDCoreCommand.zsc"
 #include "zscript/HDCore/ui/CameraContext.zsc"
 #include "zscript/HDCore/ui/VectorPrefabs.zsc"
 
@@ -20,5 +21,7 @@ version "4.12"
 #include "zscript/HDCore/ui/DrawPrefabs.zsc"
 
 // Event Handlers
+#include "zscript/HDCore/events/AmmoBoxSpawnPoolHandler.zsc"
 #include "zscript/HDCore/events/AmmoUsageHandler.zsc"
+#include "zscript/HDCore/events/BackpackSpawnPoolHandler.zsc"
 #include "zscript/HDCore/events/SpawnHandler.zsc"
