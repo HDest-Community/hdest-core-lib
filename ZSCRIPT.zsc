@@ -8,6 +8,7 @@ version "4.12"
 // Global Classes
 #include "zscript/HDCore/commands/HDCoreCommand.zsc"
 #include "zscript/HDCore/lineTracing/LineTraceData.zsc"
+#include "zscript/HDCore/spawning/ClusterSpawner.zsc"
 #include "zscript/HDCore/ui/CameraContext.zsc"
 #include "zscript/HDCore/ui/VectorPrefabs.zsc"
 

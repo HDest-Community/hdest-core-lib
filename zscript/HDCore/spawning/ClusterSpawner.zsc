@@ -1,0 +1,105 @@
+class ClusterSpawner : IdleDummy abstract {
+
+    Class<Actor> actorClass;property actorClass:actorClass;
+    
+    int maxSpawns;property maxSpawns:maxSpawns;
+    int maxAttempts;property maxAttempts:maxAttempts;
+    float maxDist;property maxDist:maxDist;
+    
+    int numToSpawn;
+    int numSpawned;
+
+    default {
+        // The Class of the Mob/Actor to spawn
+        ClusterSpawner.actorClass '';
+
+        // The max amount of actors to try and spawn, ranged 0-30, defaults to 8
+        ClusterSpawner.maxSpawns 8;
+
+        // The max number of times a spawn attempt can fail before quitting
+        ClusterSpawner.maxAttempts 10;
+
+        // The max distance from the cluster origin point (x/y) to attempt to spawn a new actor
+        ClusterSpawner.maxDist 64.0;
+    }
+
+    override void PostBeginPlay() {
+        super.PostBeginPlay();
+
+        if (!actorClass) {
+            Console.PrintF(GetClassName().." configured with invalid Actor Class!");
+            destroy();
+        }
+
+        // Pick a random rotation, in case that matters.
+        angle = random(1, 360);
+        
+        // Clamp max spawns to within valid range
+        let max = clamp(maxSpawns, 0, 30);
+
+        if (max != maxSpawns) Console.PrintF(GetClassName().." configured with invalid maxSpawns, clamped to "..max);
+
+        // Pick a random unsigned integer within range
+        uint i = frandom(0, 2 ** max);
+
+        // Every extra spawn is half as likely as the previous
+        for (let j = max; j >= 0; j--) {
+
+            if (uint(i >> j)) {
+                numToSpawn = max - j;
+                break;
+            }
+        }
+    }
+
+    action void A_SpawnClass(int dist) {
+        let failedAttempts = 0;
+
+        while(invoker.numSpawned < invoker.numToSpawn && failedAttempts < invoker.maxAttempts) {
+
+            // Pick a random spot around origin to spawn
+            let spawnPos = Vec3Offset(FRandom(-dist, dist), FRandom(-dist, dist), 0);
+
+            if (hd_debug) Console.PrintF("Attempt #"..(failedAttempts + 1).." of "..ceil(invoker.maxAttempts).." to spawn "..invoker.actorClass.GetClassName().." #"..(invoker.numSpawned + 1).." of "..invoker.numToSpawn.." at pos="..spawnPos);
+
+            // If that point is outside the level, try again.
+            if (!Level.IsPointInLevel(spawnPos)) {
+                invoker.onSpawnError();
+                failedAttempts++;
+                continue;
+            }
+
+            // Try to spawn the mob.  If it failed to spawn, or spawned stuck, remove it and try again.
+            let spawned = Spawn(invoker.actorClass, spawnPos);
+            if (!spawned || !spawned.TestMobjLocation()) {
+                invoker.onSpawnError();
+                failedAttempts++;
+                
+                spawned.Destroy();
+
+                continue;
+            }
+
+            // Otherwise, the spawn succeeded.
+            invoker.onSpawnSuccess();
+            invoker.numSpawned++;
+            failedAttempts = 0;
+
+        }
+    }
+
+    protected void onSpawnSuccess() {
+        // no-op
+    }
+
+    protected void onSpawnError() {
+        if (hd_debug) Console.PrintF("Failed to spawn "..actorClass.GetClassName().." #"..numSpawned.." of "..numToSpawn..", retrying");
+    }
+
+
+    states {
+        spawn:
+            TNT1 A 0 nodelay A_SpawnClass(maxSpawns > 1 ? maxDist : 0);
+            stop;
+    }
+}
