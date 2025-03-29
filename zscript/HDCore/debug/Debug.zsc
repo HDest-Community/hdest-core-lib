@@ -87,15 +87,10 @@ extend class HDCore {
      * @param {double} [density=1.0] The number of degrees to rotate for each particle
      */
     static void drawSectorDebug(Sector s, Color color = 0xFFFFFF, int lifetime = 1, double size = 1.0, bool fullbright = true, double density = 1.0) {
-        double ceil, floor;
-        Sector sec;
-        [ceil, sec] = s.highestCeilingAt(s.centerspot);
-        [floor, sec] = s.lowestFloorAt(s.centerspot);
+        double area, circum, radius, avgSize;
+        [area, circum, radius, avgSize] = getSectorSize(s);
+        Vector3 pos = getSectorCenter(s);
 
-        Vector3 pos = (s.centerspot.x, s.centerspot.y, floor + ((ceil - floor) / 2));
-        double radius = sqrt(HDCore.getSectorArea(s) / HDCONST_PI);
-
-        
         FSpawnParticleParams fp;
 
         fp.flags = fullbright&SPF_FULLBRIGHT;
