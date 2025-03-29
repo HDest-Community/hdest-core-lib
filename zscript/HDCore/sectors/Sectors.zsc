@@ -5,11 +5,13 @@ extend class HDCore {
      * @param {Sector} s The Sector to calculate
      * @returns {double} The area of the sector
      * @returns {double} The circumference of the sector
+     * @returns {double} The radius of the sector
      * @returns {double} The average length of all linedefs in the sector
      */
-    static clearscope double, double, double getSectorSize(Sector s) {
+    static clearscope double, double, double, double getSectorSize(Sector s) {
         let c = HDCore.getSectorCircumference(s);
-        return HDCore.getSectorArea(s), c, c / s.lines.size();
+        let r = HDCore.getSectorRadius(s);
+        return HDCore.getSectorArea(s), c, r, c / s.lines.size();
     }
     
     /**
@@ -58,6 +60,17 @@ extend class HDCore {
         forEach (l : s.lines) c += l.delta.length();
 
         return c;
+    }
+
+    /**
+     * Returns the given sector's radius.
+     * @param {Sector} s The Sector to calculate
+     * @returns {double} 
+     */
+    static clearscope double getSectorRadius(Sector s) {
+        let c = getSectorCircumference(s);
+
+        return c / (2 * HDCONST_PI);
     }
     
     /**
