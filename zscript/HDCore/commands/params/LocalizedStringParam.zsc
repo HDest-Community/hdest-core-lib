@@ -1,0 +1,6 @@
+class HDCoreCommandLocalizedParam : HDCoreCommandStaticParam {
+
+    override string getStringValue() {
+        return StringTable.localize("$"..value);
+    }
+}

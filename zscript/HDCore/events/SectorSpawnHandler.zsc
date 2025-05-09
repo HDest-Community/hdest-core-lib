@@ -45,12 +45,12 @@ class HDCoreSectorSpawnerHandler : EventHandler {
     }
 
     private void SpawnDummySpawners(Sector s, name spawnerName)  {
-        double size, circum, radius, avgSize;
-        [size, circum, radius, avgSize] = HDCore.GetSectorSize(s);
+        double area, circum, radius, avgSize;
+        [area, circum, radius, avgSize] = HDCore.GetSectorSize(s);
 
-        // Somewhere between 0 and 1/256th the sector size in square meters should be good for a secret
+        // Somewhere between 0 and 1/256th the sector size in square meters should be good for a sector
         // TODO: Allow reduction rate to be configurable
-        int max = int(random(0, size) / HDCONST_ONEMETRE) >> 8;
+        int max = int(random(0, area) / HDCONST_ONEMETRE) >> 8;
         int count = 0;
         for (let i = 0; i < max; i++) {
             double angle = random(1, 360);
@@ -62,6 +62,6 @@ class HDCoreSectorSpawnerHandler : EventHandler {
             }
         }
 
-        if (hd_debug) Console.Printf("[Sector Spawn Handler] Spawned "..count.." out of "..max.." dummy actors.\n\t\tSector @"..s.centerspot.." size/circum/radius/avg is "..size.."/"..circum.."/"..radius.."/"..avgSize..".");
+        if (hd_debug) Console.Printf("[Sector Spawn Handler] Spawned "..count.." out of "..max.." dummy actors.\n\t\tSector @"..s.centerspot.." area/circum/radius/avg is "..area.."/"..circum.."/"..radius.."/"..avgSize..".");
     }
 } 

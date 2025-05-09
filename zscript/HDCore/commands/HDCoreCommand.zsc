@@ -1,61 +1,123 @@
+class HDCoreCommandParam abstract {
+
+    string value;
+
+    static HDCoreCommandParam create(name paramName, string value = "") {
+        let param = HDCoreCommandParam(new(paramName));
+
+        if (param) param.setParam(value);
+
+        return param;
+    }
+
+    virtual void setParam(string newVal = "") {
+        value = newVal;
+    }
+
+    abstract string getStringValue();
+
+    abstract name getNameValue();
+
+    abstract int getIntValue();
+
+    abstract double getDoubleValue();
+
+    abstract bool getBoolValue();
+}
+
 class HDCoreCommand {
     name command;
 
-    Dictionary args;
+    Map<string, HDCoreCommandParam> params;
 
-    static HDCoreCommand create(name command, string argsStr = "") {
+    static HDCoreCommand create(name command, string paramsStr = "") {
         let cmd = HDCoreCommand(new('HDCoreCommand'));
 
         if (cmd) {
             cmd.command = command;
+            cmd.params.clear();
 
-            if (argsStr.length() > 0) {
-                cmd.args = Dictionary.fromString(argsStr);
-            } else {
-                cmd.args = Dictionary.create();
+            if (paramsStr.length() > 0) {
+
+                let dict = Dictionary.fromString(paramsStr);
+                let i = DictionaryIterator.create(dict);
+
+                while (i.next()) {
+                    name paramName = '';
+                    let key = i.key();
+                    let val = i.value();
+
+                    if (val.indexOf("$") == 0) {
+                        paramName = 'HDCoreCommandLocalizedParam';
+                        val = val.mid(1);
+                    } else if (val.indexOf("#") == 0) {
+                        paramName = 'HDCoreCommandCVarParam';
+                        val = val.mid(1);
+                    } else {
+                        paramName = 'HDCoreCommandStaticParam';
+                    }
+
+                    let params = HDCoreCommandParam.create(paramName, val);
+
+                    if (params) {
+                        cmd.params.insert(key, params);
+                    }
+                }
             }
         }
 
         return cmd;
     }
 
-    bool hasArg(string key) {
-        return args.at(key) != 'None';
+    bool hasParam(string key) {
+        return params.checkKey(key);
     }
 
-    string getStringArg(string key, string defaultValue = "") {
-        string value = args.at(key);
-        return hasArg(key) ? value : defaultValue;
+    HDCoreCommandParam getParam(string key) {
+        return HDCoreCommandParam(params.getIfExists(key));
     }
 
-    name getNameArg(string key, name defaultValue = '') {
-        name value = args.at(key);
-        return hasArg(key) ? value : defaultValue;
+    string getStringParam(string key, string defaultValue = "") {
+        return hasParam(key) ? getParam(key).getStringValue() : defaultValue;
     }
 
-    int getIntArg(string key, int defaultValue = 0) {
-        string value = args.at(key);
-        return hasArg(key) ? value.toInt(10) : defaultValue;
+    name getNameParam(string key, name defaultValue = '') {
+        return hasParam(key) ? getParam(key).getNameValue() : defaultValue;
     }
 
-    double getDoubleArg(string key, double defaultValue = 0.0) {
-        string value = args.at(key);
-        return hasArg(key) ? value.toDouble() : defaultValue;
+    int getIntParam(string key, int defaultValue = 0) {
+        return hasParam(key) ? getParam(key).getIntValue() : defaultValue;
     }
 
-    bool getBoolArg(string key, bool defaultValue = false) {
-        string value = args.at(key);
-        return hasArg(key) ? value == 'true' : defaultValue;
+    double getDoubleParam(string key, double defaultValue = 0.0) {
+        return hasParam(key) ? getParam(key).getDoubleValue() : defaultValue;
+    }
+
+    bool getBoolParam(string key, bool defaultValue = false) {
+        return hasParam(key) ? getParam(key).getBoolValue() : defaultValue;
     }
 
     bool equals(HDCoreCommand other) {
-        return command == other.command && args.toString() == other.args.toString();
+
+        // First check if the command and size of params are equal
+        let isEqual = command == other.command && params.countUsed() == other.params.countUsed();
+
+        // If they are, check if each param matches the other, and quit early if they are not
+        if (isEqual) forEach(k, v : params) if (!other.params.checkKey(k) || other.params.getIfExists(k) != v) return false;
+
+        return isEqual;
     }
 
     string toString() {
+        let paramStr = "(";
+
+        forEach (k, v : params) paramStr = paramStr.."\""..k.."\": "..HDCoreCommandParam(v).getStringValue()..", ";
+
+        paramStr = paramStr..")";
+
         return String.format(
-            "{ command=%s, args=%s }",
-                command,    args.toString()
+            "{ command=%s, params=%s }",
+               command,    paramStr
         );
     }
 }

@@ -1,0 +1,31 @@
+class HDCoreCommandCVarParam : HDCoreCommandParam {
+
+    CVar _cvar;
+
+    override void setParam(string newVal) {
+        super.setParam(newVal);
+
+        _cvar = CVar.getCVar(newVal);
+    }
+
+    override string getStringValue() {
+        return _cvar ? _cvar.getString() : "";
+    }
+
+    override name getNameValue() {
+        name name = getStringValue();
+        return name;
+    }
+
+    override int getIntValue() {
+        return _cvar ? _cvar.getInt() : 0;
+    }
+
+    override double getDoubleValue() {
+        return _cvar ? _cvar.getFloat() : 0.0;
+    }
+
+    override bool getBoolValue() {
+        return _cvar && _cvar.getBool();
+    }
+}

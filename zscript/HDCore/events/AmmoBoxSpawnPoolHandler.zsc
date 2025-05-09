@@ -1,5 +1,8 @@
 class HDCoreAmmoBoxSpawnPoolHandler : EventHandler {
 
+    // List of Inventory Classes to add to Ammo Box Spawns
+    Array< Class<Inventory> > ammoBoxWhitelist;
+
     // List of Inventory Classes to remove from Ammo Box Spawns
     Array< Class<Inventory> > ammoBoxBlacklist;
 
@@ -13,6 +16,7 @@ class HDCoreAmmoBoxSpawnPoolHandler : EventHandler {
 
         if (initialized) return;
 
+        ammoBoxWhitelist.clear();
         ammoBoxBlacklist.clear();
 
         Array<HDCoreCommand> cmds;
@@ -22,18 +26,62 @@ class HDCoreAmmoBoxSpawnPoolHandler : EventHandler {
 
         if (hd_debug) forEach(cmd : cmds) console.printF(cmd.toString());
         
-        loadAmmoBoxBlacklist(cmds);
+        loadAmmoBoxLists(cmds);
 
         if (hd_debug) forEach(bl : ammoBoxBlacklist) console.printF(bl.getClassName());
 
         initialized = true;
     }
 
-    void loadAmmoBoxBlacklist(Array<HDCoreCommand> cmds) {
+    void loadAmmoBoxLists(Array<HDCoreCommand> cmds) {
         forEach (cmd : cmds) {
             switch (cmd.command) {
+                case 'addAmmoBoxFilter': {
+                    // FIXME: Find a better command/logic to handle existing CVARs
+
+                    let ammo = cmd.getNameParam("ammoName");
+                    Class<Inventory> invClass = ammo;
+
+                    if (!invClass) break;
+
+                    // If the filter entry is allowed, remove from blacklist,
+                    // Otherwise add to blacklist.
+                    let index = ammoBoxBlacklist.find(invClass);
+                    if (cmd.getBoolParam("allowed")) {
+                        if (index < ammoBoxBlacklist.size()) ammoBoxBlacklist.delete(index);
+                    } else {
+                        if (index >= ammoBoxBlacklist.size()) ammoBoxBlacklist.push(invClass);
+                    }
+
+                    break;
+                }
+                case 'addAmmoBoxWhitelist': {
+                    let ammo = cmd.getNameParam("ammoName");
+                    Class<Inventory> invClass = ammo;
+
+                    if (!invClass) break;
+
+                    if (ammoBoxWhitelist.find(invClass) >= ammoBoxWhitelist.size()) ammoBoxWhitelist.push(invClass);
+
+                    break;
+                }
+                case 'removeAmmoBoxWhitelist': {
+                    let ammo = cmd.getNameParam("ammoName");
+                    Class<Inventory> invClass = ammo;
+
+                    if (!invClass) break;
+
+                    let index = ammoBoxWhitelist.find(invClass);
+                    if (index < ammoBoxWhitelist.size()) ammoBoxWhitelist.delete(index);
+
+                    break;
+                }
+                case 'clearAmmoBoxWhitelist': {
+                    ammoBoxWhitelist.clear();
+                    break;
+                }
                 case 'addAmmoBoxBlacklist': {
-                    let ammo = cmd.getNameArg("ammoName");
+                    let ammo = cmd.getNameParam("ammoName");
                     Class<Inventory> invClass = ammo;
 
                     if (!invClass) break;
@@ -43,7 +91,7 @@ class HDCoreAmmoBoxSpawnPoolHandler : EventHandler {
                     break;
                 }
                 case 'removeAmmoBoxBlacklist': {
-                    let ammo = cmd.getNameArg("ammoName");
+                    let ammo = cmd.getNameParam("ammoName");
                     Class<Inventory> invClass = ammo;
 
                     if (!invClass) break;
@@ -68,8 +116,8 @@ class HDCoreAmmoBoxSpawnPoolHandler : EventHandler {
         // Populates the main arrays if they haven't been already.
         if (!initialized) init();
 
-        // If the Ammo Box Blacklist is empty, quit.
-        if (!ammoBoxBlacklist.size()) return;
+        // If the Ammo Box Whitelist and Blacklist are both empty, quit.
+        if (!ammoBoxWhitelist.size() && !ammoBoxBlacklist.size()) return;
 
         // Handle Ammo Box Loot Table Filtering
         if (e.thing is 'HDAmBox') handleAmmoBoxLootTable();
@@ -83,6 +131,18 @@ class HDCoreAmmoBoxSpawnPoolHandler : EventHandler {
         // If it still hasn't been cached, quit.
         if (!ammoBoxList) return;
 
+        // Add all "whitelisted" entries
+        foreach (wl : ammoBoxWhitelist) {
+            let index = ammoBoxList.invClasses.find(wl.getClassName());
+
+            if (index >= ammoBoxList.invClasses.Size()) {
+                if (hd_debug) console.printF("Adding "..wl.getClassName().." to Ammo Box Loot Table");
+
+                ammoBoxList.invClasses.push(wl.getClassName());
+            }
+        }
+
+        // Remove all "blacklisted" entries
         foreach (bl : ammoBoxBlacklist) {
             let index = ammoBoxList.invClasses.find(bl.getClassName());
 

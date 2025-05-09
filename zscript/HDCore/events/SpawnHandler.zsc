@@ -1,33 +1,19 @@
 class HDCoreSpawnHandler : EventHandler {
 
+    Array<name> mapBlacklist;
+
     // List of persistent classes to completely ignore.
-    // This -should- mean this mod has no performance impact.
-    static const string blacklist[] = {
-        'HDSmoke',
-        'BloodTrail',
-        'CheckPuff',
-        'WallChunk',
-        'HDBulletPuff',
-        'HDFireballTail',
-        'ReverseImpBallTail',
-        'HDSmokeChunk',
-        'ShieldSpark',
-        'HDFlameRed',
-        'HDMasterBlood',
-        'PlantBit',
-        'HDBulletActor',
-        'HDLadderSection'
-    };
+    Array<name> thingBlacklist;
 
     // List of all spawn tables.
     Array<HDCoreSpawnTable> spawnTables;
 
     bool initialized;
 
-    HDCoreSpawnTable getSpawnTable(name name, bool persists = false, bool replace = true) {
+    HDCoreSpawnTable getSpawnTable(name name, bool replace = true) {
         if (spawnTables.size()) {
             foreach (table : spawnTables) {
-                if ((table.tableName == name || table.spawnName == name) && table.isPersistent == persists && table.replace == replace) {
+                if ((table.tableName == name || table.spawnName == name) && table.replace == replace) {
                     return table;
                 }
             }
@@ -52,12 +38,11 @@ class HDCoreSpawnHandler : EventHandler {
         if (hd_debug) {
 
             let msg = "Adding "
-                ..(table.isPersistent ? "Persistent" : "Non-Persistent").." "
                 ..(table.replace ? "Replacement" : "Spawning")
                 .." Table for "..table.spawnName.." named '"..table.tableName
                 .."': [";
 
-                if (table.entries.size()) foreach (entry : table.entries) msg = msg..", "..entry.toString();
+                if (table._entries.size()) foreach (entry : table._entries) msg = msg..", "..entry.toString();
 
             console.printf(msg.."]");
         }
@@ -66,7 +51,7 @@ class HDCoreSpawnHandler : EventHandler {
         if (spawnTables.size()) {
             foreach (spawnTable : spawnTables) {
                 if (table.equals(spawnTable)) {
-                    spawnTable.entries.append(table.entries);
+                    spawnTable._entries.append(table._entries);
 
                     return;
                 }
@@ -77,34 +62,39 @@ class HDCoreSpawnHandler : EventHandler {
         spawnTables.push(table);
     }
 
-    void removeSpawnTable(name name, bool persists = false, bool replace = true) {
+    void removeSpawnTable(name name, bool replace = true) {
         Array<HDCoreSpawnTable> tables;
         tables.clear();
 
         getSpawnTables(tables, name, replace);
-        foreach (spawnTable : tables) if (spawnTable.isPersistent == persists) spawnTables.delete(spawnTables.find(spawnTable));
+        foreach (spawnTable : tables) spawnTables.delete(spawnTables.find(spawnTable));
     }
 
     // Add a new entry to an existing Spawn Table
-    void addSpawnTableEntry(name name, HDCoreSpawnTableEntry entry, bool persists = false, bool replace = true) {
+    void addSpawnTableEntry(name name, HDCoreSpawnTableEntry entry, bool replace = true) {
         Array<HDCoreSpawnTable> tables;
         tables.clear();
 
         getSpawnTables(tables, name, replace);
-        foreach (spawnTable : tables) if (spawnTable.isPersistent == persists) spawnTable.addEntry(entry);
+        foreach (spawnTable : tables) spawnTable.addEntry(entry);
     }
 
     // Tries to replace the thing during spawning.
     bool tryReplaceThing(ReplaceEvent e, HDCoreSpawnTable table) {
-        let entry = table.getRandomEntry();
+
+        let persistentOnly = Level.mapTime > 1;
+
+        let entry = table.getRandomEntry(persistentOnly);
 
         if (entry) {
-            let replacement = entry.getValue();
+            let replacement = entry.getValue(persistentOnly);
     
             if (replacement != e.replacee) {
                 if (hd_debug) console.printf(e.replacee.getClassName().." -> "..entry.name);
     
                 e.replacement = replacement;
+                // TODO: Support marking replacements as final
+                // e.final = entry.final || replacement == 'NullSpawner';
     
                 return true;
             }
@@ -115,10 +105,13 @@ class HDCoreSpawnHandler : EventHandler {
 
     // Tries to create the thing via random spawning.
     bool tryCreateThing(Actor a, HDCoreSpawnTable table) {
-        let entry = table.getRandomEntry();
+        
+        let persistentOnly = Level.mapTime > 1;
+
+        let entry = table.getRandomEntry(persistentOnly);
 
         if (entry) {
-            let value = entry.getValue();
+            let value = entry.getValue(persistentOnly);
 
             if (value != a.getClassName()) {
                 if (hd_debug) console.printf(a.getClassName().." + "..value);
@@ -135,6 +128,8 @@ class HDCoreSpawnHandler : EventHandler {
     void init() {
         if (initialized) return;
 
+        mapBlackList.clear();
+        thingBlacklist.clear();
         spawnTables.clear();
 
         Array<HDCoreCommand> cmds;
@@ -154,12 +149,23 @@ class HDCoreSpawnHandler : EventHandler {
     void loadSpawnTables(Array<HDCoreCommand> cmds) {
         forEach (cmd : cmds) {
             switch (cmd.command) {
+                case 'addSpawnHandlerThingBlacklist': {
+                    let name = cmd.getNameParam("name");
+
+                    if (name) thingBlacklist.push(name);
+                    break;
+                }
+                case 'addSpawnHandlerMapBlacklist': {
+                    let name = cmd.getNameParam("name");
+
+                    if (name) mapBlacklist.push(name);
+                    break;
+                }
                 case 'newSpawnTable': {
                     let table = HDCoreSpawnTable.create(
-                        cmd.getNameArg("spawnName"),
-                        cmd.getNameArg("tableName"),
-                        cmd.getBoolArg("persists"),
-                        cmd.getBoolArg("replaces", true)
+                        cmd.getNameParam("spawnName"),
+                        cmd.getNameParam("tableName"),
+                        cmd.getBoolParam("replaces", true)
                     );
 
                     if (table) addSpawnTable(table);
@@ -167,60 +173,58 @@ class HDCoreSpawnHandler : EventHandler {
                 }
                 case 'addSpawnTableSingleEntry': {
                     let entry = HDCoreSpawnTableSingleEntry.create(
-                        cmd.getNameArg("name"),
-                        cmd.getIntArg("weight")
+                        cmd.getNameParam("name"),
+                        cmd.getDoubleParam("weight"),
+                        cmd.getBoolParam("persists"),
+                        cmd.getIntParam("chance", 256)
                     );
 
                     if (entry) addSpawnTableEntry(
-                        cmd.getNameArg("tableName"),
+                        cmd.getNameParam("tableName"),
                         entry,
-                        cmd.getBoolArg("persists"),
-                        cmd.getBoolArg("replaces", true)
+                        cmd.getBoolParam("replaces", true)
                     );
                     break;
                 }
                 case 'addSpawnTableNestedEntry': {
                     let nestedTable = getSpawnTable(
-                        cmd.getNameArg("name"),
-                        cmd.getBoolArg("persists"),
-                        cmd.getBoolArg("replaces", true)
+                        cmd.getNameParam("name"),
+                        cmd.getBoolParam("replaces", true)
                     );
 
                     if (!nestedTable) HDCoreSpawnTable.create(
-                        cmd.getNameArg("name"),
-                        cmd.getNameArg("name"),
-                        cmd.getBoolArg("persists"),
-                        cmd.getBoolArg("replaces", true)
+                        cmd.getNameParam("name"),
+                        cmd.getNameParam("name"),
+                        cmd.getBoolParam("replaces", true)
                     );
 
                     let entry = HDCoreSpawnTableNestedEntry.create(
                         nestedTable,
-                        cmd.getIntArg("weight")
+                        cmd.getDoubleParam("weight"),
+                        cmd.getBoolParam("persists"),
+                        cmd.getIntParam("chance", 256)
                     );
     
                     if (entry) addSpawnTableEntry(
-                        cmd.getNameArg("tableName"),
+                        cmd.getNameParam("tableName"),
                         entry,
-                        cmd.getBoolArg("persists"),
-                        cmd.getBoolArg("replaces", true)
+                        cmd.getBoolParam("replaces", true)
                     );
                     break;
                 }
                 case 'removeSpawnTableEntry': {
                     let table = getSpawnTable(
-                        cmd.getNameArg("tableName"),
-                        cmd.getBoolArg("persists"),
-                        cmd.getBoolArg("replaces", true)
+                        cmd.getNameParam("tableName"),
+                        cmd.getBoolParam("replaces", true)
                     );
 
-                    if (table) table.removeEntry(cmd.getNameArg("name"));
+                    if (table) table.removeEntry(cmd.getNameParam("name"));
                     break;
                 }
                 case 'clearSpawnTable': {
                     let table = getSpawnTable(
-                        cmd.getNameArg("tableName"),
-                        cmd.getBoolArg("persists"),
-                        cmd.getBoolArg("replaces", true)
+                        cmd.getNameParam("tableName"),
+                        cmd.getBoolParam("replaces", true)
                     );
 
                     if (table) table.clearEntries();
@@ -228,30 +232,27 @@ class HDCoreSpawnHandler : EventHandler {
                 }
                 case 'appendSpawnTableEntries': {
                     let sourceTable = getSpawnTable(
-                        cmd.getNameArg("sourceTableName"),
-                        cmd.getBoolArg("persists"),
-                        cmd.getBoolArg("replaces", true)
+                        cmd.getNameParam("sourceTableName"),
+                        cmd.getBoolParam("replaces", true)
                     );
                     
                     let destTable = getSpawnTable(
-                        cmd.getNameArg("destTableName"),
-                        cmd.getBoolArg("persists"),
-                        cmd.getBoolArg("replaces", true)
+                        cmd.getNameParam("destTableName"),
+                        cmd.getBoolParam("replaces", true)
                     );
 
-                    if (sourceTable && destTable) destTable.addEntries(sourceTable.entries);
+                    if (sourceTable && destTable) destTable.addEntries(sourceTable._entries);
                     break;
                 }
                 case 'setSpawnTableEntryWeight': {
                     let table = getSpawnTable(
-                        cmd.getNameArg("tableName"),
-                        cmd.getBoolArg("persists"),
-                        cmd.getBoolArg("replaces", true)
+                        cmd.getNameParam("tableName"),
+                        cmd.getBoolParam("replaces", true)
                     );
 
                     if (table) {
-                        let entry = table.getEntry(cmd.getNameArg("name"));
-                        let weight = cmd.getIntArg("weight");
+                        let entry = table.getEntry(cmd.getNameParam("name"));
+                        let weight = cmd.getDoubleParam("weight");
 
                         if (entry) entry.weight = weight > 0 ? weight : entry.getWeight();
                     }
@@ -259,9 +260,8 @@ class HDCoreSpawnHandler : EventHandler {
                 }
                 case 'removeSpawnTable': {
                     removeSpawnTable(
-                        cmd.getNameArg("name"),
-                        cmd.getBoolArg("persists"),
-                        cmd.getBoolArg("replaces", true)
+                        cmd.getNameParam("name"),
+                        cmd.getBoolParam("replaces", true)
                     );
                     break;
                 }
@@ -290,12 +290,12 @@ class HDCoreSpawnHandler : EventHandler {
         if (!e.replacee || e.isFinal) return;
 
         // If thing being replaced is blacklisted, quit.
-        foreach (bl : blacklist) if (e.replacee is bl) return;
+        foreach (bl : thingBlacklist) if (e.replacee is bl) return;
 
-        // If current map is Range, quit.
-        if (Level.MapName == 'RANGE') return;
+        // If current map is blacklisted, quit.
+        foreach (bl : mapBlackList) if (Level.MapName == bl) return;
 
-        handleSpawnReplacements(e, e.replacee.getClassName());
+        handleSpawnReplacements(e);
     }
 
     override void worldThingSpawned(WorldEvent e) {
@@ -307,45 +307,36 @@ class HDCoreSpawnHandler : EventHandler {
         if (!e.thing) return;
 
         // If thing spawned is blacklisted, quit.
-        foreach (bl : blacklist) if (e.thing is bl) return;
+        foreach (bl : thingBlacklist) if (e.thing is bl) return;
 
-        // If current map is Range, quit.
-        if (Level.MapName == 'RANGE') return;
+        // If current map is blacklisted, quit.
+        foreach (bl : mapBlackList) if (Level.MapName == bl) return;
 
-        handleSpawns(e.thing, e.thing.getClassName());
+        handleSpawns(e.thing);
     }
 
-    private void handleSpawnReplacements(ReplaceEvent e, name name) {
-
-        // Checks if the level has been loaded more than 1 tic.
-        bool prespawn = !(Level.maptime > 1);
+    private void handleSpawnReplacements(ReplaceEvent e) {
 
         // Iterate through the list of replacement tables for the current thing
         Array<HDCoreSpawnTable> tables;
         tables.clear();
 
-        getSpawnTables(tables, name);
+        getSpawnTables(tables, e.replacee.getClassName(), true);
         foreach (table : tables) {
+            if (hd_debug) console.printf("Attempting to replace "..e.replacee.getClassName().." with entry in "..table.tableName.."...");
 
-            if (prespawn || table.isPersistent) {
-                if (hd_debug) console.printf("Attempting to replace "..name.." with entry in "..table.tableName.."...");
-
-                // If an entry in the table is selected and is replaced successfully, quit.
-                if (tryReplaceThing(e, table)) return;
-            }
+            // If an entry in the table is selected and is replaced successfully, quit.
+            if (tryReplaceThing(e, table)) return;
         }
     }
 
-    private void handleSpawns(Actor thing, name name) {
-
-        // Checks if the level has been loaded more than 1 tic.
-        bool prespawn = !(level.maptime > 1);
+    private void handleSpawns(Actor thing) {
 
         // Iterate through the list of non-replacement tables for the current thing
         Array<HDCoreSpawnTable> tables;
         tables.clear();
 
-        getSpawnTables(tables, name, false);
+        getSpawnTables(tables, thing.getClassName(), false);
         foreach (table : tables) {
 
             // if currently in pre-spawn or configured to be persistent,
@@ -353,8 +344,8 @@ class HDCoreSpawnHandler : EventHandler {
             // and not configured to replace original spawn,
             // attempt to spawn new thing.
             let item = Inventory(thing);
-            if ((prespawn || table.isPersistent) && !(item && item.owner)) {
-                if (hd_debug) console.printf("Attempting to spawn entry in "..table.tableName.." along with "..name.."...");
+            if (!(item && item.owner)) {
+                if (hd_debug) console.printf("Attempting to spawn entry in "..table.tableName.." along with "..thing.getClassName().."...");
 
                 // If an entry in the table is selected and is spawned successfully, quit.
                 if (tryCreateThing(thing, table)) return;

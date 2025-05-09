@@ -4,7 +4,7 @@ class HDCoreSpawnAmmo play {
     name ammoName;
 
     // ID by string for weapons using that ammo.
-    Array<name> weaponNames;
+    Array<name> userNames;
 
     /**
      * Creates an association for the given ammo and the list of weapons or other items/things that use them.
@@ -15,7 +15,7 @@ class HDCoreSpawnAmmo play {
         HDCoreSpawnAmmo ammo = HDCoreSpawnAmmo(new('HDCoreSpawnAmmo'));
 
         ammo.ammoName = ammoName;
-        ammo.weaponNames.clear();
+        ammo.userNames.clear();
 
         return ammo;
     }
@@ -26,12 +26,12 @@ class HDCoreSpawnAmmo play {
 
     string toString() {
 
-        let weapons = "[";
+        let users = "[";
 
-        foreach (weaponName : weaponNames) weapons = weapons..", "..weaponName;
+        foreach (userName : userNames) users = users..", "..userName;
 
-        weapons = weapons.."]";
+        users = users.."]";
 
-        return String.format("{ ammoName=%s, weaponNames=%s }", ammoName, weapons);
+        return String.format("{ ammoName=%s, userNames=%s }", ammoName, users);
     }
 }

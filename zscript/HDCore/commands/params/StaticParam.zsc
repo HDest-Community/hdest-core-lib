@@ -1,0 +1,23 @@
+class HDCoreCommandStaticParam : HDCoreCommandParam {
+
+    override string getStringValue() {
+        return value;
+    }
+
+    override name getNameValue() {
+        name name = getStringValue();
+        return name;
+    }
+
+    override int getIntValue() {
+        return value.toInt(10);
+    }
+
+    override double getDoubleValue() {
+        return value.toDouble();
+    }
+
+    override bool getBoolValue() {
+        return value == 'true';
+    }
+}

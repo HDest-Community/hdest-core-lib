@@ -1,15 +1,19 @@
 class HDCoreBPSpawnPoolHandler : EventHandler {
 
+    // List of Inventory Classes to add to Backpack Spawns
+    Array< Class<Inventory> > backpackWhitelist;
+
     // List of Inventory Classes to remove from Backpack Spawns
     Array< Class<Inventory> > backpackBlacklist;
 
     bool initialized;
 
-    // Populates the blacklist.
+    // Populates the Spawn Pool Filters.
     void init() {
 
         if (initialized) return;
 
+        backpackWhitelist.clear();
         backpackBlacklist.clear();
 
         Array<HDCoreCommand> cmds;
@@ -19,18 +23,68 @@ class HDCoreBPSpawnPoolHandler : EventHandler {
 
         if (hd_debug) forEach(cmd : cmds) console.printF(cmd.toString());
         
-        loadBPSpawnPoolBlacklist(cmds);
+        loadBPSpawnPoolLists(cmds);
 
-        if (hd_debug) forEach(bl : backpackBlacklist) console.printF(bl.getClassName());
+        if (hd_debug) {
+            console.printF("BP Spawn Pool Whitelist:");
+            forEach(wl : backpackWhitelist) console.printF(" * "..wl.getClassName());
+
+            console.printF("BP Spawn Pool Blacklist:");
+            forEach(bl : backpackBlacklist) console.printF(" * "..bl.getClassName());
+        }
 
         initialized = true;
     }
 
-    void loadBPSpawnPoolBlacklist(Array<HDCoreCommand> cmds) {
+    void loadBPSpawnPoolLists(Array<HDCoreCommand> cmds) {
         forEach (cmd : cmds) {
             switch (cmd.command) {
+                case 'addBPSpawnPoolFilter': {
+                    // FIXME: Find a better command/logic to handle existing CVARs
+
+                    let ammo = cmd.getNameParam("name");
+                    Class<Inventory> invClass = ammo;
+
+                    if (!invClass) break;
+
+                    // If the filter entry is allowed, remove from blacklist,
+                    // Otherwise add to blacklist.
+                    let index = backpackBlacklist.find(invClass);
+                    if (cmd.getBoolParam("allowed")) {
+                        if (index < backpackBlacklist.size()) backpackBlacklist.delete(index);
+                    } else {
+                        if (index >= backpackBlacklist.size()) backpackBlacklist.push(invClass);
+                    }
+
+                    break;
+                }
+                case 'addBPSpawnPoolWhitelist': {
+                    let item = cmd.getNameParam("name");
+                    Class<Inventory> invClass = item;
+
+                    if (!invClass) break;
+
+                    if (backpackWhitelist.find(invClass) >= backpackWhitelist.size()) backpackWhitelist.push(invClass);
+
+                    break;
+                }
+                case 'removeBPSpawnPoolWhitelist': {
+                    let item = cmd.getNameParam("name");
+                    Class<Inventory> invClass = item;
+
+                    if (!invClass) break;
+
+                    let index = backpackWhitelist.find(invClass);
+                    if (index < backpackWhitelist.size()) backpackWhitelist.delete(index);
+
+                    break;
+                }
+                case 'clearBPSpawnPoolWhitelist': {
+                    backpackWhitelist.clear();
+                    break;
+                }
                 case 'addBPSpawnPoolBlacklist': {
-                    let item = cmd.getNameArg("name");
+                    let item = cmd.getNameParam("name");
                     Class<Inventory> invClass = item;
 
                     if (!invClass) break;
@@ -40,7 +94,7 @@ class HDCoreBPSpawnPoolHandler : EventHandler {
                     break;
                 }
                 case 'removeBPSpawnPoolBlacklist': {
-                    let item = cmd.getNameArg("name");
+                    let item = cmd.getNameParam("name");
                     Class<Inventory> invClass = item;
 
                     if (!invClass) break;
@@ -65,13 +119,31 @@ class HDCoreBPSpawnPoolHandler : EventHandler {
         // Populates the main arrays if they haven't been already.
         if (!initialized) init();
 
-        // If there are no configured BP Blacklist items, quit.
-        if (!backpackBlacklist.size()) return;
+        // If there are no configured BP Whitelist or Blacklist items, quit.
+        if (!backpackWhitelist.size() && !backpackBlacklist.size()) return;
 
         handleBackpackSpawnPool();
     }
 
     private void handleBackpackSpawnPool() {
+        
+        // Find the BPSpawnPool Handler
+		BPSpawnPool sp = BPSpawnPool(EventHandler.Find("BPSpawnPool"));
+
+        // If we somehow don't find it, quit.
+        if (!sp) return;
+
+        // If the spawn pool hasn't been initialized yet, do so.
+        // if (!sp.initialized) sp.BuildValidItemList();
+
+        // Add all "whitelisted" entries
+        foreach (wl : backpackWhitelist) {
+            if (hd_debug) console.printf("Adding "..wl.getClassName().." to Backpack Spawn Pool");
+
+            BPSpawnPool.AddItem(wl);
+        }
+
+        // Remove all "blacklisted" entries
         foreach (bl : backpackBlacklist) {
             if (hd_debug) console.printf("Removing "..bl.getClassName().." from Backpack Spawn Pool");
 

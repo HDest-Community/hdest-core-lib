@@ -1,4 +1,4 @@
-version "4.12"
+version "4.14"
 
 // Bundled Libraries
 #include "zscript/libs/HDZForms/include.zsc"
@@ -7,6 +7,9 @@ version "4.12"
 
 // Global Classes
 #include "zscript/HDCore/commands/HDCoreCommand.zsc"
+#include "zscript/HDCore/commands/params/CVarParam.zsc"
+#include "zscript/HDCore/commands/params/LocalizedStringParam.zsc"
+#include "zscript/HDCore/commands/params/StaticParam.zsc"
 #include "zscript/HDCore/lineTracing/LineTraceData.zsc"
 #include "zscript/HDCore/spawning/ClusterSpawner.zsc"
 #include "zscript/HDCore/ui/CameraContext.zsc"
@@ -20,7 +23,7 @@ version "4.12"
 #include "zscript/HDCore/random/Random.zsc"
 #include "zscript/HDCore/sectors/Sectors.zsc"
 #include "zscript/HDCore/spawning/AmmoAssociations.zsc"
-#include "zscript/HDCore/spawning/SectorSpawners.zsc"
+#include "zscript/HDCore/spawning/DummySpawners.zsc"
 #include "zscript/HDCore/spawning/SpawnTables.zsc"
 #include "zscript/HDCore/ui/DrawBar.zsc"
 #include "zscript/HDCore/ui/DrawPrefabs.zsc"

@@ -1,0 +1,22 @@
+class DummySpawner : Actor abstract {
+    states {
+        spawn:
+            TNT1 A 0;
+            stop;
+    }
+}
+
+class HurtfloorSectorSpawner : DummySpawner {
+}
+
+class IndoorSectorSpawner : DummySpawner {
+}
+
+class OutdoorSectorSpawner : DummySpawner {
+}
+
+class SecretSectorSpawner : DummySpawner {
+}
+
+class NullSpawner : DummySpawner final {
+}

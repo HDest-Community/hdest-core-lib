@@ -8,14 +8,14 @@ extend class HDCore {
      * @param {int} [defaultValue=0] The value to return by default
      * @returns {int} The index of the given set of weights that was rolled
      */
-    static int getWeightedRandom(out Array<int> weights, int defaultValue = 0) {
+    static int getWeightedRandom(out Array<double> weights, int defaultValue = 0) {
 
         // Add up the sum total of all given weights
-        int sum = 0;
+        double sum = 0.0;
         forEach (w : weights) sum += w;
 
         // Roll against that sum and find the index it fell within
-        int rng = random[weightrand](0, sum);
+        int rng = frandom[weightrand](0.0, sum);
         for (let i = 0; i < weights.size(); i++) {
             if (rng < weights[i]) return i;
 

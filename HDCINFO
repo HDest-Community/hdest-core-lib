@@ -4,47 +4,111 @@
 
 
 
+// SPAWN HANDLER BLACKLISTS
+// ------------------------
+
+// Blacklist a map from being handled
+// - name = Name of map to be blacklisted
+//
+// addSpawnHandlerMapBlacklist => { "name": "E1M1" }
+
+// Blacklist a thing from being handled
+// - name = ClassName of thing to be blacklisted
+//
+// addSpawnHandlerThingBlacklist => { "name": "HDSmoke" }
+
+
+// Map Blacklist
+addSpawnHandlerMapBlacklist => { "name": "RANGE" }
+addSpawnHandlerMapBlacklist => { "name": "TEST" }
+
+// Thing Blacklist
+addSpawnHandlerThingBlacklist => { "name": "HDSmoke" }
+addSpawnHandlerThingBlacklist => { "name": "BloodTrail" }
+addSpawnHandlerThingBlacklist => { "name": "CheckPuff" }
+addSpawnHandlerThingBlacklist => { "name": "WallChunk" }
+addSpawnHandlerThingBlacklist => { "name": "HDBulletPuff" }
+addSpawnHandlerThingBlacklist => { "name": "HDFireballTail" }
+addSpawnHandlerThingBlacklist => { "name": "ReverseImpBallTail" }
+addSpawnHandlerThingBlacklist => { "name": "HDSmokeChunk" }
+addSpawnHandlerThingBlacklist => { "name": "ShieldSpark" }
+addSpawnHandlerThingBlacklist => { "name": "HDFlameRed" }
+addSpawnHandlerThingBlacklist => { "name": "HDMasterBlood" }
+addSpawnHandlerThingBlacklist => { "name": "PlantBit" }
+addSpawnHandlerThingBlacklist => { "name": "HDBulletActor" }
+addSpawnHandlerThingBlacklist => { "name": "HDLadderSection" }
+
+
+
+// AMMO USAGE BLACKLISTS
+// ---------------------
+
+// Blacklist a thing from being handled
+// - name = ClassName of thing to be blacklisted
+//
+// addAmmoThingBlacklist => { "name": "HDSmoke" }
+
+
+// Thing Blacklist
+addAmmoThingBlacklist => { "name": "HDSmoke" }
+addAmmoThingBlacklist => { "name": "BloodTrail" }
+addAmmoThingBlacklist => { "name": "CheckPuff" }
+addAmmoThingBlacklist => { "name": "WallChunk" }
+addAmmoThingBlacklist => { "name": "HDBulletPuff" }
+addAmmoThingBlacklist => { "name": "HDFireballTail" }
+addAmmoThingBlacklist => { "name": "ReverseImpBallTail" }
+addAmmoThingBlacklist => { "name": "HDSmokeChunk" }
+addAmmoThingBlacklist => { "name": "ShieldSpark" }
+addAmmoThingBlacklist => { "name": "HDFlameRed" }
+addAmmoThingBlacklist => { "name": "HDMasterBlood" }
+addAmmoThingBlacklist => { "name": "PlantBit" }
+addAmmoThingBlacklist => { "name": "HDBulletActor" }
+addAmmoThingBlacklist => { "name": "HDLadderSection" }
+
+
+
 // SPAWN TABLES
 // ------------
 
 // Add a new empty Spawn Table
 // - spawnName   = ClassName of thing to be replaced or add spawns to
 // - [tableName] = Custom name of SpawnTable (Defaults to "spawnName")
-// - [persists]  = If true, entry will be used beyond initial map spawns (Defaults to false)
 // - [replaces]  = If true, entry will replace the "spawnName", instead of spawn alongside it (Defaults to true)
 //
-// newSpawnTable => {"spawnName":"DoomImp","tableName":"impTest"}
+// newSpawnTable => { "spawnName": "DoomImp", "tableName": "impTest" }
 
 // Add a single entry to an existing table
 // - tableName  = Name of SpawnTable
 // - name       = ClassName of thing to replace with or spawn
 // - weight     = The bias of this entry
-// - [persists] = Used to find spawnTable with matching property value (Defaults to false)
+// - [persists] = Whether the entry will be used beyond initial map spawns (Defaults to false)
 // - [replaces] = Used to find spawnTable with matching property value (Defaults to true)
+// - [chance]   = Used to define the chance out of 256 that the selected entry will spawn successfully (Defaults to 256)
 //
-// addSpawnTableSingleEntry => {"tableName":"impTest","name":"WitheredSpawner","weight":"69"}
+// addSpawnTableSingleEntry => { "tableName": "impTest", "name": "WitheredSpawner", "weight": "69" }
 
 // Add a nested table entry to an existing table
 // - tableName  = Name of spawnTable to add new entry to
 // - name       = Name of SpawnTable (spawnName is inherited)
-// - [persists] = Used to find spawnTable with matching property value (Defaults to false)
+// - [persists] = Whether the entry will be used beyond initial map spawns (Defaults to false)
 // - [replaces] = Used to find spawnTable with matching property value (Defaults to true)
+// - [chance]   = Used to define the chance out of 256 that the selected entry will spawn successfully (Defaults to 256)
 //
-// addSpawnTableNestedEntry => {"tableName":"impTest","name":"zombiemanTest"}
+// addSpawnTableNestedEntry => { "tableName": "impTest", "name": "zombiemanTest" }
 
 // Remove an entry from an existing table
 // - tableName  = Name of spawnTable to remove entry from
-// - [persists] = Used to find spawnTable with matching property value (Defaults to false)
+// - [persists] = Whether the entry will be used beyond initial map spawns (Defaults to false)
 // - [replaces] = Used to find spawnTable with matching property value (Defaults to true)
 //
-// removeSpawnTableEntry => {"tableName":"impTest","name":"DoggySpawner"}
+// removeSpawnTableEntry => { "tableName": "impTest", "name": "DoggySpawner" }
 
 // Remove all entries from an existing table
 // - tableName  = Name of spawnTable to clear
-// - [persists] = Used to find spawnTable with matching property value (Defaults to false)
+// - [persists] = Whether the entry will be used beyond initial map spawns (Defaults to false)
 // - [replaces] = Used to find spawnTable with matching property value (Defaults to true)
 //
-// clearSpawnTable => {"tableName":"impTest"}
+// clearSpawnTable => { "tableName": "impTest" }
 
 // Append all entries from sourceTable into destTable
 // - sourcetableName = Name of spawnTable to copy entries from
@@ -52,7 +116,7 @@
 // - [persists]      = Used to find spawnTables with matching property value (Defaults to false)
 // - [replaces]      = Used to find spawnTables with matching property value (Defaults to true)
 //
-// appendSpawnTableEntries => {"sourceTableName":"impTest","destTableName":"zombiemanTest"}
+// appendSpawnTableEntries => { "sourceTableName": "impTest", "destTableName": "zombiemanTest" }
 
 // Set the bias/weight of a single entry in an existing table
 // - tableName  = Name of SpawnTable
@@ -60,21 +124,769 @@
 // - weight     = The new bias of this entry.  If set to 0 or less, the entry will recalculate its weight automatically.
 //                For single entries, the weight simply stays the same
 //                For nested entries, the weight is recalculated as the sum of the weights of its entries
-// - [persists] = Used to find spawnTable with matching property value (Defaults to false)
+// - [persists] = Whether the entry will be used beyond initial map spawns (Defaults to false)
 // - [replaces] = Used to find spawnTable with matching property value (Defaults to true)
 //
-// setSpawnTableEntryWeight => {"tableName":"impTest","name":"WitheredSpawner","weight":"420"}
+// setSpawnTableEntryWeight => { "tableName": "impTest", "name": "WitheredSpawner", "weight": "420" }
 
 // Remove an existing table entirely
 // - tableName  = Name of spawnTable to remove
-// - [persists] = Used to find spawnTable with matching property value (Defaults to false)
+// - [persists] = Whether the entry will be used beyond initial map spawns (Defaults to false)
 // - [replaces] = Used to find spawnTable with matching property value (Defaults to true)
 //
-// removeSpawnTable => {"tableName":"impTest"}
+// removeSpawnTable => { "tableName": "impTest" }
 
 // Remove all existing spawn tables
 //
 // removeSpawnTable => {}
+
+// HDest Spawn Tables
+
+// Casing Bits: Total Weight = 41, Total Persistent Weight = 41
+newSpawnTable => { "spawnName": "HDCasingBits", "tableName": "HDCore.HDCasingBitsReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDCasingBitsReplaces", "name": "HDSpent9mm", "weight": "24", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDCasingBitsReplaces", "name": "HDSpentShell", "weight": "9", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDCasingBitsReplaces", "name": "HDSpent7mm", "weight": "6", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDCasingBitsReplaces", "name": "HDFumblingShell", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDCasingBitsReplaces", "name": "TerrorCasing", "weight": "1", "persists": "true" }
+
+// Gore Bits: Total Weight = 87, Total Persistent Weight = 87
+newSpawnTable => { "spawnName": "HDGoreBits", "tableName": "HDCore.HDGoreBitsReplaces" }
+addSpawnTableNestedEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "HDCore.HDCasingBitsReplaces", "weight": "32", "persists": "true" }
+// addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "HDCasingBits", "weight": "32", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "SmallBloodPool", "weight": "8", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "BarrelGibs", "weight": "8", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "HDFumblingShell", "weight": "8", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "HD4mmMagEmpty", "weight": "8", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "Gibs", "weight": "6", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "ColonGibs", "weight": "4", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "HDSMGEmptyMag", "weight": "3", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "HDPistolEmptyMag", "weight": "3", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "DeadDemon", "weight": "1", "chance": "126", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "DeadDoomImp", "weight": "1", "chance": "126", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "DeadZombieMan", "weight": "1", "chance": "96", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "DeadShotgunGuy", "weight": "1", "chance": "96", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "DeadRifleman", "weight": "1", "chance": "96", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "LiberatorEmptyMag", "weight": "1", "chance": "96", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDGoreBitsReplaces", "name": "RealyDeadRifleman", "weight": "1", "chance": "46", "persists": "true" }
+
+// Handgun Drop Table: Total Weight = 6, Total Persistent Weight = 6
+newSpawnTable => { "spawnName": "HDHandgunRandomDrop", "tableName": "HDCore.HDHandgunRandomDropReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDHandgunRandomDropReplaces", "name": "HDPistol", "weight": "5", "chance": "16", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HDHandgunRandomDropReplaces", "name": "HDRevolver", "weight": "1", "chance": "16", "persists": "true" }
+
+
+// Vanilla Weapon Spawn Tables
+
+// BFG-9000 Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "BFG9000", "tableName": "HDCore.BFG9000Replaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BFG9000Replaces", "name": "BFG9K", "weight": "1", "persists": "true" }
+
+// Chaingun Spawns: Total Weight = 13, Total Persistent Weight = 13
+newSpawnTable => { "spawnName": "Chaingun", "tableName": "HDCore.ChaingunReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ChaingunReplaces", "name": "Vulcanette", "weight": "9", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ChaingunReplaces", "name": "HERPUsable", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ChaingunReplaces", "name": "HDAutoPistol", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ChaingunReplaces", "name": "LiberatorRandom", "weight": "1", "persists": "true" }
+
+// Chainsaw Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Chainsaw", "tableName": "HDCore.ChainsawReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ChainsawReplaces", "name": "Lumberjack", "weight": "1", "persists": "true" }
+
+// Fist Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Fist", "tableName": "HDCore.FistReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.FistReplaces", "name": "HDFist", "weight": "1", "persists": "true" }
+
+// Pistol Spawns: Total Weight = 6, Total Persistent Weight = 6
+newSpawnTable => { "spawnName": "Pistol", "tableName": "HDCore.PistolReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.PistolReplaces", "name": "HDPistol", "weight": "5", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.PistolReplaces", "name": "DeinoSpawn", "weight": "1", "persists": "true" }
+
+// Plasma Rifle Spawns: Total Weight = 7, Total Persistent Weight = 7
+newSpawnTable => { "spawnName": "PlasmaRifle", "tableName": "HDCore.PlasmaRifleReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.PlasmaRifleReplaces", "name": "ThunderBuster", "weight": "5", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.PlasmaRifleReplaces", "name": "LiberatorRandom", "weight": "2", "persists": "true" }
+
+// Rocket Launcher Spawns: Total Weight = 5, Total Persistent Weight = 5
+newSpawnTable => { "spawnName": "RocketLauncher", "tableName": "HDCore.RocketLauncherReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.RocketLauncherReplaces", "name": "BloopMapPickup", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.RocketLauncherReplaces", "name": "HDRLMapPickup", "weight": "4", "persists": "true" }
+
+// Shotgun Spawns: Total Weight = 10, Total Persistent Weight = 10
+newSpawnTable => { "spawnName": "Shotgun", "tableName": "HDCore.ShotgunReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShotgunReplaces", "name": "HunterRandom", "weight": "7", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShotgunReplaces", "name": "SlayerRAndom", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShotgunReplaces", "name": "DeinoSpawn", "weight": "1", "persists": "true" }
+
+// Super Shotgun Spawns: Total Weight = 14, Total Persistent Weight = 14
+newSpawnTable => { "spawnName": "SuperShotgun", "tableName": "HDCore.SuperShotgunReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.SuperShotgunReplaces", "name": "SlayerRandom", "weight": "4", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.SuperShotgunReplaces", "name": "LiberatorRandom", "weight": "3", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.SuperShotgunReplaces", "name": "BloopMapPickup", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.SuperShotgunReplaces", "name": "HunterRandom", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.SuperShotgunReplaces", "name": "BossRifleSpawner", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.SuperShotgunReplaces", "name": "HDJetpack", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.SuperShotgunReplaces", "name": "HDAutoPistol", "weight": "1", "persists": "true" }
+
+// Vanilla Ammo Spawn Tables
+
+// Cell Spawns: Total Weight = 13, Total Persistent Weight = 13
+newSpawnTable => { "spawnName": "Cell", "tableName": "HDCore.CellReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CellReplaces", "name": "HDBattery", "weight": "7", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CellReplaces", "name": "HD7mMag", "weight": "3", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CellReplaces", "name": "BrontornisRound", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CellReplaces", "name": "BFGNecroShard", "weight": "1", "chance": "128", "persists": "true" }
+
+// Cell Pack Spawns: Total Weight = 16, Total Persistent Weight = 16
+newSpawnTable => { "spawnName": "CellPack", "tableName": "HDCore.CellPackReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CellPackReplaces", "name": "HDBattery", "weight": "4", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CellPackReplaces", "name": "HD7mMag", "weight": "3", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CellPackReplaces", "name": "BrontornisSpawner", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CellPackReplaces", "name": "HDAB", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CellPackReplaces", "name": "PortableLadder", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CellPackReplaces", "name": "YokaiSpawner", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CellPackReplaces", "name": "HDFragGrenadePickup", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CellPackReplaces", "name": "HD9mBoxPickup", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CellPackReplaces", "name": "HD7mBoxPickup", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CellPackReplaces", "name": "DoorBuster", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CellPackReplaces", "name": "BFGNecroShard", "weight": "1", "chance": "196", "persists": "true" }
+
+// Clip Spawns: Total Weight = 34, Total Persistent Weight = 34
+newSpawnTable => { "spawnName": "Clip", "tableName": "HDCore.ClipReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ClipReplaces", "name": "HD4mMag", "weight": "24", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ClipReplaces", "name": "HD9mMag15", "weight": "4", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ClipReplaces", "name": "HD9mMag30", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ClipReplaces", "name": "ArmorBonus", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ClipReplaces", "name": "HD9mBoxPickup", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ClipReplaces", "name": "HD355BoxPickup", "weight": "1", "persists": "true" }
+
+// Clip Box Spawns: Total Weight = 28, Total Persistent Weight = 28
+newSpawnTable => { "spawnName": "ClipBox", "tableName": "HDCore.ClipBoxReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ClipBoxReplaces", "name": "ClipBoxPickup1", "weight": "14", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ClipBoxReplaces", "name": "HDAB", "weight": "6", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ClipBoxReplaces", "name": "ClipBoxPickup2", "weight": "4", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ClipBoxReplaces", "name": "BossRifleSpawner", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ClipBoxReplaces", "name": "HD9mBoxPickup", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ClipBoxReplaces", "name": "HD7mBoxPickup", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ClipBoxReplaces", "name": "HD355BoxPickup", "weight": "1", "persists": "true" }
+
+// Rocket Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "RocketAmmo", "tableName": "HDCore.RocketAmmoReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.RocketAmmoReplaces", "name": "HDRocketAmmo", "weight": "1", "persists": "true" }
+
+// Rocket Box Spawns: Total Weight = 21, Total Persistent Weight = 21
+newSpawnTable => { "spawnName": "RocketBox", "tableName": "HDCore.RocketBoxReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.RocketBoxReplaces", "name": "RocketBigPickup", "weight": "14", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.RocketBoxReplaces", "name": "HDFragGrenadePickup", "weight": "3", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.RocketBoxReplaces", "name": "PortableLadder", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.RocketBoxReplaces", "name": "HD9mBoxPickup", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.RocketBoxReplaces", "name": "HD7mBoxPickup", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.RocketBoxReplaces", "name": "HDIEDPack", "weight": "1", "persists": "true" }
+
+// Shell Spawns: Total Weight = 23, Total Persistent Weight = 23
+newSpawnTable => { "spawnName": "Shell", "tableName": "HDCore.ShellReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellReplaces", "name": "ShellPickup", "weight": "8", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellReplaces", "name": "HDFumblingShell", "weight": "4", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellReplaces", "name": "DecoPusher", "weight": "4", "chance": "200", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellReplaces", "name": "HDBattery", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellReplaces", "name": "HD4mMag", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellReplaces", "name": "DoorBuster", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellReplaces", "name": "HDIEDPack", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellReplaces", "name": "BFGNecroShard", "weight": "1", "chance": "200", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellReplaces", "name": "HDAB", "weight": "1", "chance": "200", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellReplaces", "name": "YokaiSpawner", "weight": "1", "chance": "128", "persists": "true" }
+
+// Shell Box Spawns: Total Weight = 17, Total Persistent Weight = 17
+newSpawnTable => { "spawnName": "ShellBox", "tableName": "HDCore.ShellBoxReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellBoxReplaces", "name": "ShellBoxPickup", "weight": "10", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellBoxReplaces", "name": "HDBattery", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellBoxReplaces", "name": "HDAB", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellBoxReplaces", "name": "HDFragGrenadePickup", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellBoxReplaces", "name": "HD9mBoxPickup", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellBoxReplaces", "name": "HD7mBoxPickup", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShellBoxReplaces", "name": "DecoPusher", "weight": "1", "chance": "200", "persists": "true" }
+
+// Vanilla Item Spawn Tables
+
+// Computer Map Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "AllMap", "tableName": "HDCore.AllMapReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.AllMapReplaces", "name": "HDMap", "weight": "1", "persists": "true" }
+
+// Armor Bonus Spawns: Total Weight = 30, Total Persistent Weight = 30
+newSpawnTable => { "spawnName": "ArmorBonus", "tableName": "HDCore.ArmorBonusReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ArmorBonusReplaces", "name": "DecoPusher", "weight": "20", "chance": "96", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ArmorBonusReplaces", "name": "ShieldCore", "weight": "2", "chance": "100", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ArmorBonusReplaces", "name": "BFGNecroShard", "weight": "1", "chance": "96", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ArmorBonusReplaces", "name": "HDFragGrenades", "weight": "1", "chance": "72", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ArmorBonusReplaces", "name": "HD7mMag", "weight": "1", "chance": "48", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ArmorBonusReplaces", "name": "HD4mMag", "weight": "1", "chance": "48", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ArmorBonusReplaces", "name": "HDBattery", "weight": "1", "chance": "48", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ArmorBonusReplaces", "name": "PortableStimpack", "weight": "1", "chance": "48", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ArmorBonusReplaces", "name": "ClipBox", "weight": "1", "chance": "48", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ArmorBonusReplaces", "name": "HDAB", "weight": "1", "chance": "48", "persists": "true" }
+
+// Backpack Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Backpack", "tableName": "HDCore.BackpackReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BackpackReplaces", "name": "WildBackpack", "weight": "1", "persists": "true" }
+
+// Berserk Spawns: Total Weight = 10, Total Persistent Weight = 10
+newSpawnTable => { "spawnName": "Berserk", "tableName": "HDCore.BerserkReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BerserkReplaces", "name": "PortableBerserkPack", "weight": "5", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BerserkReplaces", "name": "BattleArmour", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BerserkReplaces", "name": "HEATAmmo", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BerserkReplaces", "name": "HD4mMag", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BerserkReplaces", "name": "HDJetpack", "weight": "1", "persists": "true" }
+
+// Blue Armor Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "BlueArmor", "tableName": "HDCore.BlueArmorReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BlueArmorReplaces", "name": "BattleArmour", "weight": "1", "persists": "true" }
+
+// Blur Sphere Spawns: Total Weight = 26, Total Persistent Weight = 26
+newSpawnTable => { "spawnName": "BlurSphere", "tableName": "HDCore.BlurSphereReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BlurSphereReplaces", "name": "SquadSummoner", "weight": "14", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BlurSphereReplaces", "name": "HDFragGrenades", "weight": "6", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BlurSphereReplaces", "name": "GarrisonArmour", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BlurSphereReplaces", "name": "HDHealingPotion", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BlurSphereReplaces", "name": "HDBlurSphere", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BlurSphereReplaces", "name": "HDJetpack", "weight": "1", "persists": "true" }
+
+// Green Armor Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "GreenArmor", "tableName": "HDCore.GreenArmorReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.GreenArmorReplaces", "name": "GarrisonArmour", "weight": "1", "persists": "true" }
+
+// Health Bonus Spawns: Total Weight = 29, Total Persistent Weight = 29
+newSpawnTable => { "spawnName": "HealthBonus", "tableName": "HDCore.HealthBonusReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HealthBonusReplaces", "name": "DecoPusher", "weight": "20", "chance": "96", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HealthBonusReplaces", "name": "HDHealingPotion", "weight": "2", "chance": "96", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HealthBonusReplaces", "name": "BFGNecroShard", "weight": "1", "chance": "96", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HealthBonusReplaces", "name": "HDFragGrenades", "weight": "1", "chance": "72", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HealthBonusReplaces", "name": "HDBattery", "weight": "1", "chance": "72", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HealthBonusReplaces", "name": "HD9mMag15", "weight": "1", "chance": "48", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HealthBonusReplaces", "name": "PortableMedikit", "weight": "1", "chance": "48", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HealthBonusReplaces", "name": "PortableStimpack", "weight": "1", "chance": "48", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HealthBonusReplaces", "name": "HDAB", "weight": "1", "chance": "48", "persists": "true" }
+
+// Light-amp Goggles Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Infrared", "tableName": "HDCore.InfraredReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.InfraredReplaces", "name": "PortableLiteAmp", "weight": "1", "persists": "true" }
+
+// Invulnerability Sphere Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "InvulnerabilitySphere", "tableName": "HDCore.InvulnerabilitySphereReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.InvulnerabilitySphereReplaces", "name": "HDInvulnerabilitySphere", "weight": "1", "persists": "true" }
+
+// Medikit Spawns: Total Weight = 46, Total Persistent Weight = 46
+newSpawnTable => { "spawnName": "Medikit", "tableName": "HDCore.MedikitReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MedikitReplaces", "name": "PortableMedikit", "weight": "30", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MedikitReplaces", "name": "PortableStimpack", "weight": "10", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MedikitReplaces", "name": "HD4mMag", "weight": "5", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MedikitReplaces", "name": "HDHealingPotion", "weight": "1", "persists": "true" }
+
+// Mega Sphere Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "MegaSphere", "tableName": "HDCore.MegaSphereReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MegaSphereReplaces", "name": "HDMegaSphere", "weight": "1", "persists": "true" }
+
+// Rad Suit Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "RadSuit", "tableName": "HDCore.RadSuitReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.RadSuitReplaces", "name": "PortableRadsuit", "weight": "1", "persists": "true" }
+
+// Soul Sphere Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "SoulSphere", "tableName": "HDCore.SoulSphereReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.SoulSphereReplaces", "name": "HDSoulSphere", "weight": "1", "persists": "true" }
+
+// Stimpack Spawns: Total Weight = 8, Total Persistent Weight = 8
+newSpawnTable => { "spawnName": "Stimpack", "tableName": "HDCore.StimpackReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StimpackReplaces", "name": "PortableStimpack", "weight": "4", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StimpackReplaces", "name": "PortableMedikit", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StimpackReplaces", "name": "HD4mMag", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StimpackReplaces", "name": "SecondBlood", "weight": "1", "persists": "true" }
+
+// Vanilla Key Spawn Tables
+
+// Blue Keycard Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "BlueCard", "tableName": "HDCore.BlueCardReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BlueCardReplaces", "name": "HDBlueKey", "weight": "1", "persists": "true" }
+
+// Blue Skull Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "BlueSkull", "tableName": "HDCore.BlueSkullReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BlueSkullReplaces", "name": "HDBlueSkull", "weight": "1", "persists": "true" }
+
+// Red Keycard Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "RedCard", "tableName": "HDCore.RedCardReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.RedCardReplaces", "name": "HDRedKey", "weight": "1", "persists": "true" }
+
+// Red Skull Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "RedSkull", "tableName": "HDCore.RedSkullReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.RedSkullReplaces", "name": "HDRedSkull", "weight": "1", "persists": "true" }
+
+// Yellow Keycard Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "YellowCard", "tableName": "HDCore.YellowCardReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.YellowCardReplaces", "name": "HDYellowKey", "weight": "1", "persists": "true" }
+
+// Yellow Skull Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "YellowSkull", "tableName": "HDCore.YellowSkullReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.YellowSkullReplaces", "name": "HDYellowSkull", "weight": "1", "persists": "true" }
+
+// Vanilla Monster Spawn Tables
+
+// Arachnotron Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Arachnotron", "tableName": "HDCore.ArachnotronReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ArachnotronReplaces", "name": "Manticore", "weight": "1", "persists": "true" }
+
+// Arch-Vile Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "ArchVile", "tableName": "HDCore.ArchVileReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ArchVileReplaces", "name": "Necromancer", "weight": "1", "persists": "true" }
+
+// Baron of Hell Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "BaronOfHell", "tableName": "HDCore.BaronOfHellReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BaronOfHellReplaces", "name": "Baron", "weight": "1", "persists": "true" }
+
+// Icon of Sin Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "BossBrain", "tableName": "HDCore.BossBrainReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BossBrainReplaces", "name": "HDBossBrain", "weight": "1", "persists": "true" }
+
+// Icon of Sin Spawners Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "BossEye", "tableName": "HDCore.BossEyeReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BossEyeReplaces", "name": "HDBossEye", "weight": "1", "persists": "true" }
+
+// Cacodemon Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Cacodemon", "tableName": "HDCore.CacodemonReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CacodemonReplaces", "name": "FlyZapper", "weight": "1", "persists": "true" }
+
+// Chaingun Guy Spawns: Total Weight = 10, Total Persistent Weight = 10
+newSpawnTable => { "spawnName": "ChaingunGuy", "tableName": "HDCore.ChaingunGuyReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ChaingunGuyReplaces", "name": "VulcanetteZombie", "weight": "6", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ChaingunGuyReplaces", "name": "UndeadRifleman", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ChaingunGuyReplaces", "name": "EnemyHERP", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ChaingunGuyReplaces", "name": "EnemyDERP", "weight": "1", "persists": "true" }
+
+// Commander Keen Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "CommanderKeen", "tableName": "HDCore.CommanderKeenReplaces" }
+// TODO: Move to LT Filter?
+addSpawnTableSingleEntry => { "tableName": "HDCoreCommanderKeen.Replaces", "name": "HDLizardJar", "weight": "1", "persists": "true" }
+// TODO: Move to ID Filter
+// addSpawnTableSingleEntry => { "tableName": "HDCore.CommanderKeenReplaces", "name": "HDKeen", "weight": "1", "persists": "true" }
+
+// Cyberdemon Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Cyberdemon", "tableName": "HDCore.CyberdemonReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CyberdemonReplaces", "name": "SatanRobo", "weight": "1", "persists": "true" }
+
+// Demon Spawns: Total Weight = 20, Total Persistent Weight = 20
+newSpawnTable => { "spawnName": "Demon", "tableName": "HDCore.DemonReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DemonReplaces", "name": "Babuin", "weight": "17", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DemonReplaces", "name": "SpecBabuin", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DemonReplaces", "name": "NinjaPirate", "weight": "1", "persists": "true" }
+
+// Imp Spawns: Total Weight = 10, Total Persistent Weight = 10
+newSpawnTable => { "spawnName": "DoomImp", "tableName": "HDCore.DoomImpReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DoomImpReplaces", "name": "FighterImp", "weight": "5", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DoomImpReplaces", "name": "MageImp", "weight": "3", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DoomImpReplaces", "name": "HealerImp", "weight": "2", "persists": "true" }
+
+// Mancubus Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Fatso", "tableName": "HDCore.FatsoReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.FatsoReplaces", "name": "Mancubus", "weight": "1", "persists": "true" }
+
+// Hell Knight Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "HellKnight", "tableName": "HDCore.HellKnightReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HellKnightReplaces", "name": "Knave", "weight": "1", "persists": "true" }
+
+// Lost Soul Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "LostSoul", "tableName": "HDCore.LostSoulReplaces" }
+// TODO: Move to LT Filter?
+addSpawnTableSingleEntry => { "tableName": "HDCore.LostSoulReplaces", "name": "Hatchling", "weight": "1", "persists": "true" }
+// TODO: Move to ID Filter?  Replaces Hatchling
+// addSpawnTableSingleEntry => { "tableName": "HDCore.LostSoulReplaces", "name": "FlyingSkull", "weight": "1", "persists": "true" }
+
+
+// Pain Elemental Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "PainElemental", "tableName": "HDCore.PainElementalReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.PainElementalReplaces", "name": "FlySpitter", "weight": "1", "persists": "true" }
+
+// Revenant Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Revenant", "tableName": "HDCore.RevenantReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.RevenantReplaces", "name": "Boner", "weight": "1", "persists": "true" }
+
+// Shotgun Guy Spawns: Total Weight = 226, Total Persistent Weight = 226
+newSpawnTable => { "spawnName": "ShotgunGuy", "tableName": "HDCore.ShotgunGuyReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShotgunGuyReplaces", "name": "Jackboot", "weight": "120", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShotgunGuyReplaces", "name": "UndeadJackbootman", "weight": "60", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShotgunGuyReplaces", "name": "JackAndJillboot", "weight": "40", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShotgunGuyReplaces", "name": "EnemyHERP", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShotgunGuyReplaces", "name": "EnemyDERP", "weight": "1", "persists": "true" }
+
+// Spectre Spawns: Total Weight = 26, Total Persistent Weight = 26
+newSpawnTable => { "spawnName": "Spectre", "tableName": "HDCore.SpectreReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.SpectreReplaces", "name": "SpecBabuin", "weight": "20", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.SpectreReplaces", "name": "NinjaPirate", "weight": "5", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.SpectreReplaces", "name": "ShellShade", "weight": "1", "persists": "true" }
+
+// Spider Mastermind Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "SpiderMastermind", "tableName": "HDCore.SpiderMastermindReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.SpiderMastermindReplaces", "name": "SpiderDemon", "weight": "1", "persists": "true" }
+
+// Wolfenstein SS Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "WolfensteinSS", "tableName": "HDCore.WolfensteinSSReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.WolfensteinSSReplaces", "name": "HoopBubble", "weight": "1", "persists": "true" }
+
+// Zombie Man Spawns: Total Weight = 145, Total Persistent Weight = 145
+newSpawnTable => { "spawnName": "ZombieMan", "tableName": "HDCore.ZombieManReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ZombieManReplaces", "name": "ZombieAutoStormtrooper", "weight": "100", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ZombieManReplaces", "name": "ZombieSemiStormtrooper", "weight": "20", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ZombieManReplaces", "name": "ZombieSMGStormtrooper", "weight": "10", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ZombieManReplaces", "name": "UndeadHomeboy", "weight": "14", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ZombieManReplaces", "name": "EnemyHERP", "weight": "1", "persists": "true" }
+
+// Vanilla Dead Monster Spawn Tables
+
+// Dead Cacodemon Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "DeadCacodemon", "tableName": "HDCore.DeadCacodemonReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DeadCacodemonReplaces", "name": "DeadFlyZapper", "weight": "1", "persists": "true" }
+
+// Dead Demon Spawns: Total Weight = 8, Total Persistent Weight = 8
+newSpawnTable => { "spawnName": "DeadDemon", "tableName": "HDCore.DeadDemonReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DeadDemonReplaces", "name": "DeadBabuin", "weight": "5", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DeadDemonReplaces", "name": "DeadSpecBabuin", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DeadDemonReplaces", "name": "DeadSpectre", "weight": "1", "persists": "true" }
+
+// Dead Imp Spawns: Total Weight = 10, Total Persistent Weight = 10
+newSpawnTable => { "spawnName": "DeadDoomImp", "tableName": "HDCore.DeadDoomImpReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DeadDoomImpReplaces", "name": "DeadFighterImp", "weight": "5", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DeadDoomImpReplaces", "name": "DeadMageImp", "weight": "3", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DeadDoomImpReplaces", "name": "DeadHealerImp", "weight": "2", "persists": "true" }
+
+// Dead Shotgun Guy Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "DeadShotgunGuy", "tableName": "HDCore.DeadShotgunGuyReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DeadShotgunGuyReplaces", "name": "DeadZombieShotgunner", "weight": "1", "persists": "true" }
+// addSpawnTableSingleEntry => { "tableName": "HDCore.DeadShotgunGuyReplaces", "name": "DeadJackboot", "weight": "120", "persists": "true" }
+// addSpawnTableSingleEntry => { "tableName": "HDCore.DeadShotgunGuyReplaces", "name": "DeadUndeadJackbootman", "weight": "60", "persists": "true" }
+// addSpawnTableSingleEntry => { "tableName": "HDCore.DeadShotgunGuyReplaces", "name": "DeadJackAndJillboot", "weight": "40", "persists": "true" }
+
+// Dead Zombie Man Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "DeadZombieMan", "tableName": "HDCore.DeadZombieManReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DeadZombieManReplaces", "name": "DeadZombieStormtrooper", "weight": "1", "persists": "true" }
+// addSpawnTableSingleEntry => { "tableName": "HDCore.DeadZombieManReplaces", "name": "DeadZombieAutoStormtrooper", "weight": "100", "persists": "true" }
+// addSpawnTableSingleEntry => { "tableName": "HDCore.DeadZombieManReplaces", "name": "DeadZombieSemiStormtrooper", "weight": "20", "persists": "true" }
+// addSpawnTableSingleEntry => { "tableName": "HDCore.DeadZombieManReplaces", "name": "DeadZombieSMGStormtrooper", "weight": "10", "persists": "true" }
+
+// Vanilla Stealth Monster Spawn Tables
+
+
+// Stealth Arachnotron Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "StealthArachnotron", "tableName": "HDCore.StealthArachnotronReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StealthArachnotronReplaces", "name": "HDStealthArachnotron", "weight": "1", "persists": "true" }
+
+// Stealth Arch-Vile Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "StealthArchVile", "tableName": "HDCore.StealthArchVileReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StealthArchVileReplaces", "name": "HDStealthArchvile", "weight": "1", "persists": "true" }
+
+// Stealth Baron of Hell Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "StealthBaronOfHell", "tableName": "HDCore.StealthBaronOfHellReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StealthBaronOfHellReplaces", "name": "HDStealthBaron", "weight": "1", "persists": "true" }
+
+// Stealth Cacodemon Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "StealthCacodemon", "tableName": "HDCore.StealthCacodemonReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StealthCacodemonReplaces", "name": "HDStealthCacodemon", "weight": "1", "persists": "true" }
+
+// Stealth Chaingun GuySpawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "StealthChaingunGuy", "tableName": "HDCore.StealthChaingunGuyReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StealthChaingunGuyReplaces", "name": "HDStealthChaingunGuy", "weight": "1", "persists": "true" }
+
+// Stealth Demon Spawns: Total Weight = 30, Total Persistent Weight = 30
+newSpawnTable => { "spawnName": "StealthDemon", "tableName": "HDCore.StealthDemonReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StealthDemonReplaces", "name": "NinjaPirate", "weight": "20", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StealthDemonReplaces", "name": "SpecBabuin", "weight": "5", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StealthDemonReplaces", "name": "StealthPortBabuin", "weight": "4", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StealthDemonReplaces", "name": "ShellShade", "weight": "1", "persists": "true" }
+
+// Stealth Imp Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "StealthDoomImp", "tableName": "HDCore.StealthDoomImpReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StealthDoomImpReplaces", "name": "HDStealthDoomImp", "weight": "1", "persists": "true" }
+
+// Stealth Mancubus Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "StealthFatso", "tableName": "HDCore.StealthFatsoReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StealthFatsoReplaces", "name": "HDStealthMancubus", "weight": "1", "persists": "true" }
+
+// Stealth Hell Knight Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "StealthHellKnight", "tableName": "HDCore.StealthHellKnightReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StealthHellKnightReplaces", "name": "HDStealthHellKnight", "weight": "1", "persists": "true" }
+
+// Stealth Revenant Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "StealthRevenant", "tableName": "HDCore.StealthRevenantReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StealthRevenantReplaces", "name": "HDStealthBoner", "weight": "1", "persists": "true" }
+
+// Stealth Shotgun Guy Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "StealthShotgunGuy", "tableName": "HDCore.StealthShotgunGuyReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StealthShotgunGuyReplaces", "name": "HDStealthShotgunGuy", "weight": "1", "persists": "true" }
+// addSpawnTableSingleEntry => { "tableName": "HDCore.StealthShotgunGuyReplaces", "name": "ShellShade", "weight": "1", "persists": "true" }
+
+// Stealth Zombie Man Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "StealthZombieMan", "tableName": "HDCore.StealthZombieManReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StealthZombieManReplaces", "name": "HDStealthZombieMan", "weight": "1", "persists": "true" }
+
+// Vanilla Decoration Spawn Tables
+
+// Big Tree Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "BigTree", "tableName": "HDCore.BigTreeReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BigTreeReplaces", "name": "HDBigTree", "weight": "1", "persists": "true" }
+
+// Blood Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Blood", "tableName": "HDCore.BloodReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BloodReplaces", "name": "BloodSplat", "weight": "1", "persists": "true" }
+
+// Blood Splatter Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "BloodSplatter", "tableName": "HDCore.BloodSplatterReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BloodSplatterReplaces", "name": "BloodSplattest", "weight": "1", "persists": "true" }
+
+// Bloody Twitch Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "BloodyTwitch", "tableName": "HDCore.BloodyTwitchReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BloodyTwitchReplaces", "name": "HDTwitchHang", "weight": "1", "persists": "true" }
+
+// Blue Torch Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "BlueTorch", "tableName": "HDCore.BlueTorchReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BlueTorchReplaces", "name": "HDBlueTorch", "weight": "1", "persists": "true" }
+
+// Burning Barrel Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "BurningBarrel", "tableName": "HDCore.BurningBarrelReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.BurningBarrelReplaces", "name": "HDFireCan", "weight": "1", "persists": "true" }
+
+// Candelabra Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Candelabra", "tableName": "HDCore.CandelabraReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CandelabraReplaces", "name": "HDCandelabra", "weight": "1", "persists": "true" }
+
+// Candlestick Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Candlestick", "tableName": "HDCore.CandlestickReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.CandlestickReplaces", "name": "HDCandle", "weight": "1", "persists": "true" }
+
+// Column Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Column", "tableName": "HDCore.ColumnReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ColumnReplaces", "name": "HDColumn", "weight": "1", "persists": "true" }
+
+// Dead Stick Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "DeadStick", "tableName": "HDCore.DeadStickReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DeadStickReplaces", "name": "HDDeadStick", "weight": "1", "persists": "true" }
+
+// Evil Eye Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "EvilEye", "tableName": "HDCore.EvilEyeReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.EvilEyeReplaces", "name": "HDEvilEye", "weight": "1", "persists": "true" }
+
+// Explosive Barrel Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "ExplosiveBarrel", "tableName": "HDCore.ExplosiveBarrelReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ExplosiveReplaces", "name": "HDBarrel", "weight": "1", "persists": "true" }
+
+// Floating Skull Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "FloatingSkull", "tableName": "HDCore.FloatingSkullReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.FloatingSkullReplaces", "name": "HDFloatingSkull", "weight": "1", "persists": "true" }
+
+// Green Torch Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "GreenTorch", "tableName": "HDCore.GreenTorchReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.GreenTorchReplaces", "name": "HDGreenTorch", "weight": "1", "persists": "true" }
+
+// Hanging Corpse (No Guts) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "HangNoGuts", "tableName": "HDCore.HangNoGutsReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HangNoGutsReplaces", "name": "HDHTNoGuts", "weight": "1", "persists": "true" }
+
+// Hanging Torso (Looking Down) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "HangTLookingDown", "tableName": "HDCore.HangTLookingDownReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HangTLookingDownReplaces", "name": "HDHTLkDown", "weight": "1", "persists": "true" }
+
+// Hanging Torso (Looking Up) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "HangTLookingUp", "tableName": "HDCore.HangTLookingUpReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HangTLookingUpReplaces", "name": "HDHTLkUp", "weight": "1", "persists": "true" }
+
+// Hanging Torso (No Brain) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "HangTNoBrain", "tableName": "HDCore.HangTNoBrainReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HangTNoBrainReplaces", "name": "HDHTNoBrain", "weight": "1", "persists": "true" }
+
+// Hanging Torso (Skull) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "HangTSkull", "tableName": "HDCore.HangTSkullReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HangTSkullReplaces", "name": "HDHTSkull", "weight": "1", "persists": "true" }
+
+// Head Candles Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "HeadCandles", "tableName": "HDCore.HeadCandlesReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HeadCandlesReplaces", "name": "HDHeadCandles", "weight": "1", "persists": "true" }
+
+// Head on a Stick Spawns: Total Weight = 3, Total Persistent Weight = 3
+newSpawnTable => { "spawnName": "HeadOnAStick", "tableName": "HDCore.HeadOnAStickReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HeadOnAStickReplaces", "name": "HDHeadStickBase", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HeadOnAStickReplaces", "name": "HDHeadStickOld", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HeadOnAStickReplaces", "name": "HDHeadStickBlack", "weight": "1", "persists": "true" }
+
+// Heads on a Stick Spawns: Total Weight = 2, Total Persistent Weight = 2
+newSpawnTable => { "spawnName": "HeadsOnAStick", "tableName": "HDCore.HeadsOnAStickReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HeadsOnAStickReplaces", "name": "HDHeadsStickBase", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HeadsOnAStickReplaces", "name": "HDHeadsStickOld", "weight": "1", "persists": "true" }
+
+// Heart Column Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "HeartColumn", "tableName": "HDCore.HeartColumnReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.HeartColumnReplaces", "name": "HDHeartColumn", "weight": "1", "persists": "true" }
+
+// Live Stick Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "LiveStick", "tableName": "HDCore.LiveStickReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.LiveStickReplaces", "name": "HDTwitchStick", "weight": "1", "persists": "true" }
+
+// Meat 2 Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Meat2", "tableName": "HDCore.Meat2Replaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.Meat2Replaces", "name": "HDMt2", "weight": "1", "persists": "true" }
+
+// Meat 3 Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Meat3", "tableName": "HDCore.Meat3Replaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.Meat3Replaces", "name": "HDMt3", "weight": "1", "persists": "true" }
+
+// Meat 4 Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Meat4", "tableName": "HDCore.Meat4Replaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.Meat4Replaces", "name": "HDMt4", "weight": "1", "persists": "true" }
+
+// Meat 5 Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Meat5", "tableName": "HDCore.Meat5Replaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.Meat5Replaces", "name": "HDMt5", "weight": "1", "persists": "true" }
+
+// Non-Solid Meat 2 Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "NonSolidMeat2", "tableName": "HDCore.NonSolidMeat2Replaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.NonSolidMeat2Replaces", "name": "HDM2NS", "weight": "1", "persists": "true" }
+
+// Non-Solid Meat 3 Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "NonSolidMeat3", "tableName": "HDCore.NonSolidMeat3Replaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.NonSolidMeat3Replaces", "name": "HDMt3NS", "weight": "1", "persists": "true" }
+
+// Non-Solid Meat 4 Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "NonSolidMeat4", "tableName": "HDCore.NonSolidMeat4Replaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.NonSolidMeat4Replaces", "name": "HDMt4NS", "weight": "1", "persists": "true" }
+
+// Non-Solid Meat 5 Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "NonSolidMeat5", "tableName": "HDCore.NonSolidMeat5Replaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.NonSolidMeat5Replaces", "name": "HDMt5NS", "weight": "1", "persists": "true" }
+
+// Non-Solid Twitch Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "NonSolidTwitch", "tableName": "HDCore.NonSolidTwitchReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.NonSolidTwitchReplaces", "name": "HDTwitchHangNS", "weight": "1", "persists": "true" }
+
+// Red Torch Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "RedTorch", "tableName": "HDCore.RedTorchReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.RedStorchReplaces", "name": "HDRedTorch", "weight": "1", "persists": "true" }
+
+// Short Blue Torch Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "ShortBlueTorch", "tableName": "HDCore.ShortBlueTorchReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShortBlueTorchReplaces", "name": "HDShortBlueTorch", "weight": "1", "persists": "true" }
+
+// Short Green Column Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "ShortGreenColumn", "tableName": "HDCore.ShortGreenColumnReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShortGreenColumnReplaces", "name": "HDShortGreenColumn", "weight": "1", "persists": "true" }
+
+// Short Green Torch Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "ShortGreenTorch", "tableName": "HDCore.ShortGreenTorchReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShortGreenTorchReplaces", "name": "HDShortGreenTorch", "weight": "1", "persists": "true" }
+
+// Short Red column Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "ShortRedColumn", "tableName": "HDCore.ShortRedColumnReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShortRedColumnReplaces", "name": "HDShortRedColumn", "weight": "1", "persists": "true" }
+
+// Short Red Torch Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "ShortRedTorch", "tableName": "HDCore.ShortRedTorchReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ShortRedTorchReplaces", "name": "HDShortRedTorch", "weight": "1", "persists": "true" }
+
+// Skull Column Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "SkullColumn", "tableName": "HDCore.SkullColumnReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.SkullColumnReplaces", "name": "HDSkullColumn", "weight": "1", "persists": "true" }
+
+// Stalagmite Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Stalagmite", "tableName": "HDCore.StalagmiteReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StalagmiteReplaces", "name": "HDStalagmite", "weight": "1", "persists": "true" }
+
+// Stalagtite Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "Stalagtite", "tableName": "HDCore.StalagtiteReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.StalagtiteReplaces", "name": "HDStalagtite", "weight": "1", "persists": "true" }
+
+// TallGreenColumn Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "TallGreenColumn", "tableName": "HDCore.TallGreenColumnReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.TallGreenColumnReplaces", "name": "HDTallGreenColumn", "weight": "1", "persists": "true" }
+
+// TallRedColumn Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "TallRedColumn", "tableName": "HDCore.TallRedColumnReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.TallRedColumnReplaces", "name": "HDTallRedColumn", "weight": "1", "persists": "true" }
+
+// Tech Lamp Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "TechLamp", "tableName": "HDCore.TechLampReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.TechLampReplaces", "name": "HDTechLamp", "weight": "1", "persists": "true" }
+
+// Tech Lamp 2 Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "TechLamp2", "tableName": "HDCore.TechLamp2Replaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.TechLamp2Replaces", "name": "HDTechLamp2", "weight": "1", "persists": "true" }
+
+// Tech Pillar Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "TechPillar", "tableName": "HDCore.TechPillarReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.TechPillarReplaces", "name": "HDTechPillar", "weight": "1", "persists": "true" }
+
+// Teleport Fog Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "TeleportFog", "tableName": "HDCore.TeleportFogReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.TeleportFogReplaces", "name": "TeleFog", "weight": "1", "persists": "true" }
+
+// Torch Tree Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "TorchTree", "tableName": "HDCore.TorchTreeReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.TorchTreeReplaces", "name": "HDTorchTree", "weight": "1", "persists": "true" }
+
+// Vanilla Marines Spawn Tables
+
+// Scripted Marine Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "ScriptedMarine", "tableName": "HDCore.ScriptedMarineReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.ScriptedMarineReplaces", "name": "HDOperator", "weight": "1", "persists": "true" }
+
+// Marine (Fist) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "MarineFist", "tableName": "HDCore.MarineFistReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MarineFistReplaces", "name": "RifleFistman", "weight": "1", "persists": "true" }
+
+// Marine (Chaingun) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "MarineChaingun", "tableName": "HDCore.MarineChaingunReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MarineChaingunReplaces", "name": "RifleChaingunman", "weight": "1", "persists": "true" }
+
+// Marine (Shotgun) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "MarineShotgun", "tableName": "HDCore.MarineShotgunReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MarineShotgunReplaces", "name": "EnforcerShot", "weight": "1", "persists": "true" }
+
+// Marine (Super Shotgun) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "MarineSSG", "tableName": "HDCore.MarineSSGReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MarineSSGReplaces", "name": "EnforcerSuperShot", "weight": "1", "persists": "true" }
+
+// Marine (Berserk) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "MarineBerserk", "tableName": "HDCore.MarineBerserkReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MarineBerserkReplaces", "name": "EnforcerNoShot", "weight": "1", "persists": "true" }
+
+// Marine (Pistol) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "MarinePistol", "tableName": "HDCore.MarinePistolReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MarinePistolReplaces", "name": "InfiltratorPistol", "weight": "1", "persists": "true" }
+
+// Marine (Chainsaw) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "MarineChainsaw", "tableName": "HDCore.MarineChainsawReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MarineChainsawReplaces", "name": "InfiltratorChainsaw", "weight": "1", "persists": "true" }
+
+// Marine (Rocket Launcher) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "MarineRocket", "tableName": "HDCore.MarineRocketReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MarineRocketReplaces", "name": "RRocketeer", "weight": "1", "persists": "true" }
+
+// Marine (BFG-9000) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "MarineBFG", "tableName": "HDCore.MarineBFGReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MarineBFGReplaces", "name": "BFuglyteer", "weight": "1", "persists": "true" }
+
+// Marine (Plasma Rifle) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "MarinePlasma", "tableName": "HDCore.MarinePlasmaReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MarinePlasmaReplaces", "name": "Plasmateer", "weight": "1", "persists": "true" }
+
+// Marine (Railgun) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "MarineRailgun", "tableName": "HDCore.MarineRailgunReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.MarineRailgunReplaces", "name": "Railgunteer", "weight": "1", "persists": "true" }
+
+// Vanilla Dead Marines Spawn Tables
+
+// Dead Marine Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "DeadMarine", "tableName": "HDCore.DeadMarineReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.DeadMarineReplaces", "name": "DeadRifleman", "weight": "1", "persists": "true" }
+
+// Gibbed Marine Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "GibbedMarine", "tableName": "HDCore.GibbedMarineReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.GibbedMarineReplaces", "name": "ReallyDeadRifleman", "weight": "1", "persists": "true" }
+
+// Gibbed Marine (Extra) Spawns: Total Weight = 1, Total Persistent Weight = 1
+newSpawnTable => { "spawnName": "GibbedMarineExtra", "tableName": "HDCore.GibbedMarineExtraReplaces" }
+addSpawnTableSingleEntry => { "tableName": "HDCore.GibbedMarineExtraReplaces", "name": "ReallyDeadRiflemanCrouched", "weight": "1", "persists": "true" }
 
 
 
@@ -82,39 +894,70 @@
 // -----------------
 
 // Add a new ammo association entry
-// - ammoName = Name of the ammo to check against when adding things that use it
+// - ammoName = ClassName of the ammo to check against when adding things that use it
 //
-// newAmmo => {"ammoName":"FourMilAmmo"}
+// newAmmo => { "ammoName": "FourMilAmmo" }
 
-// Add a new weapon association to the given ammo type
-// - ammoName   = Name of the ammo to associate
-// - weaponName = Name of the weapon to associate with the ammo
+// Add a new ammo association to the given ammo type
+// - ammoName = Name of the ammo to associate
+// - name     = ClassName of the thing to associate with the ammo
 // 
-// addAmmoWeapon => {"ammoName":"HDPistolAmmo","weaponName":"MyCoolPistol"}
+// addAmmoUser => { "ammoName": "HDPistolAmmo", "name": "MyCoolPistol" }
 
 // Remove an existing ammo association entry
-// - ammoName = Name of the ammo to remove
+// - ammoName = ClassName of the ammo to remove
 //
-// removeAmmo => {"ammoName":"SevenMilAmmo"}
+// removeAmmo => { "ammoName": "SevenMilAmmo" }
 
 // Remove all existing ammo associations
 //
 // removeAllAmmo => {}
 
+// HDest Ammo Associations
+newAmmo => { "ammoName": "HDPistolAmmo" }
+newAmmo => { "ammoName": "HDShellAmmo" }
+newAmmo => { "ammoName": "HDRevolverAmmo" }
+newAmmo => { "ammoName": "FourMilAmmo" }
+newAmmo => { "ammoName": "HDRocketAmmo" }
+newAmmo => { "ammoName": "HEATAmmo" }
+newAmmo => { "ammoName": "HDBattery" }
+newAmmo => { "ammoName": "SevenMilAmmo" }
+newAmmo => { "ammoName": "BrontornisRound" }
 
 
-// AMMO BOX SPAWN POOL BLACKLISTING
+
+// AMMO BOX SPAWN POOL COMMANDS
 // --------------------------------
+
+// Add a new ammo to the whitelist
+// - ammoName = Name of the ammo to add
+// - allowed  = Used to determine if ammo should be removed from blacklist if true, otherwise added
+//
+// addAmmoBoxFilter => { "ammoName": "FourMilAmmo", "allowed": "true" }
+
+// Add a new ammo to the whitelist
+// - ammoName = Name of the ammo to add
+//
+// addAmmoBoxWhitelist => { "ammoName": "FourMilAmmo" }
+
+// Remove an existing ammo from the whitelist
+// - ammoName = Name of the ammo to remove
+//
+// removeAmmoBoxWhitelist => { "ammoName": "SevenMilAmmo" }
+
+// Remove all existing ammo from whitelist
+//
+// clearAmmoBoxWhitelist => {}
 
 // Add a new ammo to the blacklist
 // - ammoName = Name of the ammo to add
 //
-// addAmmoBoxBlacklist => {"ammoName":"FourMilAmmo"}
+// addAmmoBoxBlacklist => { "ammoName": "FourMilAmmo" }
 
 // Remove an existing ammo from the blacklist
 // - ammoName = Name of the ammo to remove
 //
-// removeAmmoBoxBlacklist => {"ammoName":"SevenMilAmmo"}
+// removeAmmoBoxBlacklist => { "ammoName": "SevenMilAmmo" }
 
 // Remove all existing ammo from blacklist
 //
@@ -122,18 +965,38 @@
 
 
 
-// BACKPACK SPAWN POOL BLACKLISTING
+// BACKPACK SPAWN POOL COMMANDS
 // --------------------------------
+
+// Add a new ammo to the whitelist
+// - name = Name of the item to add
+// - allowed  = Used to determine if item should be added to spawn pool if true, otherwise remove it
+//
+// addBPSpawnPoolFilter => { "name": "HDInvulnerabilitySphere", "allowed": "false" }
+
+// Add a new item to the whitelist
+// - name = Name of the item to add
+//
+// addBPSpawnPoolWhitelist => { "name": "HDBlursphere" }
+
+// Remove an existing item from the whitelist
+// - name = Name of the item to remove
+//
+// removeBPSpawnPoolWhitelist => { "name": "HDMegaSphere" }
+
+// Remove all existing items from whitelist
+//
+// clearBPSpawnPoolWhitelist => {}
 
 // Add a new item to the blacklist
 // - name = Name of the item to add
 //
-// addBPSpawnPoolBlacklist => {"name":"HDBlursphere"}
+// addBPSpawnPoolBlacklist => { "name": "HDBlursphere" }
 
 // Remove an existing item from the blacklist
 // - name = Name of the item to remove
 //
-// removeBPSpawnPoolBlacklist => {"name":"HDMegaSphere"}
+// removeBPSpawnPoolBlacklist => { "name": "HDMegaSphere" }
 
 // Remove all existing items from blacklist
 //
