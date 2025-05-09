@@ -180,7 +180,7 @@ class HDCoreSpawnHandler : EventHandler {
                 case 'addSpawnTableSingleEntry': {
                     let entry = HDCoreSpawnTableSingleEntry.create(
                         cmd.getNameParam("name"),
-                        cmd.getDoubleParam("weight"),
+                        cmd.getDoubleParam("weight", 1.0),
                         cmd.getBoolParam("persists"),
                         cmd.getIntParam("chance", 256)
                     );
@@ -198,15 +198,19 @@ class HDCoreSpawnHandler : EventHandler {
                         cmd.getBoolParam("replaces", true)
                     );
 
-                    if (!nestedTable) HDCoreSpawnTable.create(
-                        cmd.getNameParam("name"),
-                        cmd.getNameParam("name"),
-                        cmd.getBoolParam("replaces", true)
-                    );
+                    if (!nestedTable) {
+                        nestedTable = HDCoreSpawnTable.create(
+                            cmd.getNameParam("name"),
+                            cmd.getNameParam("name"),
+                            cmd.getBoolParam("replaces", true)
+                        );
+
+                        addSpawnTable(nestedTable);
+                    }
 
                     let entry = HDCoreSpawnTableNestedEntry.create(
                         nestedTable,
-                        cmd.getDoubleParam("weight"),
+                        cmd.getDoubleParam("weight", 1.0),
                         cmd.getBoolParam("persists"),
                         cmd.getIntParam("chance", 256)
                     );
@@ -258,7 +262,7 @@ class HDCoreSpawnHandler : EventHandler {
 
                     if (table) {
                         let entry = table.getEntry(cmd.getNameParam("name"));
-                        let weight = cmd.getDoubleParam("weight");
+                        let weight = cmd.getDoubleParam("weight", 1.0);
 
                         if (entry) entry.weight = weight > 0 ? weight : entry.getWeight();
                     }

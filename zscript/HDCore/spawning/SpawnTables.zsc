@@ -114,15 +114,19 @@ class HDCoreSpawnTable play {
         getWeights(weights, entries, persistentOnly);
 
         if (hd_debug) {
-            console.printF(tablename.."Weights: ");
+            console.printF(tablename.." Weights:");
             foreach (weight : weights) console.printF(" * "..weight);
         }
 
-        let entry = entries[HDCore.getWeightedRandom(weights)];
+        if (entries.size() > 0) {
+            let entry = entries[HDCore.getWeightedRandom(weights)];
+    
+            if (entry is 'HDCoreSpawnTableNestedEntry') return HDCoreSpawnTableNestedEntry(entry)._table.getRandomEntry(persistentOnly);
+    
+            return entry;
+        }
 
-        if (entry is 'HDCoreSpawnTableNestedEntry') return HDCoreSpawnTableNestedEntry(entry)._table.getRandomEntry(persistentOnly);
-
-        return entry;
+        return null;
     }
 
     void getWeights(out Array<double> weights, Array<HDCoreSpawnTableEntry> entries, bool persistentOnly = false) {
