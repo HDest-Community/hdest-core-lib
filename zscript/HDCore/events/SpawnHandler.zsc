@@ -205,7 +205,7 @@ class HDCoreSpawnHandler : EventHandler {
                             cmd.getBoolParam("replaces", true)
                         );
 
-                        addSpawnTable(nestedTable);
+                        if (nestedTable) addSpawnTable(nestedTable);
                     }
 
                     let entry = HDCoreSpawnTableNestedEntry.create(
