@@ -16,14 +16,9 @@ class HDCoreBPSpawnPoolHandler : EventHandler {
         backpackWhitelist.clear();
         backpackBlacklist.clear();
 
-        Array<HDCoreCommand> cmds;
-        cmds.clear();
+        let cmdReader = HDCoreInfoReader(StaticEventHandler.find('HDCoreInfoReader'));
         
-        HDCore.getHDCoreInfoCommands(cmds);
-
-        if (hd_debug) forEach(cmd : cmds) console.printF(cmd.toString());
-        
-        loadBPSpawnPoolLists(cmds);
+        loadBPSpawnPoolLists(cmdReader.commands);
 
         if (hd_debug) {
             console.printF("BP Spawn Pool Whitelist:");

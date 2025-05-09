@@ -19,16 +19,14 @@ class HDCoreAmmoBoxSpawnPoolHandler : EventHandler {
         ammoBoxWhitelist.clear();
         ammoBoxBlacklist.clear();
 
-        Array<HDCoreCommand> cmds;
-        cmds.clear();
-        
-        HDCore.getHDCoreInfoCommands(cmds);
+        let cmdReader = HDCoreInfoReader(StaticEventHandler.find('HDCoreInfoReader'));
 
-        if (hd_debug) forEach(cmd : cmds) console.printF(cmd.toString());
-        
-        loadAmmoBoxLists(cmds);
+        loadAmmoBoxLists(cmdReader.commands);
 
-        if (hd_debug) forEach(bl : ammoBoxBlacklist) console.printF(bl.getClassName());
+        if (hd_debug) {
+            console.printF("Configured Ammo Box Blacklist:");
+            forEach(bl : ammoBoxBlacklist) console.printF(" * "..bl.getClassName());
+        }
 
         initialized = true;
     }

@@ -79,16 +79,14 @@ class HDCoreAmmoUsesHandler : EventHandler {
         thingBlacklist.clear();
         ammoSpawnList.clear();
 
-        Array<HDCoreCommand> cmds;
-        cmds.clear();
-        
-        HDCore.getHDCoreInfoCommands(cmds);
+        let cmdReader = HDCoreInfoReader(StaticEventHandler.find('HDCoreInfoReader'));
 
-        if (hd_debug) forEach(cmd : cmds) console.printF(cmd.toString());
-        
-        loadAmmoUses(cmds);
+        loadAmmoUses(cmdReader.commands);
 
-        if (hd_debug) forEach(ammo : ammoSpawnList) console.printF(ammo.toString());
+        if (hd_debug) {
+            console.printF("Configured Ammo Usage List:");
+            forEach(ammo : ammoSpawnList) console.printF(ammo.toString());
+        }
 
         initialized = true;
     }

@@ -132,17 +132,9 @@ class HDCoreSpawnHandler : EventHandler {
         thingBlacklist.clear();
         spawnTables.clear();
 
-        Array<HDCoreCommand> cmds;
-        cmds.clear();
-        
-        HDCore.getHDCoreInfoCommands(cmds);
+        let cmdReader = HDCoreInfoReader(StaticEventHandler.find('HDCoreInfoReader'));
 
-        if (hd_debug) {
-            console.printF("Parsed Commands:");
-            forEach(cmd : cmds) console.printF(cmd.toString());
-        }
-        
-        loadSpawnTables(cmds);
+        loadSpawnTables(cmdReader.commands);
 
         if (hd_debug) {
             console.printF("Configured Spawn Tables:");

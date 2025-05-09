@@ -1,19 +1,46 @@
-extend class HDCore {
+const HDCONST_HDCEVENT = -1000;
 
-    static void getHDCoreInfoCommands(out Array<HDCoreCommand> arr) {
-        
+class HDCoreInfoReader : StaticEventHandler {
+
+    Array<HDCoreCommand> commands;
+
+    override void onRegister() {
+
+        // This should go absolutely first, to initialize all possible commands
+        setOrder(HDCONST_HDCEVENT);
+
         // Initialize a temp array of raw command strings
         Array<string> cmds;
         cmds.clear();
+
+        // Initialize Commands Array
+        commands.clear();
 
         // Read the HDCINFO lumps into the temp list of raw commands
         readHDCoreInfo(cmds);
 
         // Parse the HDCore Lumps into the cache of commands
-        parseHDCoreInfo(cmds, arr);
+        parseHDCoreInfo(cmds, commands);
+
+        if (hd_debug) {
+            console.printF("Parsed HDCoreCommands:");
+            forEach(cmd : commands) console.printF(cmd.toString());
+        }
     }
+
+    // static void getHDCoreInfoCommands(out Array<HDCoreCommand> arr, out Array<name> cmdNames) {
+        
+    //     // Initialize a temp array of raw command strings
+    //     Array<string> arr;
+    //     arr.clear();
+
+    //     let cmdReader = HDCoreInfoReader(StaticEventHandler.find('HDCoreInfoReader'));
+
+    //     // Return the commands filtered by the given list, if any
+    //     forEach (cmd : cmdReader.commands) if (cmdNames.size() < 1 || cmdNames.indexOf(cmd) < cmdNames.size()) arr.push(cmd);
+    // }
     
-    static void readHDCoreInfo(out Array<string> arr) {
+    private void readHDCoreInfo(out Array<string> arr) {
         string rawLumpText;
         int lumpNum;
 
@@ -28,11 +55,8 @@ extend class HDCore {
 
                 // Remove comments
                 int commentIdx = line.indexOf("//");
-                if (commentIdx == 0) {
-                    line = "";
-                } else if (commentIdx > 0) {
-                    line = line.left(commentIdx);
-                }
+                if (commentIdx == 0) continue;
+                else if (commentIdx > 0) line = line.left(commentIdx);
 
                 // Remove newline and return characters
                 line.replace("\r", "");
@@ -54,7 +78,7 @@ extend class HDCore {
         }
     }
 
-    static void parseHDCoreInfo(Array<string> input, out Array<HDCoreCommand> output) {
+    private void parseHDCoreInfo(Array<string> input, out Array<HDCoreCommand> output) {
         output.clear();
 
         Array<string> tokens;
