@@ -137,11 +137,17 @@ class HDCoreSpawnHandler : EventHandler {
         
         HDCore.getHDCoreInfoCommands(cmds);
 
-        if (hd_debug) forEach(cmd : cmds) console.printF(cmd.toString());
+        if (hd_debug) {
+            console.printF("Parsed Commands:");
+            forEach(cmd : cmds) console.printF(cmd.toString());
+        }
         
         loadSpawnTables(cmds);
 
-        if (hd_debug) forEach(table : spawnTables) console.printF(table.toString());
+        if (hd_debug) {
+            console.printF("Configured Spawn Tables:");
+            forEach(table : spawnTables) console.printF(" * "..table.toString());
+        }
 
         initialized = true;
     }
