@@ -150,13 +150,15 @@ class HDCoreAmmoUsesHandler : EventHandler {
     }
 
     private void handleAmmoUses(HDAmmo ammo) {
-        foreach (ammoSpawn : ammoSpawnList) if (ammo.getClassName() == ammoSpawn.ammoName) {
-            if (hd_debug) {
-                console.printF("Adding the following to the list of items that use "..ammo.getClassName().."");
-                foreach (weapon : ammoSpawn.userNames) console.printF(" * "..weapon);
-            }
+        foreach (ammoSpawn : ammoSpawnList) {
+            if (ammo.getClassName() == ammoSpawn.ammoName && ammoSpawn.userNames.size() > 0) {
+                if (hd_debug) {
+                    console.printF("Adding the following to the list of items that use "..ammo.getClassName().."");
+                    foreach (weapon : ammoSpawn.userNames) console.printF(" * "..weapon);
+                }
 
-            forEach(userName : ammoSpawn.userNames) ammo.itemsThatUseThis.push(userName);
+                forEach(userName : ammoSpawn.userNames) ammo.itemsThatUseThis.push(userName);
+            }
         }
     }
 }
