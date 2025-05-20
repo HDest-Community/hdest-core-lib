@@ -89,8 +89,8 @@ class HDCoreSpawnHandler : EventHandler {
         if (entry) {
             let replacement = entry.getValue(persistentOnly);
     
-            if (replacement != e.replacee) {
-                if (hd_debug) console.printf(e.replacee.getClassName().." -> "..entry.name);
+            if (replacement != e.replacee && replacement != 'NullSpawner') {
+                if (hd_debug) console.printf(e.replacee.getClassName().." -> "..replacement);
     
                 e.replacement = replacement;
                 // TODO: Support marking replacements as final
@@ -113,7 +113,7 @@ class HDCoreSpawnHandler : EventHandler {
         if (entry) {
             let value = entry.getValue(persistentOnly);
 
-            if (value != a.getClassName()) {
+            if (value != a.getClassName() && value != 'NullSpawner') {
                 if (hd_debug) console.printf(a.getClassName().." + "..value);
     
                 Actor.Spawn(value, a.pos);
