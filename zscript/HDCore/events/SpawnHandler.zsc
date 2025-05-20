@@ -160,13 +160,30 @@ class HDCoreSpawnHandler : EventHandler {
                     break;
                 }
                 case 'newSpawnTable': {
-                    let table = HDCoreSpawnTable.create(
-                        cmd.getNameParam("spawnName"),
-                        cmd.getNameParam("tableName"),
-                        cmd.getBoolParam("replaces", true)
-                    );
+                    let spawnName   = cmd.getNameParam("spawnName");
+                    let tableName   = cmd.getNameParam("tableName");
+                    let replacement = cmd.getBoolParam("replaces", true);
 
-                    if (table) addSpawnTable(table);
+                    // If one already exists, quit.
+                    if (getSpawnTable(tableName ? tableName : spawnName, replacement)) return;
+
+                    // Create the new
+                    let table = HDCoreSpawnTable.create(spawnName, tableName, replacement);
+
+                    if (table) {
+                        if (cmd.getBoolParam("addOriginalThing")) {
+                            let entry = HDCoreSpawnTableSingleEntry.create(
+                                spawnName,
+                                cmd.getDoubleParam("weight", 1.0),
+                                cmd.getBoolParam("persists"),
+                                cmd.getIntParam("chance", 256)
+                            );
+    
+                            if (entry) table.addEntry(entry);
+                        }
+
+                        addSpawnTable(table);
+                    }
                     break;
                 }
                 case 'addSpawnTableSingleEntry': {
