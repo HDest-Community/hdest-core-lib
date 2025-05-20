@@ -87,15 +87,15 @@ class HDCoreSpawnTable play {
             // Filter out persistence-related entries
             if (!persistentOnly || entry.isPersistent) {
 
-                // If weight is (basically) 0, treat as only possible outcome (replace all)
-                if (HDGMGlobalMaths.nearZero(entry.getWeight(persistentOnly))) {
+                // If weight is negative, treat as only possible outcome (replace all)
+                if (entry.getWeight(persistentOnly) < 0.0) {
                     arr.clear();
                     arr.push(entry);
                     return;
                 }
     
-                // Otherwise, as long as we have a valid weight, add it to 
-                if (entry.getWeight(persistentOnly) > 0.0) {
+                // Otherwise, as long as we have a valid weight, add it to array
+                if (!HDGMGlobalMaths.nearZero(entry.getWeight(persistentOnly))) {
                     arr.push(entry);
                 }
             }
