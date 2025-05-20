@@ -40,7 +40,7 @@ class HDCoreSpawnTable play {
 
         let entriesStr = "[";
 
-        foreach (entry : _entries) entriesStr = entriesStr..", "..entry.toString();
+        forEach (entry : _entries) entriesStr = entriesStr..", "..entry.toString();
 
         entriesStr = entriesStr.."]";
 
@@ -61,7 +61,7 @@ class HDCoreSpawnTable play {
     void removeEntry(name name) {
         HDCoreSpawnTableEntry tableEntry;
 
-        foreach (entry : _entries) {
+        forEach (entry : _entries) {
             if (entry.name == name) {
                 tableEntry = entry;
                 break;
@@ -76,13 +76,15 @@ class HDCoreSpawnTable play {
     }
 
     HDCoreSpawnTableEntry getEntry(name name, bool persistentOnly = false) {
-        foreach (entry : _entries) if (entry.name == name && (!persistentOnly || entry.isPersistent)) return entry;
+        forEach (entry : _entries) if (entry.name == name && (!persistentOnly || entry.isPersistent)) return entry;
 
         return null;
     }
 
     void getEntries(out Array<HDCoreSpawnTableEntry> arr, bool persistentOnly = false) {
-        foreach (entry : _entries) {
+        arr.clear();
+
+        forEach (entry : _entries) {
 
             // Filter out persistence-related entries
             if (!persistentOnly || entry.isPersistent) {
@@ -113,13 +115,16 @@ class HDCoreSpawnTable play {
 
         getWeights(weights, entries, persistentOnly);
 
-        if (hd_debug) {
-            console.printF(tablename.." Weights:");
-            foreach (weight : weights) console.printF(" * "..weight);
-        }
-
         if (entries.size() > 0) {
+
+            if (hd_debug) {
+                console.printF(tablename.." Entries:");
+                forEach (entry : entries) console.printF(" * "..entry.name.." ["..entry.getWeight().."]");
+            }
+
             let entry = entries[HDCore.getWeightedRandom(weights)];
+
+            if (hd_debug) console.PrintF("Selected Entry: "..entry.name);
     
             if (entry is 'HDCoreSpawnTableNestedEntry') return HDCoreSpawnTableNestedEntry(entry)._table.getRandomEntry(persistentOnly);
     
@@ -130,7 +135,9 @@ class HDCoreSpawnTable play {
     }
 
     void getWeights(out Array<double> weights, Array<HDCoreSpawnTableEntry> entries, bool persistentOnly = false) {
-        foreach (entry : entries) weights.push(entry.getWeight(persistentOnly));
+        weights.clear();
+
+        forEach (entry : entries) weights.push(entry.getWeight(persistentOnly));
     }
 }
 
@@ -200,8 +207,8 @@ class HDCoreSpawnTableSingleEntry : HDCoreSpawnTableEntry {
 
     override string toString() {
         return String.format(
-            "{ name=%s, value=%s, weight=%.3f, isPersistent=%i, chance=%i }",
-               name,  getValue(), weight,    isPersistent,    chance
+            "{ name=%s, weight=%.3f, isPersistent=%i, chance=%i }",
+               name,    weight,      isPersistent,    chance
         );
     }
 }
@@ -247,7 +254,7 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
 
         getEntries(entries, persistentOnly);
 
-        foreach (entry : entries) weight += entry.getWeight(persistentOnly);
+        forEach (entry : entries) weight += entry.getWeight(persistentOnly);
 
         return weight;
     }
