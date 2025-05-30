@@ -115,23 +115,24 @@ class HDCoreSpawnTable play {
 
         getWeights(weights, entries, persistentOnly);
 
-        if (entries.size() > 0) {
-
-            if (hd_debug) {
-                console.printF(tablename.." Entries:");
-                forEach (entry : entries) console.printF(" * "..entry.name.." ["..entry.getWeight().."]");
-            }
-
-            let entry = entries[HDCore.getWeightedRandom(weights)];
-
-            if (hd_debug) console.PrintF("Selected Entry: "..entry.name);
-    
-            if (entry is 'HDCoreSpawnTableNestedEntry') return HDCoreSpawnTableNestedEntry(entry)._table.getRandomEntry(persistentOnly);
-    
-            return entry;
+        if (hd_debug) {
+            Console.printF(tableName.." Entries:");
+            forEach (entry : entries) Console.printF(" * "..entry.name.." ["..entry.getWeight().."]");
         }
 
-        return null;
+        HDCoreSpawnTableEntry entry;
+
+        if (entries.size() > 1) {
+            entry = entries[HDCore.getWeightedRandom(weights)];
+        } else if (entries.size() > 0) {
+            entry = entries[0];
+        }
+        
+        if (hd_debug) Console.printF("Selected Entry: "..(entry ? entry.name.."" : "Nothing"));
+
+        return (entry is 'HDCoreSpawnTableNestedEntry')
+            ? HDCoreSpawnTableNestedEntry(entry)._table.getRandomEntry(persistentOnly)
+            : entry;
     }
 
     void getWeights(out Array<double> weights, Array<HDCoreSpawnTableEntry> entries, bool persistentOnly = false) {
