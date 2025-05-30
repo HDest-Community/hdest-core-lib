@@ -228,7 +228,7 @@ addSpawnTableSingleEntry => { "tableName": "RocketLauncherReplaces", "name": "HD
 newSpawnTable => { "spawnName": "Shotgun" }
 addSpawnTableNestedEntry => { "tableName": "Shotgun", "name": "ShotgunReplaces", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ShotgunReplaces", "name": "HunterRandom", "weight": "7", "persists": "true" }
-addSpawnTableSingleEntry => { "tableName": "ShotgunReplaces", "name": "SlayerRAndom", "weight": "2", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "ShotgunReplaces", "name": "SlayerRandom", "weight": "2", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ShotgunReplaces", "name": "DeinoSpawn", "weight": "1", "persists": "true" }
 
 // Super Shotgun Spawns: Total Weight = 14, Total Persistent Weight = 14
