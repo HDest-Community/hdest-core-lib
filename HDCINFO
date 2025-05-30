@@ -142,6 +142,11 @@ addAmmoThingBlacklist => { "name": "HDLadderSection" }
 
 // HDest Spawn Tables
 
+// Ammo Box: Total Weight = 6, Total Persistent Weight = 6
+newSpawnTable => { "spawnName": "HDAB" }
+addSpawnTableSingleEntry => { "tableName": "HDAB", "name": "HDAmBoxUnarmed", "weight": "6", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDAB", "name": "HDAmBox", "weight": "1", "persists": "true" }
+
 // Casing Bits: Total Weight = 41, Total Persistent Weight = 41
 newSpawnTable => { "spawnName": "HDCasingBits" }
 addSpawnTableSingleEntry => { "tableName": "HDCasingBits", "name": "HDSpent9mm", "weight": "24", "persists": "true" }
@@ -253,7 +258,7 @@ addSpawnTableNestedEntry => { "tableName": "CellPack", "name": "CellPackReplaces
 addSpawnTableSingleEntry => { "tableName": "CellPackReplaces", "name": "HDBattery", "weight": "4", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "CellPackReplaces", "name": "HD7mMag", "weight": "3", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "CellPackReplaces", "name": "BrontornisSpawner", "weight": "1", "persists": "true" }
-addSpawnTableSingleEntry => { "tableName": "CellPackReplaces", "name": "HDAB", "weight": "1", "persists": "true" }
+addSpawnTableNestedEntry => { "tableName": "CellPackReplaces", "name": "HDAB", "weight": "1", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "CellPackReplaces", "name": "PortableLadder", "weight": "1", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "CellPackReplaces", "name": "YokaiSpawner", "weight": "1", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "CellPackReplaces", "name": "HDFragGrenadePickup", "weight": "1", "persists": "true" }
@@ -276,7 +281,7 @@ addSpawnTableSingleEntry => { "tableName": "ClipReplaces", "name": "HD355BoxPick
 newSpawnTable => { "spawnName": "ClipBox" }
 addSpawnTableNestedEntry => { "tableName": "ClipBox", "name": "ClipBoxReplaces", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ClipBoxReplaces", "name": "ClipBoxPickup1", "weight": "14", "persists": "true" }
-addSpawnTableSingleEntry => { "tableName": "ClipBoxReplaces", "name": "HDAB", "weight": "6", "persists": "true" }
+addSpawnTableNestedEntry => { "tableName": "ClipBoxReplaces", "name": "HDAB", "weight": "6", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ClipBoxReplaces", "name": "ClipBoxPickup2", "weight": "4", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ClipBoxReplaces", "name": "BossRifleSpawner", "weight": "1", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ClipBoxReplaces", "name": "HD9mBoxPickup", "weight": "1", "persists": "true" }
@@ -309,7 +314,7 @@ addSpawnTableSingleEntry => { "tableName": "ShellReplaces", "name": "HD4mMag", "
 addSpawnTableSingleEntry => { "tableName": "ShellReplaces", "name": "DoorBuster", "weight": "1", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ShellReplaces", "name": "HDIEDPack", "weight": "1", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ShellReplaces", "name": "BFGNecroShard", "weight": "1", "chance": "200", "persists": "true" }
-addSpawnTableSingleEntry => { "tableName": "ShellReplaces", "name": "HDAB", "weight": "1", "chance": "200", "persists": "true" }
+addSpawnTableNestedEntry => { "tableName": "ShellReplaces", "name": "HDAB", "weight": "1", "chance": "200", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ShellReplaces", "name": "YokaiSpawner", "weight": "1", "chance": "128", "persists": "true" }
 
 // Shell Box Spawns: Total Weight = 17, Total Persistent Weight = 17
@@ -317,7 +322,7 @@ newSpawnTable => { "spawnName": "ShellBox" }
 addSpawnTableNestedEntry => { "tableName": "ShellBox", "name": "ShellBoxReplaces", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ShellBoxReplaces", "name": "ShellBoxPickup", "weight": "10", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ShellBoxReplaces", "name": "HDBattery", "weight": "2", "persists": "true" }
-addSpawnTableSingleEntry => { "tableName": "ShellBoxReplaces", "name": "HDAB", "weight": "1", "persists": "true" }
+addSpawnTableNestedEntry => { "tableName": "ShellBoxReplaces", "name": "HDAB", "weight": "1", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ShellBoxReplaces", "name": "HDFragGrenadePickup", "weight": "1", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ShellBoxReplaces", "name": "HD9mBoxPickup", "weight": "1", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ShellBoxReplaces", "name": "HD7mBoxPickup", "weight": "1", "persists": "true" }
@@ -342,7 +347,7 @@ addSpawnTableSingleEntry => { "tableName": "ArmorBonusReplaces", "name": "HD4mMa
 addSpawnTableSingleEntry => { "tableName": "ArmorBonusReplaces", "name": "HDBattery", "weight": "1", "chance": "48", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ArmorBonusReplaces", "name": "PortableStimpack", "weight": "1", "chance": "48", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "ArmorBonusReplaces", "name": "ClipBox", "weight": "1", "chance": "48", "persists": "true" }
-addSpawnTableSingleEntry => { "tableName": "ArmorBonusReplaces", "name": "HDAB", "weight": "1", "chance": "48", "persists": "true" }
+addSpawnTableNestedEntry => { "tableName": "ArmorBonusReplaces", "name": "HDAB", "weight": "1", "chance": "48", "persists": "true" }
 
 // Backpack Spawns: Total Weight = 1, Total Persistent Weight = 1
 newSpawnTable => { "spawnName": "Backpack" }
@@ -389,7 +394,7 @@ addSpawnTableSingleEntry => { "tableName": "HealthBonusReplaces", "name": "HDBat
 addSpawnTableSingleEntry => { "tableName": "HealthBonusReplaces", "name": "HD9mMag15", "weight": "1", "chance": "48", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "HealthBonusReplaces", "name": "PortableMedikit", "weight": "1", "chance": "48", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "HealthBonusReplaces", "name": "PortableStimpack", "weight": "1", "chance": "48", "persists": "true" }
-addSpawnTableSingleEntry => { "tableName": "HealthBonusReplaces", "name": "HDAB", "weight": "1", "chance": "48", "persists": "true" }
+addSpawnTableNestedEntry => { "tableName": "HealthBonusReplaces", "name": "HDAB", "weight": "1", "chance": "48", "persists": "true" }
 
 // Light-amp Goggles Spawns: Total Weight = 1, Total Persistent Weight = 1
 newSpawnTable => { "spawnName": "Infrared" }
