@@ -165,7 +165,7 @@ class HDCoreSpawnHandler : EventHandler {
                     let replacement = cmd.getBoolParam("replaces", true);
 
                     // If one already exists, quit.
-                    if (getSpawnTable(tableName ? tableName : spawnName, replacement)) return;
+                    if (getSpawnTable(tableName ? tableName : spawnName, replacement)) break;
 
                     // Create the new
                     let table = HDCoreSpawnTable.create(spawnName, tableName, replacement);
