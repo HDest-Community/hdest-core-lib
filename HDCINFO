@@ -158,7 +158,6 @@ addSpawnTableSingleEntry => { "tableName": "HDCasingBits", "name": "TerrorCasing
 // Gore Bits: Total Weight = 87, Total Persistent Weight = 87
 newSpawnTable => { "spawnName": "HDGoreBits" }
 addSpawnTableNestedEntry => { "tableName": "HDGoreBits", "name": "HDCasingBits", "weight": "32", "persists": "true" }
-// addSpawnTableSingleEntry => { "tableName": "HDGoreBits", "name": "HDCasingBits", "weight": "32", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "HDGoreBits", "name": "SmallBloodPool", "weight": "8", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "HDGoreBits", "name": "BarrelGibs", "weight": "8", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "HDGoreBits", "name": "HDFumblingShell", "weight": "8", "persists": "true" }
