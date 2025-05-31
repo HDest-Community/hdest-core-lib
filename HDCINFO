@@ -20,7 +20,6 @@
 
 // Map Blacklist
 addSpawnHandlerMapBlacklist => { "name": "RANGE" }
-addSpawnHandlerMapBlacklist => { "name": "TEST" }
 
 // Thing Blacklist
 addSpawnHandlerThingBlacklist => { "name": "HDSmoke" }
