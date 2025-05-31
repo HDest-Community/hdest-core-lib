@@ -130,9 +130,7 @@ class HDCoreSpawnTable play {
         
         if (hd_debug) Console.printF("Selected Entry: "..(entry ? entry.name.."" : "Nothing"));
 
-        return (entry is 'HDCoreSpawnTableNestedEntry')
-            ? HDCoreSpawnTableNestedEntry(entry)._table.getRandomEntry(persistentOnly)
-            : entry;
+        return entry;
     }
 
     void getWeights(out Array<double> weights, Array<HDCoreSpawnTableEntry> entries, bool persistentOnly = false) {
@@ -244,7 +242,7 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
 
         // If a random value (0-255) falls below the success chance, return what's in the entry.
         // Otherwise return a "nothing" dummy spawner to simulate a RandomSpawner picking and failing to drop a thing.
-        return random() < entry.chance ? entry.getValue() : 'NullSpawner';
+        return random() < chance ? entry.getValue() : 'NullSpawner';
     }
 
     override double getWeight(bool persistentOnly) {
