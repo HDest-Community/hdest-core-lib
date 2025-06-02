@@ -12,7 +12,7 @@ class HDCoreSpawnHandler : EventHandler {
 
     HDCoreSpawnTable getSpawnTable(name name, bool replace = true) {
         if (spawnTables.size()) {
-            foreach (table : spawnTables) {
+            forEach (table : spawnTables) {
                 if ((table.tableName == name || table.spawnName == name) && table.replace == replace) {
                     return table;
                 }
@@ -24,7 +24,7 @@ class HDCoreSpawnHandler : EventHandler {
 
     void getSpawnTables(out Array<HDCoreSpawnTable> tables, name name, bool replace = true) {
         if (spawnTables.size()) {
-            foreach (table : spawnTables) {
+            forEach (table : spawnTables) {
                 if ((table.tableName == name || table.spawnName == name) && table.replace == replace) {
                     tables.push(table);
                 }
@@ -42,14 +42,14 @@ class HDCoreSpawnHandler : EventHandler {
                 .." Table for "..table.spawnName.." named '"..table.tableName
                 .."': [";
 
-                if (table._entries.size()) foreach (entry : table._entries) msg = msg..", "..entry.toString();
+                if (table._entries.size()) forEach (entry : table._entries) msg = msg..", "..entry.toString();
 
-            console.printf(msg.."]");
+            Console.printF(msg.."]");
         }
 
         // If we find an existing table, simply append the entries
         if (spawnTables.size()) {
-            foreach (spawnTable : spawnTables) {
+            forEach (spawnTable : spawnTables) {
                 if (table.equals(spawnTable)) {
                     spawnTable._entries.append(table._entries);
 
@@ -67,7 +67,7 @@ class HDCoreSpawnHandler : EventHandler {
         tables.clear();
 
         getSpawnTables(tables, name, replace);
-        foreach (spawnTable : tables) spawnTables.delete(spawnTables.find(spawnTable));
+        forEach (spawnTable : tables) spawnTables.delete(spawnTables.find(spawnTable));
     }
 
     // Add a new entry to an existing Spawn Table
@@ -76,7 +76,17 @@ class HDCoreSpawnHandler : EventHandler {
         tables.clear();
 
         getSpawnTables(tables, name, replace);
-        foreach (spawnTable : tables) spawnTable.addEntry(entry);
+        forEach (spawnTable : tables) {
+
+            if (hd_debug) Console.printF("Adding "
+                ..(entry.isPersistent ? "" : "non-").."persistent entry "
+                .." for "..entry.name.." to the "
+                ..(spawnTable.replace ? "Replacement" : "Spawning")
+                .." Table named '"..spawnTable.tableName.."'"
+            );
+
+            spawnTable.addEntry(entry);
+        }
     }
 
     // Tries to replace the thing during spawning.
@@ -90,7 +100,7 @@ class HDCoreSpawnHandler : EventHandler {
             let replacement = entry.getValue(persistentOnly);
     
             if (replacement != e.replacee && replacement != 'NullSpawner') {
-                if (hd_debug) console.printf(e.replacee.getClassName().." -> "..replacement);
+                if (hd_debug) Console.printF(e.replacee.getClassName().." -> "..replacement);
     
                 e.replacement = replacement;
                 // TODO: Support marking replacements as final
@@ -114,7 +124,7 @@ class HDCoreSpawnHandler : EventHandler {
             let value = entry.getValue(persistentOnly);
 
             if ((Class<Actor>)(value) && value != a.getClassName() && value != 'NullSpawner') {
-                if (hd_debug) console.printf(a.getClassName().." + "..value);
+                if (hd_debug) Console.printF(a.getClassName().." + "..value);
     
                 Actor.Spawn(value, a.pos);
     
@@ -137,8 +147,8 @@ class HDCoreSpawnHandler : EventHandler {
         loadSpawnTables(cmdReader.commands);
 
         if (hd_debug) {
-            console.printF("Configured Spawn Tables:");
-            forEach(table : spawnTables) console.printF(" * "..table.toString());
+            Console.printF("Configured Spawn Tables:");
+            forEach(table : spawnTables) Console.printF(" * "..table.toString());
         }
 
         initialized = true;
@@ -309,10 +319,10 @@ class HDCoreSpawnHandler : EventHandler {
         if (!e.replacee || e.isFinal) return;
 
         // If thing being replaced is blacklisted, quit.
-        foreach (bl : thingBlacklist) if (e.replacee is bl) return;
+        forEach (bl : thingBlacklist) if (e.replacee is bl) return;
 
         // If current map is blacklisted, quit.
-        foreach (bl : mapBlackList) if (Level.MapName == bl) return;
+        forEach (bl : mapBlackList) if (Level.MapName == bl) return;
 
         handleSpawnReplacements(e);
     }
@@ -326,10 +336,10 @@ class HDCoreSpawnHandler : EventHandler {
         if (!e.thing) return;
 
         // If thing spawned is blacklisted, quit.
-        foreach (bl : thingBlacklist) if (e.thing is bl) return;
+        forEach (bl : thingBlacklist) if (e.thing is bl) return;
 
         // If current map is blacklisted, quit.
-        foreach (bl : mapBlackList) if (Level.MapName == bl) return;
+        forEach (bl : mapBlackList) if (Level.MapName == bl) return;
 
         handleSpawns(e.thing);
     }
@@ -341,8 +351,8 @@ class HDCoreSpawnHandler : EventHandler {
         tables.clear();
 
         getSpawnTables(tables, e.replacee.getClassName(), true);
-        foreach (table : tables) {
-            if (hd_debug) console.printf("Attempting to replace "..e.replacee.getClassName().." with entry in "..table.tableName.."...");
+        forEach (table : tables) {
+            if (hd_debug) Console.printF("Attempting to replace "..e.replacee.getClassName().." with entry in "..table.tableName.."...");
 
             // If an entry in the table is selected and is replaced successfully, quit.
             if (tryReplaceThing(e, table)) return;
@@ -356,7 +366,7 @@ class HDCoreSpawnHandler : EventHandler {
         tables.clear();
 
         getSpawnTables(tables, thing.getClassName(), false);
-        foreach (table : tables) {
+        forEach (table : tables) {
 
             // if currently in pre-spawn or configured to be persistent,
             // and original thing being spawned is not an owned item,
@@ -364,7 +374,7 @@ class HDCoreSpawnHandler : EventHandler {
             // attempt to spawn new thing.
             let item = Inventory(thing);
             if (!(item && item.owner)) {
-                if (hd_debug) console.printf("Attempting to spawn entry in "..table.tableName.." along with "..thing.getClassName().."...");
+                if (hd_debug) Console.printF("Attempting to spawn entry in "..table.tableName.." along with "..thing.getClassName().."...");
 
                 // If an entry in the table is selected and is spawned successfully, quit.
                 if (tryCreateThing(thing, table)) return;
