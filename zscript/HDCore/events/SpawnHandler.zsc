@@ -160,13 +160,13 @@ class HDCoreSpawnHandler : EventHandler {
                 case 'addSpawnHandlerThingBlacklist': {
                     let name = cmd.getNameParam("name");
 
-                    if (name) thingBlacklist.push(name);
+                    if (name && thingBlacklist.find(name) == thingBlacklist.size()) thingBlacklist.push(name);
                     break;
                 }
                 case 'addSpawnHandlerMapBlacklist': {
                     let name = cmd.getNameParam("name");
 
-                    if (name) mapBlacklist.push(name);
+                    if (name && mapBlacklist.find(name) == mapBlacklist.size()) mapBlacklist.push(name);
                     break;
                 }
                 case 'newSpawnTable': {
