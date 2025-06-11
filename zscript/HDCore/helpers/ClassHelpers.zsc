@@ -1,0 +1,12 @@
+extend class HDCore {
+
+    /**
+     * Checks if the given ClassName exists as a class
+     * @param {cls} cls The 'name' of the Class to check against
+     * @returns {bool} true if the class whose name matches the given cls parameter exists,
+     *   otherwise false.
+     */
+    static clearscope bool CheckClassExists(name cls) {
+        return (Class<Object>) (cls) != null;
+    }
+}
