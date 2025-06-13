@@ -9,4 +9,28 @@ extend class HDCore {
     static clearscope bool CheckClassExists(name cls) {
         return (Class<Object>) (cls) != null;
     }
+
+    /**
+     * Checks if the all of the given ClassNames exist as classes
+     * @param {classes} classes The 'names' of the Classes to check against
+     * @returns {bool} true if all of the classes whose names match the given classes parameter exist,
+     *   otherwise false.
+     */
+    static clearscope bool CheckAllClassesExists(Array<name> classes) {
+        forEach(cls : classes) if (!CheckClassExists(cls)) return false;
+
+        return true;
+    }
+
+    /**
+     * Checks if any of the given ClassNames exist as classes
+     * @param {classes} classes The 'names' of the Classes to check against
+     * @returns {bool} true if any of the classes whose names match the given classes parameter exist,
+     *   otherwise false.
+     */
+    static clearscope bool CheckAnyClassesExists(Array<name> classes[]) {
+        forEach(cls : classes) if (CheckClassExists(cls)) return true;
+
+        return false;
+    }
 }
