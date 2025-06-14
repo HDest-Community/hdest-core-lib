@@ -123,7 +123,7 @@ class HDCoreSpawnHandler : EventHandler {
         if (entry) {
             let value = entry.getValue(persistentOnly);
 
-            if ((Class<Actor>)(value) && value != a.getClassName() && value != 'NullSpawner') {
+            if (HDCore.CheckClassExists(value) && value != a.getClassName() && value != 'NullSpawner') {
                 if (hd_debug) Console.printF(a.getClassName().." + "..value);
     
                 Actor.Spawn(value, a.pos);
