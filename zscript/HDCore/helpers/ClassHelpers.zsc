@@ -28,7 +28,7 @@ extend class HDCore {
      * @returns {bool} true if any of the classes whose names match the given classes parameter exist,
      *   otherwise false.
      */
-    static clearscope bool CheckAnyClassesExists(Array<name> classes[]) {
+    static clearscope bool CheckAnyClassesExists(Array<name> classes) {
         forEach(cls : classes) if (CheckClassExists(cls)) return true;
 
         return false;
