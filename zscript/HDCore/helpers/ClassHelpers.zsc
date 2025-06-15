@@ -33,4 +33,16 @@ extend class HDCore {
 
         return false;
     }
+
+    /**
+     * Checks if the given class extends off of the given parentClassName
+     * @param {cls} cls The given class to check against
+     * @param {parentCls} parentCls The name of the parent class to compare against
+     * @param {allowSameCls} allowSameCls If true, allows the given class to be exactly equal to the parentClass
+     * @param {allowAbstract} allowAbstract If true, allows the given class to be abstract
+     * @returns {bool} true if cls extends off of parentCls, and is the same class when allowed, and is abstract when allowed
+     */
+    static clearscope bool IsChildClass(Class<Object> cls, name parentCls, bool allowSameCls = false, bool allowAbstract = false) {
+        return cls is parentCls && (allowSameCls || cls != parentCls) && (allowAbstract || !cls.isAbstract());
+    }
 }
