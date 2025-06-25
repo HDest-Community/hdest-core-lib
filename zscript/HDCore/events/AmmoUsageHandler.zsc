@@ -22,13 +22,13 @@ class HDCoreAmmoUsesHandler : EventHandler {
     // appends an entry to ammoSpawnList;
     void addAmmo(HDCoreSpawnAmmo ammo) {
 
-        if (hd_debug) {
+        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
 
             let msg = "Adding Ammo Association Entry for "..ammo.ammoName..": [";
 
             if (ammo.userNames.size()) forEach (userName : ammo.userNames) msg = msg..", "..userName;
 
-            console.printF(msg.."]");
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg.."]");
         }
 
         let existingAmmo = getAmmo(ammo.ammoName);
@@ -53,7 +53,7 @@ class HDCoreAmmoUsesHandler : EventHandler {
     // appends an entry to ammoSpawnList;
     void addAmmoUser(name ammoName, name userName) {
 
-        if (hd_debug) console.printF("Adding \""..userName.."\" to Ammo Association Entry for "..ammoName);
+        HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Adding \""..userName.."\" to Ammo Association Entry for "..ammoName);
         
         let existingAmmo = getAmmo(ammoName);
 
@@ -83,9 +83,13 @@ class HDCoreAmmoUsesHandler : EventHandler {
 
         loadAmmoUses(cmdReader.commands);
 
-        if (hd_debug) {
-            console.printF("Configured Ammo Usage List:");
-            forEach(ammo : ammoSpawnList) console.printF(ammo.toString());
+        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
+
+            let msg = "Configured Ammo Usage List:\n";
+
+            forEach(ammo : ammoSpawnList) msg = msg..ammo.toString().."\n";
+            
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
         }
 
         initialized = true;
@@ -150,9 +154,14 @@ class HDCoreAmmoUsesHandler : EventHandler {
     private void handleAmmoUses(HDAmmo ammo) {
         foreach (ammoSpawn : ammoSpawnList) {
             if (ammo.getClassName() == ammoSpawn.ammoName && ammoSpawn.userNames.size() > 0) {
-                if (hd_debug) {
-                    console.printF("Adding the following to the list of items that use "..ammo.getClassName().."");
-                    foreach (weapon : ammoSpawn.userNames) console.printF(" * "..weapon);
+
+                if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
+
+                    let msg = "Adding the following to the list of items that use "..ammo.getClassName().."\n";
+    
+                    foreach (weapon : ammoSpawn.userNames) msg = msg.." * "..weapon.."\n";
+                    
+                    HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
                 }
 
                 forEach(userName : ammoSpawn.userNames) ammo.itemsThatUseThis.push(userName);

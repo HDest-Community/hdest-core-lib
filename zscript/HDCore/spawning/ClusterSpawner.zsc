@@ -27,7 +27,7 @@ class ClusterSpawner : IdleDummy abstract {
         super.PostBeginPlay();
 
         if (!actorClass) {
-            Console.PrintF(GetClassName().." configured with invalid Actor Class!");
+            HDCore.Log('HDCoreLib', LOGGING_WARN, GetClassName().." configured with invalid Actor Class!");
             destroy();
         }
 
@@ -37,7 +37,7 @@ class ClusterSpawner : IdleDummy abstract {
         // Clamp max spawns to within valid range
         let max = clamp(maxSpawns, 0, 30);
 
-        if (max != maxSpawns) Console.PrintF(GetClassName().." configured with invalid maxSpawns, clamped to "..max);
+        if (max != maxSpawns) HDCore.Log('HDCoreLib', LOGGING_WARN, GetClassName().." configured with invalid maxSpawns, clamped to "..max);
 
         // Pick a random unsigned integer within range
         uint i = frandom(0, 2 ** max);
@@ -60,7 +60,7 @@ class ClusterSpawner : IdleDummy abstract {
             // Pick a random spot around origin to spawn
             let spawnPos = Vec3Offset(FRandom(-dist, dist), FRandom(-dist, dist), 0);
 
-            if (hd_debug) Console.PrintF("Attempt #"..(failedAttempts + 1).." of "..ceil(invoker.maxAttempts).." to spawn "..invoker.actorClass.GetClassName().." #"..(invoker.numSpawned + 1).." of "..invoker.numToSpawn.." at pos="..spawnPos);
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Attempt #"..(failedAttempts + 1).." of "..ceil(invoker.maxAttempts).." to spawn "..invoker.actorClass.GetClassName().." #"..(invoker.numSpawned + 1).." of "..invoker.numToSpawn.." at pos="..spawnPos);
 
             // If that point is outside the level, try again.
             if (!Level.IsPointInLevel(spawnPos)) {
@@ -93,7 +93,7 @@ class ClusterSpawner : IdleDummy abstract {
     }
 
     protected void onSpawnError() {
-        if (hd_debug) Console.PrintF("Failed to spawn "..actorClass.GetClassName().." #"..numSpawned.." of "..numToSpawn..", retrying");
+        HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Failed to spawn "..actorClass.GetClassName().." #"..numSpawned.." of "..numToSpawn..", retrying");
     }
 
 

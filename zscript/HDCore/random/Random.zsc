@@ -17,7 +17,7 @@ extend class HDCore {
         // Roll against that sum and find the index it fell within
         let rng = frandom[weightrand](0.0, sum);
 
-        if (hd_debug) Console.printF("Weighted Random Value: "..rng.." out of "..sum);
+        HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Weighted Random Value: "..rng.." out of "..sum);
 
         for (let i = 0; i < weights.size(); i++) {
             if (rng < weights[i]) return i;

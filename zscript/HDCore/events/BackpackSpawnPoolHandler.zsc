@@ -20,12 +20,18 @@ class HDCoreBPSpawnPoolHandler : EventHandler {
         
         loadBPSpawnPoolLists(cmdReader.commands);
 
-        if (hd_debug) {
-            console.printF("BP Spawn Pool Whitelist:");
-            forEach(wl : backpackWhitelist) console.printF(" * "..wl.getClassName());
+        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
+            let msg = "BP Spawn Pool Whitelist:\n";
 
-            console.printF("BP Spawn Pool Blacklist:");
-            forEach(bl : backpackBlacklist) console.printF(" * "..bl.getClassName());
+            forEach(wl : backpackWhitelist) msg = msg.." * "..wl.getClassName().."\n";
+
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
+
+            msg = "BP Spawn Pool Blacklist:\n";
+
+            forEach(bl : backpackBlacklist) msg = msg.." * "..bl.getClassName().."\n";
+
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
         }
 
         initialized = true;
@@ -133,14 +139,14 @@ class HDCoreBPSpawnPoolHandler : EventHandler {
 
         // Add all "whitelisted" entries
         foreach (wl : backpackWhitelist) {
-            if (hd_debug) console.printf("Adding "..wl.getClassName().." to Backpack Spawn Pool");
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Adding "..wl.getClassName().." to Backpack Spawn Pool");
 
             BPSpawnPool.AddItem(wl);
         }
 
         // Remove all "blacklisted" entries
         foreach (bl : backpackBlacklist) {
-            if (hd_debug) console.printf("Removing "..bl.getClassName().." from Backpack Spawn Pool");
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Removing "..bl.getClassName().." from Backpack Spawn Pool");
 
             BPSpawnPool.removeItem(bl);
         }

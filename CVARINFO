@@ -1,0 +1,1 @@
+server int hdc_logging_level = 200;

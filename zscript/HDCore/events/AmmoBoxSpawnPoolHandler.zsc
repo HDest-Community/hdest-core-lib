@@ -23,9 +23,12 @@ class HDCoreAmmoBoxSpawnPoolHandler : EventHandler {
 
         loadAmmoBoxLists(cmdReader.commands);
 
-        if (hd_debug) {
-            console.printF("Configured Ammo Box Blacklist:");
-            forEach(bl : ammoBoxBlacklist) console.printF(" * "..bl.getClassName());
+        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
+            let msg = "Configured Ammo Box Blacklist:\n";
+
+            forEach(bl : ammoBoxBlacklist) msg = msg.." * "..bl.getClassName().."\n";
+            
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
         }
 
         initialized = true;
@@ -134,7 +137,7 @@ class HDCoreAmmoBoxSpawnPoolHandler : EventHandler {
             let index = ammoBoxList.invClasses.find(wl.getClassName());
 
             if (index >= ammoBoxList.invClasses.Size()) {
-                if (hd_debug) console.printF("Adding "..wl.getClassName().." to Ammo Box Loot Table");
+                HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Adding "..wl.getClassName().." to Ammo Box Loot Table");
 
                 ammoBoxList.invClasses.push(wl.getClassName());
             }
@@ -145,7 +148,7 @@ class HDCoreAmmoBoxSpawnPoolHandler : EventHandler {
             let index = ammoBoxList.invClasses.find(bl.getClassName());
 
             if (index < ammoBoxList.invClasses.Size()) {
-                if (hd_debug) console.printF("Removing "..bl.getClassName().." from Ammo Box Loot Table");
+                HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Removing "..bl.getClassName().." from Ammo Box Loot Table");
 
                 ammoBoxList.invClasses.delete(index);
             }

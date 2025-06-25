@@ -36,7 +36,7 @@ class HDVectorPrefab ui {
                     prefab.rects[2] = (3,   0, 4,   3);
                     break;
                 default:
-                    console.printF('Unknown Vector Prefab: "'..prefabName..'"');
+                    HDCore.Log('HDCoreLib', LOGGING_WARN, "Unknown Vector Prefab: \""..prefabName.."\"");
                     break;
             }
 
