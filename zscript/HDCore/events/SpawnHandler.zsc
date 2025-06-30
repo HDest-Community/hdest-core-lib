@@ -35,7 +35,7 @@ class HDCoreSpawnHandler : EventHandler {
     // Appends the given Spawn Table with the handler, or registers it if it does not yet exist
     void addSpawnTable(HDCoreSpawnTable table) {
 
-        if (hd_debug) {
+        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
 
             let msg = "Adding "
                 ..(table.replace ? "Replacement" : "Spawning")
@@ -44,7 +44,7 @@ class HDCoreSpawnHandler : EventHandler {
 
                 if (table._entries.size()) forEach (entry : table._entries) msg = msg..", "..entry.toString();
 
-            Console.printF(msg.."]");
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg.."]");
         }
 
         // If we find an existing table, simply append the entries
@@ -78,7 +78,7 @@ class HDCoreSpawnHandler : EventHandler {
         getSpawnTables(tables, name, replace);
         forEach (spawnTable : tables) {
 
-            if (hd_debug) Console.printF("Adding "
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Adding "
                 ..(entry.isPersistent ? "" : "non-").."persistent entry "
                 .." for "..entry.name.." to the "
                 ..(spawnTable.replace ? "Replacement" : "Spawning")
@@ -100,7 +100,7 @@ class HDCoreSpawnHandler : EventHandler {
             let replacement = entry.getValue(persistentOnly);
     
             if (replacement != e.replacee && replacement != 'NullSpawner') {
-                if (hd_debug) Console.printF(e.replacee.getClassName().." -> "..replacement);
+                HDCore.Log('HDCoreLib', LOGGING_DEBUG, e.replacee.getClassName().." -> "..replacement);
     
                 e.replacement = replacement;
                 // TODO: Support marking replacements as final
@@ -124,7 +124,7 @@ class HDCoreSpawnHandler : EventHandler {
             let value = entry.getValue(persistentOnly);
 
             if (HDCore.CheckClassExists(value) && value != a.getClassName() && value != 'NullSpawner') {
-                if (hd_debug) Console.printF(a.getClassName().." + "..value);
+                HDCore.Log('HDCoreLib', LOGGING_DEBUG, a.getClassName().." + "..value);
     
                 Actor.Spawn(value, a.pos);
     
@@ -146,9 +146,12 @@ class HDCoreSpawnHandler : EventHandler {
 
         loadSpawnTables(cmdReader.commands);
 
-        if (hd_debug) {
-            Console.printF("Configured Spawn Tables:");
-            forEach(table : spawnTables) Console.printF(" * "..table.toString());
+        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
+            let msg = "Configured Spawn Tables:\n";
+            
+            forEach(table : spawnTables) msg = msg.." * "..table.toString().."\n";
+            
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
         }
 
         initialized = true;
@@ -352,7 +355,7 @@ class HDCoreSpawnHandler : EventHandler {
 
         getSpawnTables(tables, e.replacee.getClassName(), true);
         forEach (table : tables) {
-            if (hd_debug) Console.printF("Attempting to replace "..e.replacee.getClassName().." with entry in "..table.tableName.."...");
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Attempting to replace "..e.replacee.getClassName().." with entry in "..table.tableName.."...");
 
             // If an entry in the table is selected and is replaced successfully, quit.
             if (tryReplaceThing(e, table)) return;
@@ -374,7 +377,7 @@ class HDCoreSpawnHandler : EventHandler {
             // attempt to spawn new thing.
             let item = Inventory(thing);
             if (!(item && item.owner)) {
-                if (hd_debug) Console.printF("Attempting to spawn entry in "..table.tableName.." along with "..thing.getClassName().."...");
+                HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Attempting to spawn entry in "..table.tableName.." along with "..thing.getClassName().."...");
 
                 // If an entry in the table is selected and is spawned successfully, quit.
                 if (tryCreateThing(thing, table)) return;

@@ -1,0 +1,56 @@
+class HDCoreDeathMatchStartSpawnerHandler : EventHandler {
+    
+    Vector3 positions[100];
+
+    override void OnRegister() {
+        // Spawn Dummy Actors after everything else
+        SetOrder(666);
+    }
+
+    override void WorldLoaded(WorldEvent e) {
+
+        // TODO: Allow DeathMatchStart-based Spawners to be toggled off
+
+        // If we're playing an actual Deathmatch, quit.
+        if (deathmatch) return;
+
+        // If we're re-opening the level, quit.
+        if (e.IsReopen) return;
+
+        // Collect all of the DM Spawn Positions in the level.
+        BuildPositions();
+
+        forEach (pos : positions) if (!(pos ~== (0, 0, 0))) Actor.Spawn('DeathMatchSpawner', pos, ALLOW_REPLACE);
+
+        // Clean up after ourselves.
+        Destroy();
+    }
+
+    private void BuildPositions() {
+        for (int i = 0; i < 100; i++) {
+            
+            // Reset the slot in the list.
+            positions[i] = (0, 0, 0);
+
+            // Get the next DM Start Position.
+            let pos = Level.PickDeathMatchStart();
+
+            // If we get an invalid Spawn Position, quit.
+            if (pos ~== (0, 0, 0)) return;
+
+            // If we already have this position, skip.
+            if (CheckPosition(pos)) continue;
+
+            // Otherwise, add the position to the list.
+            positions[i] = pos;
+        }
+    }
+
+    private bool CheckPosition(Vector3 pos) {
+
+        // for (int i = 0; i < 100; i++) if (positions[i] ~== pos) return true;
+        forEach (existing : positions) if (existing ~== pos) return true;
+
+        return false;
+    }
+}

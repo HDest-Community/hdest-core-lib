@@ -115,9 +115,12 @@ class HDCoreSpawnTable play {
 
         getWeights(weights, entries, persistentOnly);
 
-        if (hd_debug) {
-            Console.printF(tableName.." Entries:");
-            forEach (entry : entries) Console.printF(" * "..entry.name.." ["..entry.getWeight().."]");
+        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
+            let msg = tableName.." Entries:\n";
+
+            forEach (entry : entries) msg = msg.." * "..entry.name.." ["..entry.getWeight().."]\n";
+
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
         }
 
         HDCoreSpawnTableEntry entry;
@@ -128,7 +131,7 @@ class HDCoreSpawnTable play {
             entry = entries[0];
         }
         
-        if (hd_debug) Console.printF("Selected Entry: "..(entry ? entry.name.."" : "Nothing"));
+        HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Selected Entry: "..(entry ? entry.name.."" : "Nothing"));
 
         return entry;
     }

@@ -62,6 +62,6 @@ class HDCoreSectorSpawnerHandler : EventHandler {
             }
         }
 
-        if (hd_debug) Console.Printf("[Sector Spawn Handler] Spawned "..count.." out of "..max.." dummy actors.\n\t\tSector @"..s.centerspot.." area/circum/radius/avg is "..area.."/"..circum.."/"..radius.."/"..avgSize..".");
+        HDCore.Log('HDCoreLib', LOGGING_DEBUG, "[Sector Spawn Handler] Spawned "..count.." out of "..max.." dummy actors.\n\t\tSector @"..s.centerspot.." area/circum/radius/avg is "..area.."/"..circum.."/"..radius.."/"..avgSize..".");
     }
 } 

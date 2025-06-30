@@ -6,6 +6,9 @@ class DummySpawner : Actor abstract {
     }
 }
 
+class DeathMatchSpawner : DummySpawner {
+}
+
 class HurtfloorSectorSpawner : DummySpawner {
 }
 

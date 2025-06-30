@@ -1,0 +1,67 @@
+enum HDCoreLoggingLevels {
+    LOGGING_OFF   = 0,
+    LOGGING_ERROR = 100,
+    LOGGING_WARN  = 200,
+    LOGGING_INFO  = 300,
+    LOGGING_DEBUG = 400,
+    LOGGING_ALL   = 500
+}
+
+extend class HDCore {
+
+    static clearscope void Log(name ns = '', int level = LOGGING_INFO, string message = "", actor recip = null) {
+        // TODO: Leverage Namespace beyond message injection
+        // if (ns == '') {}
+        
+        // If the message being logged is more granular than the desired level, quit.
+        // TODO: refactor to service to get logging level?
+        if (!ShouldLog(ns, level)) return;
+
+        // If the message is empty, quit.
+        if (message == "") return;
+
+        // Build Log Message
+        let msg = FormatLogMessage(ns, level, message);
+
+        // If the log is coming from the Playerpawn, use it to log to its player only,
+        // otherise simply write to the console
+        /* if (recip && recip is "PlayerPawn") recip.A_Log(msg, true);
+        else */ Console.printF(msg);
+    }
+
+    static clearscope bool ShouldLog(name ns, int level) {
+        return level > LOGGING_OFF && level <= CVar.GetCVar('hdc_logging_level').GetInt();
+    }
+
+    static clearscope string FormatLogMessage(name ns, int level, string message) {
+        string namespace = ns != '' // (ns != null && ns != '')
+            ? ("[ "..String.format(ns).." ] ")
+            : "";
+
+        return GetLogColor(level)..GetLogPrefix(level).."\c-"..namespace..message;
+    }
+
+    static clearscope string GetLogPrefix(int level) {
+        let str = "$HDC_LOG_PREFIX_";
+
+             if (level <= LOGGING_ERROR) str = str.."ERROR";
+        else if (level <= LOGGING_WARN)  str = str.."WARN";
+        else if (level <= LOGGING_INFO)  str = str.."INFO";
+        else if (level <= LOGGING_DEBUG) str = str.."DEBUG";
+        else                            str = str.."LOG";
+
+        return /* SystemTime.Format("%F %X", SystemTime.Now()).. */StringTable.Localize(str);
+    }
+
+    static clearscope string GetLogColor(int level) {
+        let str = "$HDC_LOG_COLOR_";
+
+             if (level <= LOGGING_ERROR) str = str.."ERROR";
+        else if (level <= LOGGING_WARN)  str = str.."WARN";
+        else if (level <= LOGGING_INFO)  str = str.."INFO";
+        else if (level <= LOGGING_DEBUG) str = str.."DEBUG";
+        else                            str = str.."LOG";
+
+        return StringTable.Localize(str);
+    }
+}

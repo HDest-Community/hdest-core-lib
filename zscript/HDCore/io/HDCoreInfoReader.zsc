@@ -22,9 +22,13 @@ class HDCoreInfoReader : StaticEventHandler {
         // Parse the HDCore Lumps into the cache of commands
         parseHDCoreInfo(cmds, commands);
 
-        if (hd_debug) {
-            console.printF("Parsed HDCoreCommands:");
-            forEach(cmd : commands) console.printF(cmd.toString());
+        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
+
+            let msg = "Parsed HDCoreCommands:\n";
+
+            forEach(cmd : commands) msg = msg..cmd.toString().."\n";
+            
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
         }
     }
 
@@ -71,10 +75,12 @@ class HDCoreInfoReader : StaticEventHandler {
             }
         }
         
-        if (hd_debug) {
-            console.printf('Read HDCINFO Lumps!  Read '..arr.size()..' Lines!');
+        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
+            let msg = "Read HDCINFO Lumps!  Read "..arr.size().." Lines!\n";
+            
+            for (int i = 0; i < arr.size(); i++) msg = msg..i.." "..arr[i].."\n";
 
-            for (int i = 0; i < arr.size(); i++) console.printf(i.." "..arr[i]);
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
         }
     }
 
