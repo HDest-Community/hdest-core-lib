@@ -9,4 +9,5 @@ This is a collection of shared utility methods, classes, and libraries used by t
 - [ZJSON Library](https://github.com/RicardoLuis0/ZJSON): RicardoLuis0
 - CameraContext: ArgV-Minus-One
 - [Damped Spring](https://gist.github.com/caligari87/39d1cec3aad776860b4148cc3c659f70): Caligari
+- [LibToolTipMenu](./zscript/libs/HDlibtooltipmenu/COPYING.md): ToxicFrog
 - Spawn Handler: FDA, Swampyrad, TedTheDragon
