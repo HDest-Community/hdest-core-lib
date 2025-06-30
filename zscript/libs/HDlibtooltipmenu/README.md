@@ -1,5 +1,7 @@
 # libtooltipmenu - tooltips in gzdoom menus
 
+Original Repo: <https://github.com/ToxicFrog/doom-mods/tree/main/libtooltipmenu>
+
 This is a small library for displaying tooltips in gzDoom menus (both ListMenus and OptionMenus). It provides a convenient way to display in-game information about mod settings (or anything else you might use an option menu for), without crowding the menu with lots of `StaticText` entries. The tooltips can be written directly in the MENUDEF and require no special handling in your mod's code, or inserted at runtime as part of dynamic menu creation. They support `Print` colour/format escapes and `LANGUAGE` localization.
 
 It consists of three ZScript files, which can be either loaded as a separate pk3 (available on the [releases page](https://github.com/ToxicFrog/doom-mods/releases)) or simply copied into your mod wholesale. (In the latter case, don't forget to rename the classes to avoid conflicts with other mods that use it -- see the end of tihs file for details.)
