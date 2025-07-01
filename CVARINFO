@@ -1,1 +1,3 @@
 server int hdc_logging_level = 200;
+server int acl_spawnscale_min = 0;
+server int acl_spawnscale_max = 0;
