@@ -1,0 +1,15 @@
+#include "zscript/libs/HDAceCoreLib/zscript/aceHandler.zs"
+#include "zscript/libs/HDAceCoreLib/zscript/aceRuler.zs"
+#include "zscript/libs/HDAceCoreLib/zscript/globalStats.zs"
+
+#include "zscript/libs/HDAceCoreLib/zscript/core/aceCore.zs"
+#include "zscript/libs/HDAceCoreLib/zscript/core/aceCore_chanceScaling.zs"
+#include "zscript/libs/HDAceCoreLib/zscript/core/aceCore_collision.zs"
+#include "zscript/libs/HDAceCoreLib/zscript/core/aceCore_information.zs"
+#include "zscript/libs/HDAceCoreLib/zscript/core/aceCore_interfacing.zs"
+#include "zscript/libs/HDAceCoreLib/zscript/core/aceCore_mags.zs"
+#include "zscript/libs/HDAceCoreLib/zscript/core/aceCore_strings.zs"
+#include "zscript/libs/HDAceCoreLib/zscript/core/aceCore_texChecking.zs"
+#include "zscript/libs/HDAceCoreLib/zscript/core/aceCore_weights.zs"
+
+#include "zscript/libs/HDAceCoreLib/zscript/effects/smokeBase.zs"
