@@ -6,4 +6,4 @@ runs:
   - uses: actions/checkout@v4
   - uses: montudor/action-zip@v1
     with:
-      args: zip -r "AceCoreLib-${{ env.SUFFIX }}.pk3" . -i graphics/* sprites/* zscript/* CVARINFO LICENSE MAPINFO MENUDEF README.md ZSCRIPT.zs
+      args: zip -r "HDCoreLib-${{ env.SUFFIX }}.pk3" . -i graphics/* sprites/* zscript/* CVARINFO HDCINFO LANGUAGE LICENSE MAPINFO README.md ZSCRIPT.zsc
