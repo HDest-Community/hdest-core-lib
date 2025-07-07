@@ -42,7 +42,7 @@ extend class HDCore {
      * @param {allowAbstract} allowAbstract If true, allows the given class to be abstract
      * @returns {bool} true if cls extends off of parentCls, and is the same class when allowed, and is abstract when allowed
      */
-    static clearscope bool IsChildClass(Class<Object> cls, name parentCls, bool allowSameCls = false, bool allowAbstract = false) {
+    static clearscope bool IsChildClass(Class<Object> cls, name parentCls, bool allowSameCls = true, bool allowAbstract = false) {
         return cls is parentCls && (allowSameCls || cls != parentCls) && (allowAbstract || !cls.isAbstract());
     }
 
@@ -55,7 +55,7 @@ extend class HDCore {
      * @param {allowAbstract} allowAbstract If true, allows the given class to be abstract
      * @returns {bool} true if cls extends off of any of the given parentClasses, and is the same class when allowed, and is abstract when allowed
      */
-    static clearscope bool IsAnyChildClass(Class<Object> cls, Array<name> parentClasses, bool allowSameCls = false, bool allowAbstract = false) {
+    static clearscope bool IsAnyChildClass(Class<Object> cls, Array<name> parentClasses, bool allowSameCls = true, bool allowAbstract = false) {
         forEach (parentClass : parentClasses) if (IsChildClass(cls, parentClass, allowSameCls, allowAbstract)) return true;
 
         return false;
