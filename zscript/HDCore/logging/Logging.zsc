@@ -9,7 +9,7 @@ enum HDCoreLoggingLevels {
 
 extend class HDCore {
 
-    static clearscope void Log(name ns = '', int level = LOGGING_INFO, string message = "", actor recip = null) {
+    static play void LogPlay(name ns = '', int level = LOGGING_INFO, string message = "", actor recip = null) {
         // TODO: Leverage Namespace beyond message injection
         // if (ns == '') {}
         
@@ -25,8 +25,42 @@ extend class HDCore {
 
         // If the log is coming from the Playerpawn, use it to log to its player only,
         // otherise simply write to the console
-        /* if (recip && recip is "PlayerPawn") recip.A_Log(msg, true);
-        else */ Console.printF(msg);
+        if (recip && recip is 'PlayerPawn') recip.A_Log(msg);
+        else DoLog(msg);
+    }
+
+    static ui void LogUI(name ns = '', int level = LOGGING_INFO, string message = "") {
+        // TODO: Leverage Namespace beyond message injection
+        // if (ns == '') {}
+        
+        // If the message being logged is more granular than the desired level, quit.
+        // TODO: refactor to service to get logging level?
+        if (!ShouldLog(ns, level)) return;
+
+        // If the message is empty, quit.
+        if (message == "") return;
+
+        // Build Log Message
+        DoLog(FormatLogMessage(ns, level, message));
+    }
+
+    static clearscope void Log(name ns = '', int level = LOGGING_INFO, string message = "") {
+        // TODO: Leverage Namespace beyond message injection
+        // if (ns == '') {}
+        
+        // If the message being logged is more granular than the desired level, quit.
+        // TODO: refactor to service to get logging level?
+        if (!ShouldLog(ns, level)) return;
+
+        // If the message is empty, quit.
+        if (message == "") return;
+
+        // Build Log Message
+        DoLog(FormatLogMessage(ns, level, message));
+    }
+
+    private static clearscope void DoLog(string message) {
+        Console.printF(message);
     }
 
     static clearscope bool ShouldLog(name ns, int level) {

@@ -511,7 +511,7 @@ addSpawnTableSingleEntry => { "tableName": "ChaingunGuyReplaces", "name": "Enemy
 newSpawnTable => { "spawnName": "CommanderKeen" }
 addSpawnTableNestedEntry => { "tableName": "CommanderKeen", "name": "CommanderKeenReplaces", "persists": "true" }
 // TODO: Move to LT Filter?
-addSpawnTableSingleEntry => { "tableName": "HDCoreCommanderKeen.Replaces", "name": "HDLizardJar", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "CommanderKeenReplaces", "name": "HDLizardJar", "weight": "1", "persists": "true" }
 // TODO: Move to ID Filter
 // addSpawnTableSingleEntry => { "tableName": "CommanderKeenReplaces", "name": "HDKeen", "weight": "1", "persists": "true" }
 

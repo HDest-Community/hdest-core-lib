@@ -86,22 +86,30 @@ class HDCoreSpawnTable play {
 
         forEach (entry : _entries) {
 
-            // Filter out disabled or persistence-related entries
-            if (entry.enabled && (!persistentOnly || entry.isPersistent)) {
+            // If entry is disabled, skip.
+            if (!entry.enabled) continue;
 
-                // If weight is negative, treat as only possible outcome (replace all)
-                if (entry.getWeight(persistentOnly) < 0.0) {
-                    arr.clear();
-                    arr.push(entry);
-                    return;
-                }
-    
-                // Otherwise, as long as we have a valid weight, add it to array
-                if (!HDGMGlobalMaths.nearZero(entry.getWeight(persistentOnly))) {
-                    arr.push(entry);
-                }
+            // If entry is not nested, yet has an invalid actor, skip.
+            if (entry is 'HDCoreSpawnTableSingleEntry' && !HDCore.CheckClassExists(entry.name)) continue;
+
+            // If we're beyond inital map spawns and are not persistent, skip.
+            if (persistentOnly && !entry.isPersistent) continue;
+
+
+            // If weight is negative, treat as only possible outcome (replace all)
+            if (entry.getWeight(persistentOnly) < 0.0) {
+                arr.clear();
+                arr.push(entry);
+                return;
+            }
+
+            // Otherwise, as long as we have a valid weight, add it to array
+            if (!HDGMGlobalMaths.nearZero(entry.getWeight(persistentOnly))) {
+                arr.push(entry);
             }
         }
+
+        if (!arr.size()) HDCore.Log('HDCoreLib', LOGGING_WARN, "No valid entries found for Spawn Table "..tableName..". This may cause unexpected behavior!");
     }
 
     HDCoreSpawnTableEntry getRandomEntry(bool persistentOnly = false) {
@@ -273,7 +281,7 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
 
     override string toString() {
         return String.format(
-            "{ enabled=%i, name=%s, table=%s, weight=%.3, isPersistent=%i, chance=%i }",
+            "{ enabled=%i, name=%s, table=%s, weight=%.3f, isPersistent=%i, chance=%i }",
                enabled,    name, _table.toString(), getWeight(), isPersistent, chance
         );
     }
