@@ -762,7 +762,7 @@ addSpawnTableSingleEntry => { "tableName": "EvilEyeReplaces", "name": "HDEvilEye
 // Explosive Barrel Spawns: Total Weight = 1, Total Persistent Weight = 1
 newSpawnTable => { "spawnName": "ExplosiveBarrel" }
 addSpawnTableNestedEntry => { "tableName": "ExplosiveBarrel", "name": "ExplosiveBarrelReplaces", "persists": "true" }
-addSpawnTableSingleEntry => { "tableName": "ExplosiveReplaces", "name": "HDBarrel", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "ExplosiveBarrelReplaces", "name": "HDBarrel", "weight": "1", "persists": "true" }
 
 // Floating Skull Spawns: Total Weight = 1, Total Persistent Weight = 1
 newSpawnTable => { "spawnName": "FloatingSkull" }
