@@ -316,6 +316,43 @@ class HDCoreSpawnHandler : EventHandler {
         if (!initialized) init();
     }
 
+    override void checkReplacee(ReplacedEvent e) {
+
+        // Populates the main arrays if they haven't been already.
+        if (!initialized) init();
+
+        // If there's nothing replaced, quit.
+        if (!e.replacement) return;
+        
+        // Attempt to get the default properties of the thing.
+        // If that fails, quit.
+        let defaults = getDefaultByType(e.replacement);
+        if (!defaults) return;
+
+        // If we're on MAP07 and the replacement is flagged as a Mancubus, return that class.
+        name mapName = Level.MapName;
+        switch (mapName) {
+            case 'E1M8':
+                if (defaults.bE1M8BOSS) e.replacee = 'BaronOfHell';
+                break;
+            case 'E2M8':
+                if (defaults.bE2M8BOSS) e.replacee = 'Cyberdemon';
+                break;
+            case 'E3M8':
+                if (defaults.bE3M8BOSS) e.replacee = 'SpiderMastermind';
+                break;
+            case 'E4M8':
+                if (defaults.bE4M8BOSS) e.replacee = 'SpiderMastermind';
+                break;
+            case 'MAP07':
+                if (defaults.bMAP07BOSS1) e.replacee = 'Fatso';
+                else if (defaults.bMAP07BOSS2) e.replacee = 'Arachnotron';
+                break;
+            default:
+                break;
+        }
+    }
+
     override void checkReplacement(ReplaceEvent e) {
 
         // Populates the main arrays if they haven't been already.
