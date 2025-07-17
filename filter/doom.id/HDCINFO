@@ -1,0 +1,8 @@
+
+// Replace Lizard Jar with Commander Keen when in id Doom
+removeSpawnTableEntry => { "tableName": "CommanderKeenReplaces", "name": "HDLizardJar" }
+addSpawnTableSingleEntry => { "tableName": "CommanderKeenReplaces", "name": "HDKeen", "weight": "1", "persists": "true" }
+
+// Replace Hatchling with Lost Soul when in id Doom
+removeSpawnTableEntry => { "tableName": "LostSoulReplaces", "name": "Hatchling" }
+addSpawnTableSingleEntry => { "tableName": "LostSoulReplaces", "name": "FlyingSkull", "weight": "1", "persists": "true" }

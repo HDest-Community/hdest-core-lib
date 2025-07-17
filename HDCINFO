@@ -510,10 +510,7 @@ addSpawnTableSingleEntry => { "tableName": "ChaingunGuyReplaces", "name": "Enemy
 // Commander Keen Spawns: Total Weight = 1, Total Persistent Weight = 1
 newSpawnTable => { "spawnName": "CommanderKeen" }
 addSpawnTableNestedEntry => { "tableName": "CommanderKeen", "name": "CommanderKeenReplaces", "persists": "true" }
-// TODO: Move to LT Filter?
 addSpawnTableSingleEntry => { "tableName": "CommanderKeenReplaces", "name": "HDLizardJar", "weight": "1", "persists": "true" }
-// TODO: Move to ID Filter
-// addSpawnTableSingleEntry => { "tableName": "CommanderKeenReplaces", "name": "HDKeen", "weight": "1", "persists": "true" }
 
 // Cyberdemon Spawns: Total Weight = 1, Total Persistent Weight = 1
 newSpawnTable => { "spawnName": "Cyberdemon" }
@@ -547,11 +544,7 @@ addSpawnTableSingleEntry => { "tableName": "HellKnightReplaces", "name": "Knave"
 // Lost Soul Spawns: Total Weight = 1, Total Persistent Weight = 1
 newSpawnTable => { "spawnName": "LostSoul" }
 addSpawnTableNestedEntry => { "tableName": "LostSoul", "name": "LostSoulReplaces", "persists": "true" }
-// TODO: Move to LT Filter?
 addSpawnTableSingleEntry => { "tableName": "LostSoulReplaces", "name": "Hatchling", "weight": "1", "persists": "true" }
-// TODO: Move to ID Filter?  Replaces Hatchling
-// addSpawnTableSingleEntry => { "tableName": "LostSoulReplaces", "name": "FlyingSkull", "weight": "1", "persists": "true" }
-
 
 // Pain Elemental Spawns: Total Weight = 1, Total Persistent Weight = 1
 newSpawnTable => { "spawnName": "PainElemental" }
