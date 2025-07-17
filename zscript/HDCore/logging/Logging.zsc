@@ -4,7 +4,8 @@ enum HDCoreLoggingLevels {
     LOGGING_WARN  = 200,
     LOGGING_INFO  = 300,
     LOGGING_DEBUG = 400,
-    LOGGING_ALL   = 500
+    LOGGING_TRACE = 500,
+    LOGGING_ALL   = 600
 }
 
 extend class HDCore {
@@ -82,7 +83,8 @@ extend class HDCore {
         else if (level <= LOGGING_WARN)  str = str.."WARN";
         else if (level <= LOGGING_INFO)  str = str.."INFO";
         else if (level <= LOGGING_DEBUG) str = str.."DEBUG";
-        else                            str = str.."LOG";
+        else if (level <= LOGGING_TRACE) str = str.."TRACE";
+        else                             str = str.."LOG";
 
         return /* SystemTime.Format("%F %X", SystemTime.Now()).. */StringTable.Localize(str);
     }
@@ -94,7 +96,8 @@ extend class HDCore {
         else if (level <= LOGGING_WARN)  str = str.."WARN";
         else if (level <= LOGGING_INFO)  str = str.."INFO";
         else if (level <= LOGGING_DEBUG) str = str.."DEBUG";
-        else                            str = str.."LOG";
+        else if (level <= LOGGING_TRACE) str = str.."TRACE";
+        else                             str = str.."LOG";
 
         return StringTable.Localize(str);
     }
