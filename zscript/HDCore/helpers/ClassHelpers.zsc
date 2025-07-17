@@ -7,7 +7,9 @@ extend class HDCore {
      *   otherwise false.
      */
     static clearscope bool CheckClassExists(name cls) {
-        return (Class<Object>) (cls) != null;
+        let exists = (Class<Object>) (cls) != null;
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "checkClassExists(\""..cls.."\") => "..exists);
+        return exists;
     }
 
     /**
@@ -17,9 +19,18 @@ extend class HDCore {
      *   otherwise false.
      */
     static clearscope bool CheckAllClassesExists(Array<name> classes) {
-        forEach(cls : classes) if (!CheckClassExists(cls)) return false;
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "checkAllClassesExists(["..classes.."])...");
 
-        return true;
+        let exists = true;
+        forEach(cls : classes) {
+            if (!CheckClassExists(cls)) {
+                exists = false;
+                break;
+            }
+        }
+
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "checkAllClassesExists(["..classes.."]) => "..exists);
+        return exists;
     }
 
     /**
@@ -29,9 +40,18 @@ extend class HDCore {
      *   otherwise false.
      */
     static clearscope bool CheckAnyClassesExists(Array<name> classes) {
-        forEach(cls : classes) if (CheckClassExists(cls)) return true;
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "checkAnyClassesExists(["..classes.."])...");
 
-        return false;
+        let exists = false;
+        forEach(cls : classes) {
+            if (CheckClassExists(cls)) {
+                exists = true;
+                break;
+            }
+        }
+
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "checkAnyClassesExists(["..classes.."]) => "..exists);
+        return exists;
     }
 
     /**
@@ -43,7 +63,9 @@ extend class HDCore {
      * @returns {bool} true if cls extends off of parentCls, and is the same class when allowed, and is abstract when allowed
      */
     static clearscope bool IsChildClass(Class<Object> cls, name parentCls, bool allowSameCls = true, bool allowAbstract = false) {
-        return cls is parentCls && (allowSameCls || cls != parentCls) && (allowAbstract || !cls.isAbstract());
+        let isChild = cls is parentCls && (allowSameCls || cls != parentCls) && (allowAbstract || !cls.isAbstract());
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "isChildClass("..cls..", "..parentCls..", "..allowSameCls..", "..allowAbstract..") => "..isChild);
+        return isChild;
     }
 
 
@@ -56,8 +78,17 @@ extend class HDCore {
      * @returns {bool} true if cls extends off of any of the given parentClasses, and is the same class when allowed, and is abstract when allowed
      */
     static clearscope bool IsAnyChildClass(Class<Object> cls, Array<name> parentClasses, bool allowSameCls = true, bool allowAbstract = false) {
-        forEach (parentClass : parentClasses) if (IsChildClass(cls, parentClass, allowSameCls, allowAbstract)) return true;
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "isAnyChildClass("..cls..", ["..parentClasses.."], "..allowSameCls..", "..allowAbstract..")...");
 
-        return false;
+        let isChild = false;
+        forEach (parentClass : parentClasses) {
+            if (IsChildClass(cls, parentClass, allowSameCls, allowAbstract)) {
+                isChild = true;
+                break;
+            };
+        }
+
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "isAnyChildClass("..cls..", ["..parentClasses.."], "..allowSameCls..", "..allowAbstract..") => "..isChild);
+        return isChild;
     }
 }
