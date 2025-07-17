@@ -1,0 +1,23 @@
+class HDCoreCommandFunctionParam_ClassExists : HDCoreCommandFunctionParam {
+
+    override string getStringValue() {
+        return getBoolValue().."";
+    }
+
+    override name getNameValue() {
+        name name = getStringValue();
+        return name;
+    }
+
+    override int getIntValue() {
+        return getBoolValue() + 0;
+    }
+
+    override double getDoubleValue() {
+        return getBoolValue() + 0.0;
+    }
+
+    override bool getBoolValue() {
+        return HDCore.CheckClassExists(getNameParam("className"));
+    }
+}

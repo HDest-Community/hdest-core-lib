@@ -37,9 +37,16 @@ class HDCoreCommand {
             cmd.command = command;
             cmd.params.clear();
 
-            if (paramsStr.length() > 0) {
+            parseParams(cmd.params, paramsStr);
+        }
 
-                let dict = Dictionary.fromString(paramsStr);
+        return cmd;
+    }
+
+    static void parseParams(out Map<string, HDCoreCommandParam> paramsMap, string paramsStr = "") {
+        if (paramsStr.length() > 0) {
+
+            let dict = Dictionary.fromString(paramsStr);
                 let i = DictionaryIterator.create(dict);
 
                 while (i.next()) {
@@ -51,22 +58,25 @@ class HDCoreCommand {
                         paramName = 'HDCoreCommandLocalizedParam';
                         val = val.mid(1);
                     } else if (val.indexOf("#") == 0) {
-                        paramName = 'HDCoreCommandCVarParam';
-                        val = val.mid(1);
-                    } else {
-                        paramName = 'HDCoreCommandStaticParam';
-                    }
+                    paramName = 'HDCoreCommandCVarParam';
+                    val = val.mid(1);
+                } else if (val.indexOf("@") == 0) {
+                    let paramsStart = val.indexOf("(");
+                    let paramsEnd   = val.rightIndexOf(")");
 
-                    let params = HDCoreCommandParam.create(paramName, val);
+                    paramName = 'HDCoreCommandFunctionParam_'..val.mid(1, paramsStart - 1);
+                    val = val.mid(paramsStart + 1, paramsEnd - paramsStart - 1);
+                } else {
+                    paramName = 'HDCoreCommandStaticParam';
+                }
 
-                    if (params) {
-                        cmd.params.insert(key, params);
-                    }
+                let param = HDCoreCommandParam.create(paramName, val);
+
+                if (param) {
+                    paramsMap.insert(key, param);
                 }
             }
         }
-
-        return cmd;
     }
 
     bool hasParam(string key) {
