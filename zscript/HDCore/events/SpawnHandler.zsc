@@ -1,5 +1,6 @@
-class HDCoreSpawnHandler : EventHandler {
+class HDCoreSpawnHandler : HDCoreEventHandler {
 
+    // List of map names to completely ignore.
     Array<name> mapBlacklist;
 
     // List of persistent classes to completely ignore.
@@ -8,7 +9,174 @@ class HDCoreSpawnHandler : EventHandler {
     // List of all spawn tables.
     Array<HDCoreSpawnTable> spawnTables;
 
-    bool initialized;
+    override void beforeProcessCommands() {
+        mapBlackList.clear();
+        thingBlacklist.clear();
+        spawnTables.clear();
+    }
+
+    override void processCommand(HDCoreCommand cmd) {
+
+        switch (cmd.command) {
+            case 'addSpawnHandlerThingBlacklist': {
+                let name = cmd.getNameParam("name");
+
+                if (name && thingBlacklist.find(name) == thingBlacklist.size()) thingBlacklist.push(name);
+                break;
+            }
+            case 'addSpawnHandlerMapBlacklist': {
+                let name = cmd.getNameParam("name");
+
+                if (name && mapBlacklist.find(name) == mapBlacklist.size()) mapBlacklist.push(name);
+                break;
+            }
+            case 'newSpawnTable': {
+                let spawnName   = cmd.getNameParam("spawnName");
+                let tableName   = cmd.getNameParam("tableName");
+                let replacement = cmd.getBoolParam("replaces", true);
+
+                // If one already exists, quit.
+                if (getSpawnTable(tableName ? tableName : spawnName, replacement)) break;
+
+                // Create the new
+                let table = HDCoreSpawnTable.create(spawnName, tableName, replacement);
+
+                if (table) {
+                    if (cmd.getBoolParam("addOriginalThing")) {
+                        let entry = HDCoreSpawnTableSingleEntry.create(
+                            spawnName,
+                            // cmd.getBoolParam("enabled", true),
+                            cmd.getDoubleParam("weight", 1.0),
+                            cmd.getBoolParam("persists"),
+                            cmd.getIntParam("chance", 256)
+                        );
+
+                        if (entry) table.addEntry(entry);
+                    }
+
+                    addSpawnTable(table);
+                }
+                break;
+            }
+            case 'addSpawnTableSingleEntry': {
+                let entry = HDCoreSpawnTableSingleEntry.create(
+                    cmd.getNameParam("name"),
+                    // cmd.getBoolParam("enabled", true),
+                    cmd.getDoubleParam("weight", 1.0),
+                    cmd.getBoolParam("persists"),
+                    cmd.getIntParam("chance", 256)
+                );
+
+                if (entry) addSpawnTableEntry(
+                    cmd.getNameParam("tableName"),
+                    entry,
+                    cmd.getBoolParam("replaces", true)
+                );
+                break;
+            }
+            case 'addSpawnTableNestedEntry': {
+                let nestedTable = getSpawnTable(
+                    cmd.getNameParam("name"),
+                    cmd.getBoolParam("replaces", true)
+                );
+
+                if (!nestedTable) {
+                    nestedTable = HDCoreSpawnTable.create(
+                        cmd.getNameParam("name"),
+                        cmd.getNameParam("name"),
+                        cmd.getBoolParam("replaces", true)
+                    );
+
+                    if (nestedTable) addSpawnTable(nestedTable);
+                }
+
+                let entry = HDCoreSpawnTableNestedEntry.create(
+                    nestedTable,
+                    // cmd.getBoolParam("enabled", true),
+                    cmd.getDoubleParam("weight", 1.0),
+                    cmd.getBoolParam("persists"),
+                    cmd.getIntParam("chance", 256)
+                );
+
+                if (entry) addSpawnTableEntry(
+                    cmd.getNameParam("tableName"),
+                    entry,
+                    cmd.getBoolParam("replaces", true)
+                );
+                break;
+            }
+            case 'removeSpawnTableEntry': {
+                let table = getSpawnTable(
+                    cmd.getNameParam("tableName"),
+                    cmd.getBoolParam("replaces", true)
+                );
+
+                if (table) table.removeEntry(cmd.getNameParam("name"));
+                break;
+            }
+            case 'clearSpawnTable': {
+                let table = getSpawnTable(
+                    cmd.getNameParam("tableName"),
+                    cmd.getBoolParam("replaces", true)
+                );
+
+                if (table) table.clearEntries();
+                break;
+            }
+            case 'appendSpawnTableEntries': {
+                let sourceTable = getSpawnTable(
+                    cmd.getNameParam("sourceTableName"),
+                    cmd.getBoolParam("replaces", true)
+                );
+                
+                let destTable = getSpawnTable(
+                    cmd.getNameParam("destTableName"),
+                    cmd.getBoolParam("replaces", true)
+                );
+
+                if (sourceTable && destTable) destTable.addEntries(sourceTable._entries);
+                break;
+            }
+            case 'setSpawnTableEntryWeight': {
+                let table = getSpawnTable(
+                    cmd.getNameParam("tableName"),
+                    cmd.getBoolParam("replaces", true)
+                );
+
+                if (table) {
+                    let entry = table.getEntry(cmd.getNameParam("name"));
+                    let weight = cmd.getDoubleParam("weight", 1.0);
+
+                    if (entry) entry.weight = weight > 0 ? weight : entry.getWeight();
+                }
+                break;
+            }
+            case 'removeSpawnTable': {
+                removeSpawnTable(
+                    cmd.getNameParam("name"),
+                    cmd.getBoolParam("replaces", true)
+                );
+                break;
+            }
+            case 'removeAllSpawnTables': {
+                spawnTables.clear();
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    override void afterProcessCommands() {
+        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
+
+            let msg = "Configured Spawn Tables:\n";
+            
+            forEach(table : spawnTables) msg = msg.." * "..table.toString().."\n";
+            
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
+        }
+    }
 
     HDCoreSpawnTable getSpawnTable(name name, bool replace = true) {
         if (spawnTables.size()) {
@@ -133,187 +301,6 @@ class HDCoreSpawnHandler : EventHandler {
         }
 
         return false;
-    }
-
-    void init() {
-        if (initialized) return;
-
-        mapBlackList.clear();
-        thingBlacklist.clear();
-        spawnTables.clear();
-
-        let cmdReader = HDCoreInfoReader(StaticEventHandler.find('HDCoreInfoReader'));
-
-        loadSpawnTables(cmdReader.commands);
-
-        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
-            let msg = "Configured Spawn Tables:\n";
-            
-            forEach(table : spawnTables) msg = msg.." * "..table.toString().."\n";
-            
-            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
-        }
-
-        initialized = true;
-    }
-
-    void loadSpawnTables(Array<HDCoreCommand> cmds) {
-        forEach (cmd : cmds) {
-            switch (cmd.command) {
-                case 'addSpawnHandlerThingBlacklist': {
-                    let name = cmd.getNameParam("name");
-
-                    if (name && thingBlacklist.find(name) == thingBlacklist.size()) thingBlacklist.push(name);
-                    break;
-                }
-                case 'addSpawnHandlerMapBlacklist': {
-                    let name = cmd.getNameParam("name");
-
-                    if (name && mapBlacklist.find(name) == mapBlacklist.size()) mapBlacklist.push(name);
-                    break;
-                }
-                case 'newSpawnTable': {
-                    let spawnName   = cmd.getNameParam("spawnName");
-                    let tableName   = cmd.getNameParam("tableName");
-                    let replacement = cmd.getBoolParam("replaces", true);
-
-                    // If one already exists, quit.
-                    if (getSpawnTable(tableName ? tableName : spawnName, replacement)) break;
-
-                    // Create the new
-                    let table = HDCoreSpawnTable.create(spawnName, tableName, replacement);
-
-                    if (table) {
-                        if (cmd.getBoolParam("addOriginalThing")) {
-                            let entry = HDCoreSpawnTableSingleEntry.create(
-                                spawnName,
-                                cmd.getBoolParam("enabled", true),
-                                cmd.getDoubleParam("weight", 1.0),
-                                cmd.getBoolParam("persists"),
-                                cmd.getIntParam("chance", 256)
-                            );
-    
-                            if (entry) table.addEntry(entry);
-                        }
-
-                        addSpawnTable(table);
-                    }
-                    break;
-                }
-                case 'addSpawnTableSingleEntry': {
-                    let entry = HDCoreSpawnTableSingleEntry.create(
-                        cmd.getNameParam("name"),
-                        cmd.getBoolParam("enabled", true),
-                        cmd.getDoubleParam("weight", 1.0),
-                        cmd.getBoolParam("persists"),
-                        cmd.getIntParam("chance", 256)
-                    );
-
-                    if (entry) addSpawnTableEntry(
-                        cmd.getNameParam("tableName"),
-                        entry,
-                        cmd.getBoolParam("replaces", true)
-                    );
-                    break;
-                }
-                case 'addSpawnTableNestedEntry': {
-                    let nestedTable = getSpawnTable(
-                        cmd.getNameParam("name"),
-                        cmd.getBoolParam("replaces", true)
-                    );
-
-                    if (!nestedTable) {
-                        nestedTable = HDCoreSpawnTable.create(
-                            cmd.getNameParam("name"),
-                            cmd.getNameParam("name"),
-                            cmd.getBoolParam("replaces", true)
-                        );
-
-                        if (nestedTable) addSpawnTable(nestedTable);
-                    }
-
-                    let entry = HDCoreSpawnTableNestedEntry.create(
-                        nestedTable,
-                        cmd.getBoolParam("enabled", true),
-                        cmd.getDoubleParam("weight", 1.0),
-                        cmd.getBoolParam("persists"),
-                        cmd.getIntParam("chance", 256)
-                    );
-    
-                    if (entry) addSpawnTableEntry(
-                        cmd.getNameParam("tableName"),
-                        entry,
-                        cmd.getBoolParam("replaces", true)
-                    );
-                    break;
-                }
-                case 'removeSpawnTableEntry': {
-                    let table = getSpawnTable(
-                        cmd.getNameParam("tableName"),
-                        cmd.getBoolParam("replaces", true)
-                    );
-
-                    if (table) table.removeEntry(cmd.getNameParam("name"));
-                    break;
-                }
-                case 'clearSpawnTable': {
-                    let table = getSpawnTable(
-                        cmd.getNameParam("tableName"),
-                        cmd.getBoolParam("replaces", true)
-                    );
-
-                    if (table) table.clearEntries();
-                    break;
-                }
-                case 'appendSpawnTableEntries': {
-                    let sourceTable = getSpawnTable(
-                        cmd.getNameParam("sourceTableName"),
-                        cmd.getBoolParam("replaces", true)
-                    );
-                    
-                    let destTable = getSpawnTable(
-                        cmd.getNameParam("destTableName"),
-                        cmd.getBoolParam("replaces", true)
-                    );
-
-                    if (sourceTable && destTable) destTable.addEntries(sourceTable._entries);
-                    break;
-                }
-                case 'setSpawnTableEntryWeight': {
-                    let table = getSpawnTable(
-                        cmd.getNameParam("tableName"),
-                        cmd.getBoolParam("replaces", true)
-                    );
-
-                    if (table) {
-                        let entry = table.getEntry(cmd.getNameParam("name"));
-                        let weight = cmd.getDoubleParam("weight", 1.0);
-
-                        if (entry) entry.weight = weight > 0 ? weight : entry.getWeight();
-                    }
-                    break;
-                }
-                case 'removeSpawnTable': {
-                    removeSpawnTable(
-                        cmd.getNameParam("name"),
-                        cmd.getBoolParam("replaces", true)
-                    );
-                    break;
-                }
-                case 'removeAllSpawnTables': {
-                    spawnTables.clear();
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
-    }
-
-    override void worldLoaded(WorldEvent e) {
-
-        // Populates the main arrays if they haven't been already.
-        if (!initialized) init();
     }
 
     override void checkReplacee(ReplacedEvent e) {

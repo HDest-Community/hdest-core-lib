@@ -1,0 +1,53 @@
+class HDCoreEventHandler : EventHandler abstract {
+
+    protected bool initialized;
+
+    protected void init() {
+        if (initialized) return;
+
+        let cmdReader = HDCoreInfoReader(StaticEventHandler.find('HDCoreInfoReader'));
+
+        beforeProcessCommands();
+
+        processCommands(cmdReader.commands);
+
+        afterProcessCommands();
+
+        initialized = true;
+    }
+
+    /**
+     * Lifecycle Hook to do any work before HDCoreCommands are processed.
+     */
+    virtual void beforeProcessCommands() {
+        // no-op
+    }
+
+    /**
+     * Lifecycle Hook to process HDCoreCommands.
+     * By default commands are simply iterated through, and the enabled ones are processed.
+     */
+    virtual void processCommands(Array<HDCoreCommand> commands) {
+        forEach(cmd : commands) if (cmd.getBoolParam("enabled", true)) processCommand(cmd);
+    }
+
+    /**
+     * Lifecycle Hook to do any work after HDCoreCommands are processed.
+     */
+    virtual void afterProcessCommands() {
+        // no-op
+    }
+
+    /**
+     * Lifecycle Hook to process a single HDCoreCommand.
+     * Must be implemented by child class.
+     */
+    abstract void processCommand(HDCoreCommand cmd);
+
+
+    /**
+     * OnWorldLoaded Event
+     * By default will run initialization if necessary.
+     */
+    override void worldLoaded(WorldEvent e) { init(); }
+}

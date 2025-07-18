@@ -34,6 +34,7 @@ version "4.14"
 #include "zscript/HDCore/ui/DrawPrefabs.zsc"
 
 // Event Handlers
+#include "zscript/HDCore/events/BaseEventHandler.zsc"
 #include "zscript/HDCore/events/AmmoBoxSpawnPoolHandler.zsc"
 #include "zscript/HDCore/events/AmmoUsageHandler.zsc"
 #include "zscript/HDCore/events/BackpackSpawnPoolHandler.zsc"

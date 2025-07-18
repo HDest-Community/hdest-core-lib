@@ -1,4 +1,4 @@
-class HDCoreBPSpawnPoolHandler : EventHandler {
+class HDCoreBPSpawnPoolHandler : HDCoreEventHandler {
 
     // List of Inventory Classes to add to Backpack Spawns
     Array< Class<Inventory> > backpackWhitelist;
@@ -6,21 +6,96 @@ class HDCoreBPSpawnPoolHandler : EventHandler {
     // List of Inventory Classes to remove from Backpack Spawns
     Array< Class<Inventory> > backpackBlacklist;
 
-    bool initialized;
+    // Cache of Backpack loot table
+    private BPSpawnPool sp;
 
-    // Populates the Spawn Pool Filters.
-    void init() {
-
-        if (initialized) return;
-
+    override void beforeProcessCommands() {
         backpackWhitelist.clear();
         backpackBlacklist.clear();
 
-        let cmdReader = HDCoreInfoReader(StaticEventHandler.find('HDCoreInfoReader'));
-        
-        loadBPSpawnPoolLists(cmdReader.commands);
+        // If the Backpack Spawn Pool hasn't been cached, attempt to get it.
+        if (!sp) sp = BPSpawnPool(EventHandler.Find("BPSpawnPool"));
+    }
 
+    override void processCommand(HDCoreCommand cmd) {
+        switch (cmd.command) {
+            case 'addBPSpawnPoolFilter': {
+                // FIXME: Find a better command/logic to handle existing CVARs
+
+                let ammo = cmd.getNameParam("name");
+                Class<Inventory> invClass = ammo;
+
+                if (!invClass) break;
+
+                // If the filter entry is allowed, remove from blacklist,
+                // Otherwise add to blacklist.
+                let index = backpackBlacklist.find(invClass);
+                if (cmd.getBoolParam("allowed")) {
+                    if (index < backpackBlacklist.size()) backpackBlacklist.delete(index);
+                } else {
+                    if (index >= backpackBlacklist.size()) backpackBlacklist.push(invClass);
+                }
+
+                break;
+            }
+            case 'addBPSpawnPoolWhitelist': {
+                let item = cmd.getNameParam("name");
+                Class<Inventory> invClass = item;
+
+                if (!invClass) break;
+
+                if (backpackWhitelist.find(invClass) >= backpackWhitelist.size()) backpackWhitelist.push(invClass);
+
+                break;
+            }
+            case 'removeBPSpawnPoolWhitelist': {
+                let item = cmd.getNameParam("name");
+                Class<Inventory> invClass = item;
+
+                if (!invClass) break;
+
+                let index = backpackWhitelist.find(invClass);
+                if (index < backpackWhitelist.size()) backpackWhitelist.delete(index);
+
+                break;
+            }
+            case 'clearBPSpawnPoolWhitelist': {
+                backpackWhitelist.clear();
+                break;
+            }
+            case 'addBPSpawnPoolBlacklist': {
+                let item = cmd.getNameParam("name");
+                Class<Inventory> invClass = item;
+
+                if (!invClass) break;
+
+                if (backpackBlacklist.find(invClass) >= backpackBlacklist.size()) backpackBlacklist.push(invClass);
+
+                break;
+            }
+            case 'removeBPSpawnPoolBlacklist': {
+                let item = cmd.getNameParam("name");
+                Class<Inventory> invClass = item;
+
+                if (!invClass) break;
+
+                let index = backpackBlacklist.find(invClass);
+                if (index < backpackBlacklist.size()) backpackBlacklist.delete(index);
+
+                break;
+            }
+            case 'clearBPSpawnPoolBlacklist': {
+                backpackBlacklist.clear();
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    override void afterProcessCommands() {
         if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
+
             let msg = "BP Spawn Pool Whitelist:\n";
 
             forEach(wl : backpackWhitelist) msg = msg.." * "..wl.getClassName().."\n";
@@ -33,92 +108,11 @@ class HDCoreBPSpawnPoolHandler : EventHandler {
 
             HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
         }
-
-        initialized = true;
-    }
-
-    void loadBPSpawnPoolLists(Array<HDCoreCommand> cmds) {
-        forEach (cmd : cmds) {
-            switch (cmd.command) {
-                case 'addBPSpawnPoolFilter': {
-                    // FIXME: Find a better command/logic to handle existing CVARs
-
-                    let ammo = cmd.getNameParam("name");
-                    Class<Inventory> invClass = ammo;
-
-                    if (!invClass) break;
-
-                    // If the filter entry is allowed, remove from blacklist,
-                    // Otherwise add to blacklist.
-                    let index = backpackBlacklist.find(invClass);
-                    if (cmd.getBoolParam("allowed")) {
-                        if (index < backpackBlacklist.size()) backpackBlacklist.delete(index);
-                    } else {
-                        if (index >= backpackBlacklist.size()) backpackBlacklist.push(invClass);
-                    }
-
-                    break;
-                }
-                case 'addBPSpawnPoolWhitelist': {
-                    let item = cmd.getNameParam("name");
-                    Class<Inventory> invClass = item;
-
-                    if (!invClass) break;
-
-                    if (backpackWhitelist.find(invClass) >= backpackWhitelist.size()) backpackWhitelist.push(invClass);
-
-                    break;
-                }
-                case 'removeBPSpawnPoolWhitelist': {
-                    let item = cmd.getNameParam("name");
-                    Class<Inventory> invClass = item;
-
-                    if (!invClass) break;
-
-                    let index = backpackWhitelist.find(invClass);
-                    if (index < backpackWhitelist.size()) backpackWhitelist.delete(index);
-
-                    break;
-                }
-                case 'clearBPSpawnPoolWhitelist': {
-                    backpackWhitelist.clear();
-                    break;
-                }
-                case 'addBPSpawnPoolBlacklist': {
-                    let item = cmd.getNameParam("name");
-                    Class<Inventory> invClass = item;
-
-                    if (!invClass) break;
-
-                    if (backpackBlacklist.find(invClass) >= backpackBlacklist.size()) backpackBlacklist.push(invClass);
-
-                    break;
-                }
-                case 'removeBPSpawnPoolBlacklist': {
-                    let item = cmd.getNameParam("name");
-                    Class<Inventory> invClass = item;
-
-                    if (!invClass) break;
-
-                    let index = backpackBlacklist.find(invClass);
-                    if (index < backpackBlacklist.size()) backpackBlacklist.delete(index);
-
-                    break;
-                }
-                case 'clearBPSpawnPoolBlacklist': {
-                    backpackBlacklist.clear();
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
     }
 
     override void worldLoaded(WorldEvent e) {
 
-        // Populates the main arrays if they haven't been already.
-        if (!initialized) init();
+        super.worldLoaded(e);
 
         // If there are no configured BP Whitelist or Blacklist items, quit.
         if (!backpackWhitelist.size() && !backpackBlacklist.size()) return;
@@ -128,10 +122,7 @@ class HDCoreBPSpawnPoolHandler : EventHandler {
 
     private void handleBackpackSpawnPool() {
         
-        // Find the BPSpawnPool Handler
-		BPSpawnPool sp = BPSpawnPool(EventHandler.Find("BPSpawnPool"));
-
-        // If we somehow don't find it, quit.
+        // If we don't have the Backpack Spawn Pool, quit.
         if (!sp) return;
 
         // If the spawn pool hasn't been initialized yet, do so.

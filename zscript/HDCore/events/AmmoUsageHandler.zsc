@@ -1,4 +1,4 @@
-class HDCoreAmmoUsesHandler : EventHandler {
+class HDCoreAmmoUsesHandler : HDCoreEventHandler {
 
     // List of persistent classes to completely ignore.
     Array<name> thingBlacklist;
@@ -7,7 +7,54 @@ class HDCoreAmmoUsesHandler : EventHandler {
     // Used for ammo-use association on ammo spawn (happens very often).
     Array<HDCoreSpawnAmmo> ammoSpawnList;
 
-    bool initialized;
+    override void beforeProcessCommands() {
+        thingBlacklist.clear();
+        ammoSpawnList.clear();
+    }
+
+    override void processCommand(HDCoreCommand cmd) {
+        switch (cmd.command) {
+            case 'addAmmoThingBlacklist': {
+                let name = cmd.getNameParam("name");
+
+                if (name) thingBlacklist.push(name);
+                break;
+            }
+            case 'newAmmo': {
+                let ammo = HDCoreSpawnAmmo.create(cmd.getNameParam("ammoName"));
+
+                if (ammo) addAmmo(ammo);
+                break;
+            }
+            case 'addAmmoUser': {
+                addAmmoUser(cmd.getNameParam("ammoName"), cmd.getNameParam("name"));
+
+                break;
+            }
+            case 'removeAmmo': {
+                removeAmmo(cmd.getNameParam("ammoName"));
+
+                break;
+            }
+            case 'removeAllAmmo': {
+                ammoSpawnList.clear();
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    override void afterProcessCommands() {
+        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
+
+            let msg = "Configured Ammo Usage List:\n";
+
+            forEach(ammo : ammoSpawnList) msg = msg..ammo.toString().."\n";
+            
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
+        }
+    }
 
     HDCoreSpawnAmmo getAmmo(name ammoName) {
         HDCoreSpawnAmmo ammoSpawn;
@@ -70,64 +117,6 @@ class HDCoreAmmoUsesHandler : EventHandler {
         ammo.userNames.push(userName);
 
         ammoSpawnList.push(ammo);
-    }
-
-
-    void init() {
-        if (initialized) return;
-
-        thingBlacklist.clear();
-        ammoSpawnList.clear();
-
-        let cmdReader = HDCoreInfoReader(StaticEventHandler.find('HDCoreInfoReader'));
-
-        loadAmmoUses(cmdReader.commands);
-
-        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
-
-            let msg = "Configured Ammo Usage List:\n";
-
-            forEach(ammo : ammoSpawnList) msg = msg..ammo.toString().."\n";
-            
-            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
-        }
-
-        initialized = true;
-    }
-
-    void loadAmmoUses(Array<HDCoreCommand> cmds) {
-        forEach (cmd : cmds) {
-            switch (cmd.command) {
-                case 'addAmmoThingBlacklist': {
-                    let name = cmd.getNameParam("name");
-
-                    if (name) thingBlacklist.push(name);
-                    break;
-                }
-                case 'newAmmo': {
-                    let ammo = HDCoreSpawnAmmo.create(cmd.getNameParam("ammoName"));
-
-                    if (ammo) addAmmo(ammo);
-                    break;
-                }
-                case 'addAmmoUser': {
-                    addAmmoUser(cmd.getNameParam("ammoName"), cmd.getNameParam("name"));
-
-                    break;
-                }
-                case 'removeAmmo': {
-                    removeAmmo(cmd.getNameParam("ammoName"));
-
-                    break;
-                }
-                case 'removeAllAmmo': {
-                    ammoSpawnList.clear();
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
     }
 
     override void worldThingSpawned(WorldEvent e) {
