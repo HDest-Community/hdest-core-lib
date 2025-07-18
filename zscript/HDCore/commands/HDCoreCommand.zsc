@@ -59,7 +59,7 @@ class HDCoreCommandParam abstract {
 class HDCoreCommand {
     name command;
 
-    Map<string, HDCoreCommandParam> params;
+    Map<name, HDCoreCommandParam> params;
 
     static HDCoreCommand create(name command, string paramsStr = "") {
         let cmd = HDCoreCommand(new('HDCoreCommand'));
@@ -74,7 +74,7 @@ class HDCoreCommand {
         return cmd;
     }
 
-    static void parseParams(out Map<string, HDCoreCommandParam> paramsMap, string paramsStr = "") {
+    static void parseParams(out Map<name, HDCoreCommandParam> paramsMap, string paramsStr = "") {
         if (paramsStr.length() > 0) {
 
             let dict = Dictionary.fromString(paramsStr);

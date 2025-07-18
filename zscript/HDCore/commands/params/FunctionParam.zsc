@@ -1,6 +1,6 @@
 class HDCoreCommandFunctionParam : HDCoreCommandParam abstract {
 
-    Map<string, HDCoreCommandParam> fnParams;
+    Map<name, HDCoreCommandParam> fnParams;
 
     override void setParam(string newVal) {
         super.setParam(newVal);
@@ -10,13 +10,13 @@ class HDCoreCommandFunctionParam : HDCoreCommandParam abstract {
 
     bool hasParam(string key) {
         let v = fnParams.checkKey(paramName.."."..key);
-        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "hasParam(\""..key.."\") => "..v);
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "hasParam(\""..paramName.."."..key.."\") => "..v);
         return v;
     }
 
     HDCoreCommandParam getParam(string key) {
         let v = HDCoreCommandParam(fnParams.getIfExists(paramName.."."..key));
-        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getParam(\""..key.."\") => "..v);
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getParam(\""..paramName.."."..key.."\") => "..v);
         return v;
     }
 
@@ -67,7 +67,7 @@ class HDCoreCommandFunctionParam : HDCoreCommandParam abstract {
     string toString() {
         let paramStr = "(";
 
-        forEach (k, v : fnParams) paramStr = paramStr.."\""..k.."\": "..HDCoreCommandParam(v).getStringValue()..", ";
+        forEach (k, v : fnParams) paramStr = paramStr.."\""..paramName.."."..k.."\": "..HDCoreCommandParam(v).getStringValue()..", ";
 
         paramStr = paramStr..")";
 
