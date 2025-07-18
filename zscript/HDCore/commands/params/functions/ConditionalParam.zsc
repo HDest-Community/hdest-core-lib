@@ -1,0 +1,26 @@
+class HDCoreCommandFunctionParam_Conditional : HDCoreCommandFunctionParam {
+
+    override string getStringValue() {
+        return getConditionalParam().getStringValue();
+    }
+
+    override name getNameValue() {
+        return getConditionalParam().getNameValue();
+    }
+
+    override int getIntValue() {
+        return getConditionalParam().getIntValue();
+    }
+
+    override double getDoubleValue() {
+        return getConditionalParam().getDoubleValue();
+    }
+
+    override bool getBoolValue() {
+        return getConditionalParam().getBoolValue();
+    }
+
+    private HDCoreCommandParam getConditionalParam() {
+        return getBoolParam("condition") ? getParam("value") : getParam("elseValue");
+    }
+}

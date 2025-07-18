@@ -1,0 +1,59 @@
+class HDCoreCommandFunctionParam_Service : HDCoreCommandFunctionParam {
+
+    Service svc;
+
+    override void setParam(string newVal) {
+        super.setParam(newVal);
+
+        svc = ServiceIterator.Find(getNameParam("name")).Next();
+    }
+
+    override string getStringValue() {
+        return svc
+            ? svc.getStringUI(
+                getStringParam("request"),
+                getStringParam("stringArg"),
+                getIntParam("intArg"),
+                getDoubleParam("doubleArg")
+            )
+            : "";
+    }
+
+    override name getNameValue() {
+        name name = getStringValue();
+        return name;
+    }
+
+    override int getIntValue() {
+        return svc
+            ? svc.getIntUI(
+                getStringParam("request"),
+                getStringParam("stringArg"),
+                getIntParam("intArg"),
+                getDoubleParam("doubleArg")
+            )
+            : 0;
+    }
+
+    override double getDoubleValue() {
+        return svc
+            ? svc.getDoubleUI(
+                getStringParam("request"),
+                getStringParam("stringArg"),
+                getIntParam("intArg"),
+                getDoubleParam("doubleArg")
+            )
+            : 0.0;
+    }
+
+    override bool getBoolValue() {
+        return svc
+            ? svc.getIntUI(
+                getStringParam("request"),
+                getStringParam("stringArg"),
+                getIntParam("intArg"),
+                getDoubleParam("doubleArg")
+            )
+            : false;
+    }
+}

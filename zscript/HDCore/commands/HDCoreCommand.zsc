@@ -1,16 +1,47 @@
 class HDCoreCommandParam abstract {
 
+    string paramName;
+
     string value;
 
-    static HDCoreCommandParam create(name paramName, string value = "") {
-        let param = HDCoreCommandParam(new(paramName));
+    static HDCoreCommandParam create(name paramCls, name paramName, string value = "") {
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "Creating new "..paramCls.." instance, paramName="..paramName..", value="..value);
 
-        if (param) param.setParam(value);
+        let param = HDCoreCommandParam(new(paramCls));
+
+        if (param) {
+            param.paramName = paramName;
+
+            // If we're building a nested functional param,
+            // Filter out irrelevant params
+            if (param is 'HDCoreCommandFunctionParam') {
+                HDCore.log('HDCoreLib', LOGGING_TRACE, "Filtering out irrelevant parameters...");
+
+                Dictionary oldDict = Dictionary.fromString(value);
+                let i = DictionaryIterator.create(oldDict);
+                
+                let newDict = Dictionary.create();
+                while (i.next()) {
+                    let key = i.key();
+                    let val = i.value();
+                    
+                    HDCore.log('HDCoreLib', LOGGING_TRACE, "Key="..key..", value="..val..", paramName="..paramName..", Keep? "..(key.left((paramName..".").length()) ~== paramName.."."));
+
+                    if (key.left((paramName..".").length()) ~== paramName..".") newDict.insert(key, val);
+                }
+
+                value = newDict.toString();
+            }
+
+            param.setParam(value);
+        }
 
         return param;
     }
 
     virtual void setParam(string newVal = "") {
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "Setting "..paramName.." value from "..value.." to "..newVal);
+
         value = newVal;
     }
 
@@ -62,15 +93,21 @@ class HDCoreCommand {
                     val = val.mid(1);
                 } else if (val.indexOf("@") == 0) {
                     let paramsStart = val.indexOf("(");
-                    let paramsEnd   = val.rightIndexOf(")");
+                    // let paramsEnd   = val.rightIndexOf(")");
 
                     paramName = 'HDCoreCommandFunctionParam_'..val.mid(1, paramsStart - 1);
-                    val = val.mid(paramsStart + 1, paramsEnd - paramsStart - 1);
+                    // val = val.mid(paramsStart + 1, paramsEnd - paramsStart - 1);
+                    val = paramsStr;
                 } else {
                     paramName = 'HDCoreCommandStaticParam';
                 }
 
-                let param = HDCoreCommandParam.create(paramName, val);
+                // If the specific Command Param Class doesn't exist, quit.
+                // This is mainly for custom Function Params,
+                // but may be useful in the future
+                if (!HDCore.checkClassExists(paramName)) return;
+
+                let param = HDCoreCommandParam.create(paramName, key, val);
 
                 if (param) {
                     paramsMap.insert(key, param);

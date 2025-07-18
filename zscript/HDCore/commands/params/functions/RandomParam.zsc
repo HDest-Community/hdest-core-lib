@@ -1,0 +1,22 @@
+class HDCoreCommandFunctionParam_Random : HDCoreCommandFunctionParam {
+
+    override string getStringValue() {
+        return "";
+    }
+
+    override name getNameValue() {
+        return '';
+    }
+
+    override int getIntValue() {
+        return random(getIntParam("min", 0), getIntParam("max", 256));
+    }
+
+    override double getDoubleValue() {
+        return frandom(getDoubleParam("min", 0.0), getDoubleParam("max", 1.0));
+    }
+
+    override bool getBoolValue() {
+        return randompick(false, true);
+    }
+}

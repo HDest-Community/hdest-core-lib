@@ -4,18 +4,18 @@ class HDCoreCommandFunctionParam : HDCoreCommandParam abstract {
 
     override void setParam(string newVal) {
         super.setParam(newVal);
-
+        
         HDCoreCommand.parseParams(fnParams, newVal);
     }
 
     bool hasParam(string key) {
-        let v = fnParams.checkKey(key);
+        let v = fnParams.checkKey(paramName.."."..key);
         HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "hasParam(\""..key.."\") => "..v);
         return v;
     }
 
     HDCoreCommandParam getParam(string key) {
-        let v = HDCoreCommandParam(fnParams.getIfExists(key));
+        let v = HDCoreCommandParam(fnParams.getIfExists(paramName.."."..key));
         HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getParam(\""..key.."\") => "..v);
         return v;
     }
