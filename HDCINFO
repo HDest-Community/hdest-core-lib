@@ -843,7 +843,7 @@ addSpawnTableSingleEntry => { "tableName": "Meat5Replaces", "name": "HDMt5", "we
 // Non-Solid Meat 2 Spawns: Total Weight = 1, Total Persistent Weight = 1
 newSpawnTable => { "spawnName": "NonSolidMeat2" }
 addSpawnTableNestedEntry => { "tableName": "NonSolidMeat2", "name": "NonSolidMeat2Replaces", "persists": "true" }
-addSpawnTableSingleEntry => { "tableName": "NonSolidMeat2Replaces", "name": "HDM2NS", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "NonSolidMeat2Replaces", "name": "HDMt2NS", "weight": "1", "persists": "true" }
 
 // Non-Solid Meat 3 Spawns: Total Weight = 1, Total Persistent Weight = 1
 newSpawnTable => { "spawnName": "NonSolidMeat3" }
@@ -868,7 +868,7 @@ addSpawnTableSingleEntry => { "tableName": "NonSolidTwitchReplaces", "name": "HD
 // Red Torch Spawns: Total Weight = 1, Total Persistent Weight = 1
 newSpawnTable => { "spawnName": "RedTorch" }
 addSpawnTableNestedEntry => { "tableName": "RedTorch", "name": "RedTorchReplaces", "persists": "true" }
-addSpawnTableSingleEntry => { "tableName": "RedStorchReplaces", "name": "HDRedTorch", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "RedtorchReplaces", "name": "HDRedTorch", "weight": "1", "persists": "true" }
 
 // Short Blue Torch Spawns: Total Weight = 1, Total Persistent Weight = 1
 newSpawnTable => { "spawnName": "ShortBlueTorch" }
