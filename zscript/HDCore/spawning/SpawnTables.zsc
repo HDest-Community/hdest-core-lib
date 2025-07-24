@@ -45,8 +45,8 @@ class HDCoreSpawnTable play {
         entriesStr = entriesStr.."]";
 
         return String.format(
-            "{ tableName=%s, spawnName=%s, entries=%s, replace=%i }",
-               tableName,    spawnName,    entriesStr, replace
+            "{ \"tableName\": \"%s\", \"spawnName\": \"%s\", \"replace\": %i, \"totalWeight\": %.3f, \"entries\": %s }",
+                 tableName,             spawnName,             replace,      getTotalWeight(_entries), entriesStr
         );
     }
 
@@ -76,7 +76,7 @@ class HDCoreSpawnTable play {
     }
 
     HDCoreSpawnTableEntry getEntry(name name, bool persistentOnly = false) {
-        forEach (entry : _entries) if (/* entry.enabled && */ entry.name == name && (!persistentOnly || entry.isPersistent)) return entry;
+        forEach (entry : _entries) if (entry.name == name && (!persistentOnly || entry.isPersistent)) return entry;
 
         return null;
     }
@@ -109,7 +109,7 @@ class HDCoreSpawnTable play {
             }
         }
 
-        if (!arr.size()) HDCore.Log('HDCoreLib', LOGGING_WARN, "No valid entries found for Spawn Table "..tableName..". This may cause unexpected behavior!");
+        if (!arr.size()) HDCore.Log('HDCoreLib', LOGGING_WARN, "No valid entries found for Spawn Table \""..tableName.."\". This may cause unexpected behavior!");
     }
 
     HDCoreSpawnTableEntry getRandomEntry(bool persistentOnly = false) {
@@ -139,23 +139,34 @@ class HDCoreSpawnTable play {
             entry = entries[0];
         }
         
-        HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Selected Entry: "..(entry ? entry.name.."" : "Nothing"));
+        HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Selected Entry: "..(entry ? "\""..entry.name.."\"" : "Nothing"));
 
         return entry;
     }
 
-    void getWeights(out Array<double> weights, Array<HDCoreSpawnTableEntry> entries, bool persistentOnly = false) {
+    static void getWeights(out Array<double> weights, Array<HDCoreSpawnTableEntry> entries, bool persistentOnly = false) {
         weights.clear();
 
         forEach (entry : entries) weights.push(entry.getWeight(persistentOnly));
     }
+
+    static double getTotalWeight(Array<HDCoreSpawnTableEntry> entries, bool persistentOnly = false) {
+        let weight = 0.0;
+
+        forEach (entry : entries) {
+            let w = entry.getWeight(persistentOnly);
+            if (w > 0.0) {
+                weight += w;
+            } else {
+                return 1.0;
+            }
+        }
+
+        return weight;
+    }
 }
 
 class HDCoreSpawnTableEntry play abstract {
-
-    // Whether or not this entry is enabled.
-    // Disabled entries are simply ignored when being selected.
-    // bool enabled;
 
     // Name of entry.
     // Single Entries are named according to the thing they'll spawn,
@@ -188,15 +199,15 @@ class HDCoreSpawnTableSingleEntry : HDCoreSpawnTableEntry {
 
     /**
      * Creates an entry for a given thing by name and its chances of spawning within the table.
-     * @param {name} name The className of the thing that might spawn
-     * @param {double} weight The relative weight/bias of the thing in the table.
+     * @param {name} name The className of the thing that might spawn.
+     * @param {double} [weight=1.0] The relative weight/bias of the thing in the table.
+     * @param {bool} [persists=false] If true, the newly created entry will be marked as persistent.
      * @param {int}  [chance=256] chance out of 256 that the thing being spawned will actually spawn.
      * @returns {HDCoreSpawnTableEntry} The newly created table entry.
      */
-    static HDCoreSpawnTableEntry create(name name, /* bool enabled = true, */ double weight = 1.0, bool persists = false, int chance = 256) {
+    static HDCoreSpawnTableEntry create(name name, double weight = 1.0, bool persists = false, int chance = 256) {
         HDCoreSpawnTableSingleEntry entry = HDCoreSpawnTableSingleEntry(new('HDCoreSpawnTableSingleEntry'));
 
-        // entry.enabled      = enabled;
         entry.name         = name;
         entry.weight       = weight;
         entry.isPersistent = persists;
@@ -222,8 +233,8 @@ class HDCoreSpawnTableSingleEntry : HDCoreSpawnTableEntry {
 
     override string toString() {
         return String.format(
-            "{ name=%s, weight=%.3f, isPersistent=%i, chance=%i }",
-               /* enabled, */    name,    weight,      isPersistent,    chance
+            "{ \"name\": \"%s\", \"weight\": %.3f, \"isPersistent\": %i, \"chance\": %i }",
+                 name,             weight,           isPersistent,         chance
         );
     }
 }
@@ -234,20 +245,19 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
 
     /**
      * Creates an entry for a given thing by name and its chances of spawning within the table.
-     * @param {isTable} isTable If true, the entry is actually a nested table
-     * @param {name} name The className of the thing that might spawn
-     * @param {double} weight The relative weight/bias of the thing in the table.
-     * @param {int}  [chance=256] chance out of 256 that the thing being spawned will actually spawn.
+     * @param {HDCoreSpawnTable} table The Spawn Table to use in this entry.
+     * @param {double} [weight=-1.0] The relative weight/bias of the thing in the table. Defaults to the total weight of the table.
+     * @param {bool} [persists=false] if true, the new entry is marked as persistent.
+     * @param {int} [chance=256] chance out of 256 that the thing being spawned will actually spawn.
      * @returns {HDCoreSpawnTableEntry} The newly created table entry.
      */
-    static HDCoreSpawnTableEntry create(HDCoreSpawnTable table, /* bool enabled = true, */ double weight = -1.0, bool persists = false, int chance = 256) {
+    static HDCoreSpawnTableEntry create(HDCoreSpawnTable table, double weight = -1.0, bool persists = false, int chance = 256) {
         HDCoreSpawnTableNestedEntry entry = HDCoreSpawnTableNestedEntry(new('HDCoreSpawnTableNestedEntry'));
 
         entry._table = table;
 
-        // entry.enabled      = enabled;
         entry.name         = table.tableName;
-        entry.weight       = weight >= 0.0 ? weight : entry.getWeight();
+        entry.weight       = weight;
         entry.isPersistent = persists;
         entry.chance       = chance;
 
@@ -263,16 +273,16 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
     }
 
     override double getWeight(bool persistentOnly) {
-        let weight = 0.0;
+        if (weight >= 0.0) {
+            return weight;
+        } else {        
+            Array<HDCoreSpawnTableEntry> entries;
+            entries.clear();
 
-        Array<HDCoreSpawnTableEntry> entries;
-        entries.clear();
+            getEntries(entries, persistentOnly);
 
-        getEntries(entries, persistentOnly);
-
-        forEach (entry : entries) weight += entry.getWeight(persistentOnly);
-
-        return weight;
+            return HDCoreSpawnTable.getTotalWeight(entries, persistentOnly);
+        }
     }
 
     override void getEntries(out Array<HDCoreSpawnTableEntry> entries, bool persistentOnly) {
@@ -281,8 +291,8 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
 
     override string toString() {
         return String.format(
-            "{ name=%s, table=%s, weight=%.3f, isPersistent=%i, chance=%i }",
-               /* enabled, */    name, _table.toString(), getWeight(), isPersistent, chance
+            "{ \"name\": \"%s\", \"table\": %s, \"weight\": %.3f, \"isPersistent\": %i, \"chance\": %i }",
+                 name,       _table.toString(),   getWeight(),      isPersistent,         chance
         );
     }
 }

@@ -45,7 +45,6 @@ class HDCoreSpawnHandler : HDCoreEventHandler {
                     if (cmd.getBoolParam("addOriginalThing")) {
                         let entry = HDCoreSpawnTableSingleEntry.create(
                             spawnName,
-                            // cmd.getBoolParam("enabled", true),
                             cmd.getDoubleParam("weight", 1.0),
                             cmd.getBoolParam("persists"),
                             cmd.getIntParam("chance", 256)
@@ -61,7 +60,6 @@ class HDCoreSpawnHandler : HDCoreEventHandler {
             case 'addSpawnTableSingleEntry': {
                 let entry = HDCoreSpawnTableSingleEntry.create(
                     cmd.getNameParam("name"),
-                    // cmd.getBoolParam("enabled", true),
                     cmd.getDoubleParam("weight", 1.0),
                     cmd.getBoolParam("persists"),
                     cmd.getIntParam("chance", 256)
@@ -92,8 +90,7 @@ class HDCoreSpawnHandler : HDCoreEventHandler {
 
                 let entry = HDCoreSpawnTableNestedEntry.create(
                     nestedTable,
-                    // cmd.getBoolParam("enabled", true),
-                    cmd.getDoubleParam("weight", 1.0),
+                    cmd.getDoubleParam("weight", -1.0),
                     cmd.getBoolParam("persists"),
                     cmd.getIntParam("chance", 256)
                 );
