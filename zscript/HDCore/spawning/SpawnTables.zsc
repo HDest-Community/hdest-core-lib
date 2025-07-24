@@ -125,8 +125,9 @@ class HDCoreSpawnTable play {
 
         if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
             let msg = tableName.." Entries:\n";
+            let totalWeight = getTotalWeight(entries, persistentOnly);
 
-            forEach (entry : entries) msg = msg.." * "..entry.name.." ["..entry.getWeight().."]\n";
+            forEach (entry : entries) msg = msg.." * "..entry.name.." ["..entry.getWeight().." ("..((entry.getWeight() / totalWeight) * 100.0).."%)]\n";
 
             HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
         }
