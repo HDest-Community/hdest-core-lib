@@ -47,7 +47,8 @@ class HDCoreSpawnHandler : HDCoreEventHandler {
                             spawnName,
                             cmd.getDoubleParam("weight", 1.0),
                             cmd.getBoolParam("persists"),
-                            cmd.getIntParam("chance", 256)
+                            cmd.getIntParam("chance", 256),
+                            cmd.getBoolParam("isFinal")
                         );
 
                         if (entry) table.addEntry(entry);
@@ -62,7 +63,8 @@ class HDCoreSpawnHandler : HDCoreEventHandler {
                     cmd.getNameParam("name"),
                     cmd.getDoubleParam("weight", 1.0),
                     cmd.getBoolParam("persists"),
-                    cmd.getIntParam("chance", 256)
+                    cmd.getIntParam("chance", 256),
+                    cmd.getBoolParam("isFinal")
                 );
 
                 if (entry) addSpawnTableEntry(
@@ -92,7 +94,8 @@ class HDCoreSpawnHandler : HDCoreEventHandler {
                     nestedTable,
                     cmd.getDoubleParam("weight", -1.0),
                     cmd.getBoolParam("persists"),
-                    cmd.getIntParam("chance", 256)
+                    cmd.getIntParam("chance", 256),
+                    cmd.getBoolParam("isFinal")
                 );
 
                 if (entry) addSpawnTableEntry(
