@@ -182,6 +182,9 @@ class HDCoreSpawnTableEntry play abstract {
     // Chance out of 256 that the thing being spawned will succeed, otherwise nothing will spawn in its place.
     int chance;
 
+    // Whether or not this entry should be considered final.
+    bool isFinal;
+
     // Getter to return the name of the thing to spawn for this entry
     abstract name getValue(bool persistentOnly = false);
 
@@ -203,15 +206,17 @@ class HDCoreSpawnTableSingleEntry : HDCoreSpawnTableEntry {
      * @param {double} [weight=1.0] The relative weight/bias of the thing in the table.
      * @param {bool} [persists=false] If true, the newly created entry will be marked as persistent.
      * @param {int}  [chance=256] chance out of 256 that the thing being spawned will actually spawn.
+     * @param {bool} [isFinal=false] If true, the selected entry will be considered final.
      * @returns {HDCoreSpawnTableEntry} The newly created table entry.
      */
-    static HDCoreSpawnTableEntry create(name name, double weight = 1.0, bool persists = false, int chance = 256) {
+    static HDCoreSpawnTableEntry create(name name, double weight = 1.0, bool persists = false, int chance = 256, bool isFinal = false) {
         HDCoreSpawnTableSingleEntry entry = HDCoreSpawnTableSingleEntry(new('HDCoreSpawnTableSingleEntry'));
 
         entry.name         = name;
         entry.weight       = weight;
         entry.isPersistent = persists;
         entry.chance       = chance;
+        entry.isFinal      = isFinal;
 
         return entry;
     }
@@ -233,8 +238,8 @@ class HDCoreSpawnTableSingleEntry : HDCoreSpawnTableEntry {
 
     override string toString() {
         return String.format(
-            "{ \"name\": \"%s\", \"weight\": %.3f, \"isPersistent\": %i, \"chance\": %i }",
-                 name,             weight,           isPersistent,         chance
+            "{ \"name\": \"%s\", \"weight\": %.3f, \"isPersistent\": %i, \"chance\": %i, \"isFinal\": %i }",
+                 name,             weight,           isPersistent,         chance,         isFinal
         );
     }
 }
@@ -249,9 +254,10 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
      * @param {double} [weight=-1.0] The relative weight/bias of the thing in the table. Defaults to the total weight of the table.
      * @param {bool} [persists=false] if true, the new entry is marked as persistent.
      * @param {int} [chance=256] chance out of 256 that the thing being spawned will actually spawn.
+     * @param {bool} [isFinal=false] If true, the selected entry will be considered final.
      * @returns {HDCoreSpawnTableEntry} The newly created table entry.
      */
-    static HDCoreSpawnTableEntry create(HDCoreSpawnTable table, double weight = -1.0, bool persists = false, int chance = 256) {
+    static HDCoreSpawnTableEntry create(HDCoreSpawnTable table, double weight = -1.0, bool persists = false, int chance = 256, bool isFinal = false) {
         HDCoreSpawnTableNestedEntry entry = HDCoreSpawnTableNestedEntry(new('HDCoreSpawnTableNestedEntry'));
 
         entry._table = table;
@@ -260,6 +266,7 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
         entry.weight       = weight;
         entry.isPersistent = persists;
         entry.chance       = chance;
+        entry.isFinal      = isFinal;
 
         return entry;
     }
@@ -291,8 +298,8 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
 
     override string toString() {
         return String.format(
-            "{ \"name\": \"%s\", \"table\": %s, \"weight\": %.3f, \"isPersistent\": %i, \"chance\": %i }",
-                 name,       _table.toString(),   getWeight(),      isPersistent,         chance
+            "{ \"name\": \"%s\", \"table\": %s, \"weight\": %.3f, \"isPersistent\": %i, \"chance\": %i, \"isFinal\": %i }",
+                 name,       _table.toString(),   getWeight(),      isPersistent,         chance,         isFinal
         );
     }
 }

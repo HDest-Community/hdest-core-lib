@@ -268,8 +268,7 @@ class HDCoreSpawnHandler : HDCoreEventHandler {
                 HDCore.Log('HDCoreLib', LOGGING_DEBUG, e.replacee.getClassName().." -> "..replacement);
     
                 e.replacement = replacement;
-                // TODO: Support marking replacements as final
-                // e.final = entry.final || replacement == 'NullSpawner';
+                e.isFinal = e.isFinal || entry.isFinal || replacement == 'NullSpawner';
     
                 return true;
             }
@@ -291,7 +290,7 @@ class HDCoreSpawnHandler : HDCoreEventHandler {
             if (HDCore.CheckClassExists(value) && value != a.getClassName() && value != 'NullSpawner') {
                 HDCore.Log('HDCoreLib', LOGGING_DEBUG, a.getClassName().." + "..value);
     
-                Actor.Spawn(value, a.pos);
+                Actor.Spawn(value, a.pos, entry.isFinal ? NO_REPLACE : ALLOW_REPLACE);
     
                 return true;
             }
