@@ -46,8 +46,26 @@ class HDCoreEventHandler : EventHandler abstract {
 
 
     /**
-     * OnWorldLoaded Event
+     * WorldLoaded Event
      * By default will run initialization if necessary.
      */
     override void worldLoaded(WorldEvent e) { init(); }
+
+    /**
+     * WorldThingDied Event
+     */
+    override void worldThingDied(WorldEvent e) {
+        
+        // If the thing that died is any HDest Mob and it hasn't dropped anything yet,
+        // trigger our own lifecycle hook in case downstream addons wish to implement.
+        if (e.thing is 'HDMobBase' && !HDMobBase(e.thing).bHASDROPPED) worldHDMobBaseDied(e);
+    }
+
+    /**
+     * HDMobBaseDied Event
+     * To be implemented in downstream addons
+     */
+    virtual void worldHDMobBaseDied(WorldEvent e) {
+        // no-op
+    }
 }
