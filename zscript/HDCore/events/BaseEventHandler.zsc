@@ -42,7 +42,9 @@ class HDCoreEventHandler : EventHandler abstract {
      * Lifecycle Hook to process a single HDCoreCommand.
      * Must be implemented by child class.
      */
-    abstract void processCommand(HDCoreCommand cmd);
+    virtual void processCommand(HDCoreCommand cmd){
+        // no-op
+    }
 
 
     /**
