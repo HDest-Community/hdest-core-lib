@@ -7,13 +7,23 @@ class HDCoreEventHandler : EventHandler abstract {
 
         let cmdReader = HDCoreInfoReader(StaticEventHandler.find('HDCoreInfoReader'));
 
-        beforeProcessCommands();
-
-        processCommands(cmdReader.commands);
-
-        afterProcessCommands();
+        if (shouldProcessCommands()) {
+            beforeProcessCommands();
+    
+            processCommands(cmdReader.commands);
+    
+            afterProcessCommands();
+        }
 
         initialized = true;
+    }
+
+    /**
+     * Overrideable check to possibly ignore processing comnmands.
+     * @returns {bool} If true, `HDCoreCommand`s will be processed.
+     */
+    virtual bool shouldProcessCommands() {
+        return true;
     }
 
     /**
@@ -40,9 +50,9 @@ class HDCoreEventHandler : EventHandler abstract {
 
     /**
      * Lifecycle Hook to process a single HDCoreCommand.
-     * Must be implemented by child class.
+     * To be implemented in downstream addons
      */
-    virtual void processCommand(HDCoreCommand cmd){
+    virtual void processCommand(HDCoreCommand cmd) {
         // no-op
     }
 
