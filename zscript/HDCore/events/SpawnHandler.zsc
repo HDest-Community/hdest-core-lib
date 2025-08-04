@@ -267,7 +267,7 @@ class HDCoreSpawnHandler : HDCoreEventHandler {
         if (entry) {
             let replacement = entry.getValue(persistentOnly);
     
-            if (replacement != e.replacee && replacement != 'NullSpawner') {
+            if (replacement != e.replacee) {
                 HDCore.Log('HDCoreLib', LOGGING_DEBUG, e.replacee.getClassName().." -> "..replacement);
     
                 e.replacement = replacement;
