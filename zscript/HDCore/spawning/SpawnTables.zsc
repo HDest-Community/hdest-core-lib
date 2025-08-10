@@ -302,7 +302,7 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
 
         // If a random value (0-255) falls below the success chance, return what's in the entry.
         // Otherwise return a "nothing" dummy spawner to simulate a RandomSpawner picking and failing to drop a thing.
-        return random() < chance ? entry.getValue() : 'NullSpawner';
+        return (entry && random() < chance) ? entry.getValue() : 'NullSpawner';
     }
 
     override double getWeight(bool persistentOnly) {
