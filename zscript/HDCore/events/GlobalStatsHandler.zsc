@@ -1,0 +1,54 @@
+class HDCoreGlobalStatsHandler : EventHandler {
+
+    HDCoreGlobalStatsThinker t;
+
+    clearscope bool hasKey(name key) {
+        HDCore.log('HDCoreLib.GlobalStatsHandler', LOGGING_TRACE, "Checking if Global Stat '"..key.."' Exists...");
+
+        let ret = !!t && t.hasKey(key);
+        
+        HDCore.log('HDCoreLib.GlobalStatsHandler', LOGGING_DEBUG, "Thinker: "..(!!t)..", key: "..ret);
+
+        return ret;
+    }
+
+    clearscope string getValue(name key) {
+        HDCore.log('HDCoreLib.GlobalStatsHandler', LOGGING_TRACE, "Getting Global Stat '"..key.."'...");
+
+        let ret = !!t ? t.getValue(key) : "";
+
+        HDCore.log('HDCoreLib.GlobalStatsHandler', LOGGING_DEBUG, "Thinker: "..(!!t)..", value: "..ret);
+
+        return ret;
+    }
+
+    clearscope string getValueOrDefault(name key, string defaultValue = "") {
+        HDCore.log('HDCoreLib.GlobalStatsHandler', LOGGING_TRACE, "Getting Global Stat '"..key.."', or '"..defaultValue.."' if it doesn't...");
+
+        let ret = !!t ? t.getValueOrDefault(key, defaultValue) : defaultValue;
+
+        HDCore.log('HDCoreLib.GlobalStatsHandler', LOGGING_DEBUG, "Thinker: "..(!!t)..", value: "..ret);
+
+        return ret;
+    }
+
+    override void WorldLoaded(WorldEvent e) {
+        HDCore.log('HDCoreLib.GlobalStatsHandler', LOGGING_TRACE, "World Loaded, getting Thinker...");
+
+        t = HDCoreGlobalStatsThinker.get();
+        
+        HDCore.log('HDCoreLib.GlobalStatsHandler', LOGGING_DEBUG, "Thinker: "..t);
+    }
+
+    override void WorldUnloaded(WorldEvent e) {
+        int prevValue = getValueOrDefault('levelsCompleted', "0").toInt(10);
+        int currValue = prevValue + 1;
+
+        HDCore.log('HDCoreLib.GlobalStatsHandler', LOGGING_DEBUG, "Levels Completed: "..prevValue.." -> "..currValue);
+
+        if (t) {
+            t.setValue('levelsCompleted', currValue.."");
+            t.saveValues();
+        }
+    }
+}
