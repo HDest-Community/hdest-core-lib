@@ -51,18 +51,26 @@ class HDCoreSpawnTable play {
     }
 
     void addEntry(HDCoreSpawnTableEntry entry) {
+        HDCore.Log('HDCoreLib', LOGGING_TRACE, "Adding '"..entry.name.."' to Spawn Table '"..tableName.."' Entries...");
+
         _entries.push(entry);
     }
 
     void addEntries(Array<HDCoreSpawnTableEntry> arr) {
+        HDCore.Log('HDCoreLib', LOGGING_TRACE, "Appending entries to Spawn Table '"..tableName.."'...");
+
         _entries.append(arr);
     }
 
     void removeEntry(name name) {
+        HDCore.Log('HDCoreLib', LOGGING_TRACE, "Removing '"..name.."' from Spawn Table '"..tableName.."' Entries...");
+
         HDCoreSpawnTableEntry tableEntry;
 
         forEach (entry : _entries) {
             if (entry.name == name) {
+                HDCore.Log('HDCoreLib', LOGGING_TRACE, "Entry for '"..entry.name.."' found.");
+
                 tableEntry = entry;
                 break;
             }
@@ -72,6 +80,8 @@ class HDCoreSpawnTable play {
     }
 
     void clearEntries() {
+        HDCore.Log('HDCoreLib', LOGGING_TRACE, "Clearing all entries from Spawn Table '"..tableName.."'.");
+
         _entries.clear();
     }
 
@@ -86,18 +96,25 @@ class HDCoreSpawnTable play {
 
         forEach (entry : _entries) {
 
-            // If entry is disabled, skip.
-            // if (!entry.enabled) continue;
-
             // If entry is not nested, yet has an invalid actor, skip.
-            if (entry is 'HDCoreSpawnTableSingleEntry' && !HDCore.CheckClassExists(entry.name)) continue;
+            if (entry is 'HDCoreSpawnTableSingleEntry' && !HDCore.CheckClassExists(entry.name)) {
+                HDCore.Log('HDCoreLib', LOGGING_WARN, "Spawn Table Entry for "..tableName.." includes a class '"..entry.name.."' that does not exist!");
+
+                continue;
+            }
 
             // If we're beyond inital map spawns and are not persistent, skip.
-            if (persistentOnly && !entry.isPersistent) continue;
+            if (persistentOnly && !entry.isPersistent) {
+                HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Spawn Table Entry '"..entry.name.."' is not persistent, skipping.");
+
+                continue;
+            }
 
 
             // If weight is negative, treat as only possible outcome (replace all)
             if (entry.getWeight(persistentOnly) < 0.0) {
+                HDCore.Log('HDCoreLib', LOGGING_DEBUG, "'"..entry.name.."' has negative weight, returning single entry.");
+
                 arr.clear();
                 arr.push(entry);
                 return;
@@ -105,6 +122,8 @@ class HDCoreSpawnTable play {
 
             // Otherwise, as long as we have a valid weight, add it to array
             if (!HDGMGlobalMaths.nearZero(entry.getWeight(persistentOnly))) {
+                HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Adding '"..entry.name.."' to list of relevant entries.");
+
                 arr.push(entry);
             }
         }
@@ -113,6 +132,8 @@ class HDCoreSpawnTable play {
     }
 
     HDCoreSpawnTableEntry getRandomEntry(bool persistentOnly = false) {
+        HDCore.Log('HDCoreLib', LOGGING_TRACE, "Getting random entry from Spawn Table '"..tableName.."'...");
+
         Array<HDCoreSpawnTableEntry> entries;
         entries.clear();
 
@@ -126,8 +147,12 @@ class HDCoreSpawnTable play {
         if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
             let msg = tableName.." Entries:\n";
             let totalWeight = getTotalWeight(entries, persistentOnly);
+            
+            forEach (entry : entries) {
+                let weight = entry.getWeight(persistentOnly);
 
-            forEach (entry : entries) msg = msg.." * "..entry.name.." ["..entry.getWeight().." ("..((entry.getWeight() / totalWeight) * 100.0).."%)]\n";
+                msg = msg.." * "..entry.name.." ["..weight.." ("..((weight / totalWeight) * 100.0).."%)]\n";
+            }
 
             HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
         }

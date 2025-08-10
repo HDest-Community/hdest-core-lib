@@ -191,12 +191,24 @@ class HDCoreSpawnHandler : HDCoreEventHandler {
     }
 
     void getSpawnTables(out Array<HDCoreSpawnTable> tables, name name, bool replace = true) {
+        HDCore.Log('HDCoreLib', LOGGING_TRACE, "Getting all "..(replace ? "replacement" : "spawning").." tables for '"..name.."'...");
+        
         if (spawnTables.size()) {
             forEach (table : spawnTables) {
                 if ((table.tableName == name || table.spawnName == name) && table.replace == replace) {
+                    HDCore.Log('HDCoreLib', LOGGING_TRACE, "Adding '"..table.tableName.."' table for "..table.spawnName.." to list of tables.");
+
                     tables.push(table);
                 }
             }
+        }
+        
+        if (HDCore.ShouldLog('HDCoreLib', LOGGING_TRACE)) {
+            let msg = "Returning the following "..(replace ? "replacement" : "spawning").." tables:\n";
+
+            forEach (table : tables) msg = msg.." * "..table.toString().."\n";
+
+            HDCore.Log('HDCoreLib', LOGGING_TRACE, msg);
         }
     }
 
@@ -208,9 +220,9 @@ class HDCoreSpawnHandler : HDCoreEventHandler {
             let msg = "Adding "
                 ..(table.replace ? "Replacement" : "Spawning")
                 .." Table for "..table.spawnName.." named '"..table.tableName
-                .."': [";
+                .."':\n";
 
-                if (table._entries.size()) forEach (entry : table._entries) msg = msg..", "..entry.toString();
+                if (table._entries.size()) forEach (entry : table._entries) msg = msg.." * "..entry.toString().."\n";
 
             HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg.."]");
         }

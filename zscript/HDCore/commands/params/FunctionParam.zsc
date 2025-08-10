@@ -64,7 +64,7 @@ class HDCoreCommandFunctionParam : HDCoreCommandParam abstract {
         return isEqual;
     }
 
-    string toString() {
+    override string toString() {
         let paramStr = "(";
 
         forEach (k, v : fnParams) paramStr = paramStr.."\""..paramName.."."..k.."\": "..HDCoreCommandParam(v).getStringValue()..", ";
@@ -72,8 +72,8 @@ class HDCoreCommandFunctionParam : HDCoreCommandParam abstract {
         paramStr = paramStr..")";
 
         return String.format(
-            "{ name=%s, fnParams=%s }",
-               value,   paramStr
+            "{ \"%s\": \"%s => %s\" }",
+              paramName, value, (getClassName().."").mid("HDCoreCommandFunctionParam_".length())
         );
     }
 }

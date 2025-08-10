@@ -45,6 +45,13 @@ class HDCoreCommandParam abstract {
         value = newVal;
     }
 
+    virtual string toString() {
+        return String.format(
+            "{ \"%s\": \"%s\" }",
+              paramName, value
+        );
+    }
+
     abstract string getStringValue();
 
     abstract name getNameValue();
@@ -54,6 +61,7 @@ class HDCoreCommandParam abstract {
     abstract double getDoubleValue();
 
     abstract bool getBoolValue();
+
 }
 
 class HDCoreCommand {
@@ -180,8 +188,8 @@ class HDCoreCommand {
         paramStr = paramStr..")";
 
         return String.format(
-            "{ command=%s, params=%s }",
-               command,    paramStr
+            "{ \"command\": \"%s\", \"params\": \"%s\" }",
+                 command,             paramStr
         );
     }
 }
