@@ -158,3 +158,26 @@ class HDCoreCommandFunctionParam_Max : HDCoreCommandFunctionParam {
         return false;
     }
 }
+
+class HDCoreCommandFunctionParam_Clamp : HDCoreCommandFunctionParam {
+
+    override string getStringValue() {
+        return "";
+    }
+
+    override name getNameValue() {
+        return '';
+    }
+
+    override int getIntValue() {
+        return clamp(getIntParam("value"), getIntParam("min"), getIntParam("max"));
+    }
+
+    override double getDoubleValue() {
+        return clamp(getDoubleParam("value"), getDoubleParam("min"), getDoubleParam("max"));
+    }
+
+    override bool getBoolValue() {
+        return false;
+    }
+}
