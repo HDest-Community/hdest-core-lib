@@ -137,7 +137,7 @@ addAmmoThingBlacklist => { "name": "HDLadderSection" }
 
 // Remove all existing spawn tables
 //
-// removeSpawnTable => {}
+// removeAllSpawnTables => {}
 
 // HDest Spawn Tables
 
