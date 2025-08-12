@@ -3,6 +3,8 @@ class AceCoreGlobalStats : Thinker {
 	int LevelsCompleted;
 
 	static AceCoreGlobalStats Get() {
+		HDCore.log('AceCoreLib', LOGGING_WARN, "AceCoreGlobalStats is Deprecated, contact developer to update!");
+
 		ThinkerIterator it = ThinkerIterator.Create('AceCoreGlobalStats', STAT_STATIC);
 
         // If the thinker finds one, return it

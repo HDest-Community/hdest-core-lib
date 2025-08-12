@@ -1,23 +1,12 @@
-extend class AceCore
-{
-	static int GetScaledChance(int lowest, int highest, int minLevel, int maxLevel)
-	{
-		if (level.MapName ~== "LOTSAGUN")
-		{
-			return highest;
-		}
+extend class AceCore {
+	static int GetScaledChance(int lowest, int highest, int minLevel, int maxLevel) {
+		HDCore.log('AceCoreLib', LOGGING_WARN, "GetScaledChance is Deprecated, contact developer to update!");
+
+		if (level.MapName ~== "LOTSAGUN" || minLevel <= 0 && maxLevel <= 0 || maxLevel < minLevel) return highest;
 		
-		int levelCount = AceCoreGlobalStats.Get().LevelsCompleted;
-
-		if (minLevel <= 0 && maxLevel <= 0 || maxLevel < minLevel || levelCount >= maxLevel)
-		{
-			return highest;
-		}
-
-		if (levelCount <= minLevel)
-		{
-			return lowest;
-		}
+		int levelCount = HDCoreGlobalStatsHandler.get().getValue('LevelsCompleted');
+		if (levelCount >= maxLevel) return highest;
+		if (levelCount <= minLevel) return lowest;
 
 		double diff = abs(lowest - highest);
 		double growthFac = (levelCount - minLevel) / double(maxLevel - minLevel);

@@ -1,0 +1,23 @@
+extend class HDCore {
+    
+	static int GetScaledChanceInt(int lowest, int highest, int minLevel, int maxLevel) {
+
+		// If we're on a specific map, or have an invalid level range, simply return the highest value
+		if (
+			level.MapName ~== "LOTSAGUN"
+				|| minLevel <= 0 && maxLevel <= 0
+				|| maxLevel < minLevel
+		) return highest;
+		
+		// Otherwise, get the current level count, and if that's outside the range, simply return their limits
+		int levelCount = HDCoreGlobalStatsHandler.get().getValue('LevelsCompleted');
+		if (levelCount >= maxLevel) return highest;
+		if (levelCount <= minLevel) return lowest;
+
+		// Otherwise, we fall within a range of levels to lerp between, so lerp.
+		double diff = abs(lowest - highest);
+		double growthFac = (levelCount - minLevel) / double(maxLevel - minLevel);
+
+		return int(clamp(ceil(lowest + (diff * growthFac)), 0, 256));
+	}
+}

@@ -19,8 +19,9 @@ class AceCoreHandler : EventHandler
 		}
 	}
 
-	override void WorldUnloaded(WorldEvent e)
-	{
-		AceCoreGlobalStats.Get().LevelsCompleted++;
-	}
+	// Deprecated in favor of HDCore GlobalStats Thinker/Handler
+	// override void WorldUnloaded(WorldEvent e)
+	// {
+	// 	AceCoreGlobalStats.Get().LevelsCompleted++;
+	// }
 }
