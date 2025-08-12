@@ -2,6 +2,8 @@ extend class AceCore
 {
 	static clearscope double, double GetSectorSize(Sector sec)
 	{
+		HDCore.log('AceCoreLib', LOGGING_WARN, "GetSectorSize is Deprecated, contact developer to update!");
+
 		if (sec.lines.Size())
 		{
 			double secArea = 0;
