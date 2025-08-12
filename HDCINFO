@@ -1050,15 +1050,21 @@ addSpawnTableSingleEntry => { "tableName": "GibbedMarineExtraReplaces", "name": 
 // removeAllAmmo => {}
 
 // HDest Ammo Associations
-newAmmo => { "ammoName": "HDPistolAmmo" }
-newAmmo => { "ammoName": "HDShellAmmo" }
-newAmmo => { "ammoName": "HDRevolverAmmo" }
-newAmmo => { "ammoName": "FourMilAmmo" }
-newAmmo => { "ammoName": "HDRocketAmmo" }
-newAmmo => { "ammoName": "HEATAmmo" }
-newAmmo => { "ammoName": "HDBattery" }
-newAmmo => { "ammoName": "SevenMilAmmo" }
 newAmmo => { "ammoName": "BrontornisRound" }
+newAmmo => { "ammoName": "FourMilAmmo" }
+newAmmo => { "ammoName": "HD4mMag" }
+newAmmo => { "ammoName": "HD7mClip" }
+newAmmo => { "ammoName": "HD7mMag" }
+newAmmo => { "ammoName": "HD9mMag15" }
+newAmmo => { "ammoName": "HD9mMag30" }
+newAmmo => { "ammoName": "HDBattery" }
+newAmmo => { "ammoName": "HDPistolAmmo" }
+newAmmo => { "ammoName": "HDRevolverAmmo" }
+newAmmo => { "ammoName": "HDRocketAmmo" }
+newAmmo => { "ammoName": "HDShellAmmo" }
+newAmmo => { "ammoName": "HEATAmmo" }
+newAmmo => { "ammoName": "SevenMilAmmo" }
+newAmmo => { "ammoName": "SevenMilAmmoRecast" }
 
 
 
