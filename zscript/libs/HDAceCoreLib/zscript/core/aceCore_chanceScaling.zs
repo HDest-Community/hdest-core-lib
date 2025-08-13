@@ -4,7 +4,7 @@ extend class AceCore {
 
 		if (level.MapName ~== "LOTSAGUN" || minLevel <= 0 && maxLevel <= 0 || maxLevel < minLevel) return highest;
 		
-		int levelCount = HDCoreGlobalStatsHandler.get().getValue('LevelsCompleted');
+		int levelCount = HDCoreGlobalStatsHandler(EventHandler.find('HDCoreGlobalStatsHandler')).getValue('LevelsCompleted').toInt(10);
 		if (levelCount >= maxLevel) return highest;
 		if (levelCount <= minLevel) return lowest;
 
