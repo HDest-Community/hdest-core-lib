@@ -472,7 +472,7 @@ addSpawnTableSingleEntry => { "tableName": "YellowSkullReplaces", "name": "HDYel
 // Arachnotron Spawns: Total Weight = 1, Total Persistent Weight = 1
 newSpawnTable => { "spawnName": "Arachnotron" }
 addSpawnTableNestedEntry => { "tableName": "Arachnotron", "name": "ArachnotronReplaces", "persists": "true" }
-addSpawnTableSingleEntry => { "tableName": "ArachnotronReplaces", "name": "Manticore", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "ArachnotronReplaces", "name": "Balor", "weight": "1", "persists": "true" }
 
 // Arch-Vile Spawns: Total Weight = 1, Total Persistent Weight = 1
 newSpawnTable => { "spawnName": "ArchVile" }
