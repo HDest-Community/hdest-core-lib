@@ -171,7 +171,7 @@ addSpawnTableSingleEntry => { "tableName": "HDGoreBits", "name": "DeadZombieMan"
 addSpawnTableSingleEntry => { "tableName": "HDGoreBits", "name": "DeadShotgunGuy", "weight": "1", "chance": "96", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "HDGoreBits", "name": "DeadRifleman", "weight": "1", "chance": "96", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "HDGoreBits", "name": "LiberatorEmptyMag", "weight": "1", "chance": "96", "persists": "true" }
-addSpawnTableSingleEntry => { "tableName": "HDGoreBits", "name": "RealyDeadRifleman", "weight": "1", "chance": "46", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "HDGoreBits", "name": "ReallyDeadRifleman", "weight": "1", "chance": "46", "persists": "true" }
 
 // Handgun Drop Table: Total Weight = 6, Total Persistent Weight = 6
 newSpawnTable => { "spawnName": "HDHandgunRandomDrop" }
