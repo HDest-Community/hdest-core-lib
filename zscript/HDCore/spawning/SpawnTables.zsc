@@ -122,7 +122,7 @@ class HDCoreSpawnTable play {
 
             // Otherwise, as long as we have a valid weight, add it to array
             if (!HDGMGlobalMaths.nearZero(entry.getWeight(persistentOnly))) {
-                HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Adding '"..entry.name.."' to list of relevant entries.");
+                HDCore.Log('HDCoreLib', LOGGING_TRACE, "Adding '"..entry.name.."' to list of relevant entries.");
 
                 arr.push(entry);
             }

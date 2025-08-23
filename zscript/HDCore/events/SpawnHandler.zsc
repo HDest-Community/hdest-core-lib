@@ -219,12 +219,12 @@ class HDCoreSpawnHandler : HDCoreEventHandler {
 
             let msg = "Adding "
                 ..(table.replace ? "Replacement" : "Spawning")
-                .." Table for "..table.spawnName.." named '"..table.tableName
+                .." Table for '"..table.spawnName.."' named '"..table.tableName
                 .."':\n";
 
                 if (table._entries.size()) forEach (entry : table._entries) msg = msg.." * "..entry.toString().."\n";
 
-            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg.."]");
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
         }
 
         // If we find an existing table, simply append the entries
@@ -258,9 +258,9 @@ class HDCoreSpawnHandler : HDCoreEventHandler {
         getSpawnTables(tables, name, replace);
         forEach (spawnTable : tables) {
 
-            HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Adding "
-                ..(entry.isPersistent ? "" : "non-").."persistent entry "
-                .." for "..entry.name.." to the "
+            HDCore.Log('HDCoreLib', LOGGING_TRACE, "Adding "
+                ..(entry.isPersistent ? "" : "non-")
+                .."persistent entry for '"..entry.name.."' to the "
                 ..(spawnTable.replace ? "Replacement" : "Spawning")
                 .." Table named '"..spawnTable.tableName.."'"
             );

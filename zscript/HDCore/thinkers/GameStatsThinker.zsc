@@ -29,7 +29,7 @@ class HDCoreGameStatsThinker : Thinker {
 
         let ret = stats.at(key);
 
-        HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_DEBUG, "Value: "..ret);
+        HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_TRACE, "Value: "..ret);
 
         return ret;
     }
@@ -40,7 +40,7 @@ class HDCoreGameStatsThinker : Thinker {
         let val = getValue(key);
         let ret = !!val ? val : defaultValue;
 
-        HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_DEBUG, "Value: "..ret);
+        HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_TRACE, "Value: "..ret);
 
         return ret;
     }
