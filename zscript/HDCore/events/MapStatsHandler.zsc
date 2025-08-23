@@ -1,0 +1,122 @@
+class HDCoreMapStatsHandler : EventHandler {
+
+    Dictionary stats;
+
+    // ----------
+    // PUBLIC API
+    // ----------
+
+    clearscope string getValue(name key) {
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Getting Map Stat '"..key.."'...");
+
+        let ret = stats.at(key);
+
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_DEBUG, "Value: "..ret);
+
+        return ret;
+    }
+
+    clearscope string getValueOrDefault(name key, string defaultValue = "") {
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Getting Map Stat '"..key.."', or '"..defaultValue.."' if it doesn't...");
+
+        let val = getValue(key);
+        let ret = !!val ? val : defaultValue;
+
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_DEBUG, "Value: "..ret);
+
+        return ret;
+    }
+
+
+    // ------
+    // EVENTS
+    // ------
+
+    override void OnRegister() {
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Handler Registered...");
+
+        stats = Dictionary.create();
+    }
+
+    override void WorldLoaded(WorldEvent e) {
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "World Loaded...");
+
+        incrementLevelsStarted();
+    }
+
+    override void WorldThingSpawned(WorldEvent e) {
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Thing Spawned...");
+
+        // If thing is invalid, quit.
+        if (!e.thing || !(e.thing is 'Actor') || ((e.thing is 'Inventory') && Inventory(e.thing).owner)) return;
+
+        incrementThingsSpawned(e.thing.getClassName());
+    }
+
+    override void WorldThingDied(WorldEvent e) {
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Thing Spawned...");
+
+        // If thing is invalid, quit.
+        if (!e.thing || !(e.thing is 'Actor') || ((e.thing is 'Inventory') && Inventory(e.thing).owner)) return;
+
+        incrementThingsDied(e.thing.getClassName());
+    }
+
+    override void WorldUnloaded(WorldEvent e) {
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "World Unloaded...");
+
+        incrementLevelsCompleted();
+    }
+
+
+    // ------------
+    // INTERNAL API
+    // ------------
+
+    protected void incrementLevelsStarted() {
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Incrementing Levels Started MapStat...");
+
+        int prevValue = getValueOrDefault('levelsStarted', "0").toInt(10);
+        int currValue = prevValue + 1;
+
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_DEBUG, "Levels Started: "..prevValue.." -> "..currValue);
+
+        setValue('levelsStarted', currValue.."");
+    }
+
+    protected void incrementThingsSpawned(name name) {
+        int prevValue = getValueOrDefault(name..'Spawned', "0").toInt(10);
+        int currValue = prevValue + 1;
+
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_DEBUG, "Number of "..name.." Spawned: "..prevValue.." -> "..currValue);
+
+        setValue(name..'Spawned', currValue.."");
+    }
+
+    protected void incrementThingsDied(name name) {
+        int prevValue = getValueOrDefault(name..'Died', "0").toInt(10);
+        int currValue = prevValue + 1;
+
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_DEBUG, "Number of "..name.." Died: "..prevValue.." -> "..currValue);
+
+        setValue(name..'Died', currValue.."");
+    }
+
+    protected void incrementLevelsCompleted() {
+        int prevValue = getValueOrDefault('levelsCompleted', "0").toInt(10);
+        int currValue = prevValue + 1;
+
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_DEBUG, "Levels Completed: "..prevValue.." -> "..currValue);
+
+        setValue('levelsCompleted', currValue.."");
+    }
+
+
+    // ---------------
+    // UTILITY METHODS
+    // ---------------
+
+    private void setValue(name key, string value) {
+        stats.insert(key, value);
+    }
+}

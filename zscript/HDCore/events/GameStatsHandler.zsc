@@ -1,0 +1,126 @@
+class HDCoreGameStatsHandler : EventHandler {
+
+    HDCoreGameStatsThinker t;
+
+
+    // ----------
+    // PUBLIC API
+    // ----------
+
+    clearscope string getValue(name key) {
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Getting Game Stat '"..key.."'...");
+
+        let ret = !!t ? t.getValue(key) : "";
+
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_DEBUG, "Thinker: "..(!!t)..", value: "..ret);
+
+        return ret;
+    }
+
+    clearscope string getValueOrDefault(name key, string defaultValue = "") {
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Getting Game Stat '"..key.."', or '"..defaultValue.."' if it doesn't...");
+
+        let ret = !!t ? t.getValueOrDefault(key, defaultValue) : defaultValue;
+
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_DEBUG, "Thinker: "..(!!t)..", value: "..ret);
+
+        return ret;
+    }
+
+
+    // ------
+    // EVENTS
+    // ------
+
+    override void WorldLoaded(WorldEvent e) {
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "World Loaded...");
+
+        initThinker();
+
+        incrementLevelsStarted();
+    }
+
+    override void WorldThingSpawned(WorldEvent e) {
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Thing Spawned...");
+
+        // If thing is invalid, quit.
+        if (!e.thing || !(e.thing is 'Actor') || ((e.thing is 'Inventory') && Inventory(e.thing).owner)) return;
+
+        incrementThingsSpawned(e.thing.getClassName());
+    }
+
+    override void WorldThingDied(WorldEvent e) {
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Thing Spawned...");
+
+        // If thing is invalid, quit.
+        if (!e.thing || !(e.thing is 'Actor') || ((e.thing is 'Inventory') && Inventory(e.thing).owner)) return;
+
+        incrementThingsDied(e.thing.getClassName());
+    }
+
+    override void WorldUnloaded(WorldEvent e) {
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "World Unloaded...");
+
+        incrementLevelsCompleted();
+    }
+
+
+    // ------------
+    // INTERNAL API
+    // ------------
+
+    protected void initThinker() {
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Getting GameStats Thinker...");
+
+        t = HDCoreGameStatsThinker.get();
+        
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_DEBUG, "Thinker: "..t);
+    }
+
+    protected void incrementLevelsStarted() {
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Incrementing Levels Started GameStat...");
+
+        int prevValue = getValueOrDefault('levelsStarted', "0").toInt(10);
+        int currValue = prevValue + 1;
+
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_DEBUG, "Levels Started: "..prevValue.." -> "..currValue);
+
+        setValue('levelsStarted', currValue.."");
+    }
+
+    protected void incrementThingsSpawned(name name) {
+        int prevValue = getValueOrDefault(name..'Spawned', "0").toInt(10);
+        int currValue = prevValue + 1;
+
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_DEBUG, "Number of "..name.." Spawned: "..prevValue.." -> "..currValue);
+
+        setValue(name..'Spawned', currValue.."");
+    }
+
+    protected void incrementThingsDied(name name) {
+        int prevValue = getValueOrDefault(name..'Died', "0").toInt(10);
+        int currValue = prevValue + 1;
+
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_DEBUG, "Number of "..name.." Died: "..prevValue.." -> "..currValue);
+
+        setValue(name..'Died', currValue.."");
+    }
+
+    protected void incrementLevelsCompleted() {
+        int prevValue = getValueOrDefault('levelsCompleted', "0").toInt(10);
+        int currValue = prevValue + 1;
+
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_DEBUG, "Levels Completed: "..prevValue.." -> "..currValue);
+
+        setValue('levelsCompleted', currValue.."");
+    }
+
+
+    // ---------------
+    // UTILITY METHODS
+    // ---------------
+
+    private void setValue(name key, string value) {
+        if (t) t.setValue(key, value);
+    }
+}

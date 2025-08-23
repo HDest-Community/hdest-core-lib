@@ -1,13 +1,13 @@
-class HDCoreCommandFunctionParam_GlobalStat : HDCoreCommandFunctionParam {
+class HDCoreCommandFunctionParam_GameStat : HDCoreCommandFunctionParam {
 
-    private HDCoreGlobalStatsHandler _handler;
+    private HDCoreGameStatsHandler _handler;
 
     override void setParam(string newVal) {
         super.setParam(newVal);
         
         HDCoreCommand.parseParams(fnParams, newVal);
 
-        _handler = HDCoreGlobalStatsHandler(EventHandler.find("HDCoreGlobalStatsHandler"));
+        _handler = HDCoreGameStatsHandler(EventHandler.find("HDCoreGameStatsHandler"));
     }
 
     override string getStringValue() {

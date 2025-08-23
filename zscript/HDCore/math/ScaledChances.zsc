@@ -10,7 +10,7 @@ extend class HDCore {
 		) return highest;
 		
 		// Otherwise, get the current level count, and if that's outside the range, simply return their limits
-		int levelCount = HDCoreGlobalStatsHandler(EventHandler.find('HDCoreGlobalStatsHandler')).getValue('LevelsCompleted').toInt(10);
+		int levelCount = HDCoreGameStatsHandler(EventHandler.find('HDCoreGameStatsHandler')).getValue('LevelsCompleted').toInt(10);
 		if (levelCount >= maxLevel) return highest;
 		if (levelCount <= minLevel) return lowest;
 

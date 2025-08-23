@@ -1,3 +1,13 @@
 GameInfo {
-    AddEventHandlers = "HDCoreInfoReader", "HDCoreAmmoBoxSpawnPoolHandler", "HDCoreAmmoUsesHandler", "HDCoreBPSpawnPoolHandler", "HDCoreDeathMatchStartSpawnerHandler", "HDCoreGlobalStatsHandler", "HDCoreLineTraceHandler", "HDCoreSectorSpawnerHandler", "HDCoreSpawnHandler", "AceCoreHandler"
+    AddEventHandlers = "HDCoreInfoReader",
+        "HDCoreAmmoBoxSpawnPoolHandler",
+        "HDCoreAmmoUsesHandler",
+        "HDCoreBPSpawnPoolHandler",
+        "HDCoreDeathMatchStartSpawnerHandler",
+        "HDCoreGameStatsHandler",
+        "HDCoreLineTraceHandler",
+        "HDCoreMapStatsHandler",
+        "HDCoreSectorSpawnerHandler",
+        "HDCoreSpawnHandler",
+        "AceCoreHandler"
 }

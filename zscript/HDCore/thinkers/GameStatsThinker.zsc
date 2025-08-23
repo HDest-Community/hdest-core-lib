@@ -1,0 +1,55 @@
+class HDCoreGameStatsThinker : Thinker {
+
+    Dictionary stats;
+
+    static HDCoreGameStatsThinker Get() {
+        ThinkerIterator it = ThinkerIterator.Create('HDCoreGameStatsThinker', STAT_STATIC);
+
+        // If the thinker finds one, return it
+        HDCoreGameStatsThinker t = null;
+        while (t = HDCoreGameStatsThinker(it.Next())) {
+            HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_DEBUG, "Thinker Found, stats: "..t.stats.toString());
+
+            return t;
+        }
+
+        // Otherwise create a new one
+        t = new('HDCoreGameStatsThinker');
+        t.ChangeStatNum(STAT_STATIC);
+
+        t.stats = Dictionary.create();
+        
+        HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_DEBUG, "Thinker Created, stats: "..t.stats.toString());
+
+        return t;
+    }
+
+    clearscope string getValue(name key) {
+        HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_TRACE, "Getting Game Stat '"..key.."'...");
+
+        let ret = stats.at(key);
+
+        HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_DEBUG, "Value: "..ret);
+
+        return ret;
+    }
+
+    clearscope string getValueOrDefault(name key, string defaultValue = "") {
+        HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_TRACE, "Getting Game Stat '"..key.."', or '"..defaultValue.."' if it doesn't...");
+
+        let val = getValue(key);
+        let ret = !!val ? val : defaultValue;
+
+        HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_DEBUG, "Value: "..ret);
+
+        return ret;
+    }
+
+    void setValue(name key, string value) {
+        stats.insert(key, value);
+    }
+
+    void removeValue(name key) {
+        stats.remove(key);
+    }
+}

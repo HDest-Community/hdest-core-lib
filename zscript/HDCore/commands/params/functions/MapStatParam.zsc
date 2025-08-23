@@ -1,0 +1,33 @@
+class HDCoreCommandFunctionParam_MapStat : HDCoreCommandFunctionParam {
+
+    private HDCoreMapStatsHandler _handler;
+
+    override void setParam(string newVal) {
+        super.setParam(newVal);
+        
+        HDCoreCommand.parseParams(fnParams, newVal);
+
+        _handler = HDCoreMapStatsHandler(EventHandler.find("HDCoreMapStatsHandler"));
+    }
+
+    override string getStringValue() {
+        return !!_handler ? _handler.getValueOrDefault(getStringParam("key"), getStringParam("defaultValue")) : "";
+    }
+
+    override name getNameValue() {
+        name value = getStringValue();
+        return value;
+    }
+
+    override int getIntValue() {
+        return getStringValue().toInt(10);
+    }
+
+    override double getDoubleValue() {
+        return getStringValue().toDouble();
+    }
+
+    override bool getBoolValue() {
+        return getStringValue() == 'true';
+    }
+}
