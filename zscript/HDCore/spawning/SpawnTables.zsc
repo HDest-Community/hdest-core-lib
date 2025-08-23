@@ -33,7 +33,10 @@ class HDCoreSpawnTable play {
     }
 
     bool equals(HDCoreSpawnTable other) {
-        return (tableName == other.tableName || spawnName == other.spawnName) && replace == other.replace;
+        let name = tableName ? tableName : spawnName;
+        let otherName = other.tableName ? other.tableName : other.spawnName;
+
+        return name == otherName && replace == other.replace;
     }
 
     string toString() {
