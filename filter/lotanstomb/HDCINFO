@@ -1,0 +1,11 @@
+// Replace Blue Skull with LT Blue Objective
+removeSpawnTableEntry => { "tableName": "BlueSkullReplaces", "name": "HDBlueSkull" }
+addSpawnTableSingleEntry => { "tableName": "BlueSkullReplaces", "name": "HDBlueObjective", "weight": "1", "persists": "true" }
+
+// Replace Red Skull with LT Red Objective
+removeSpawnTableEntry => { "tableName": "RedSkullReplaces", "name": "HDRedSkull" }
+addSpawnTableSingleEntry => { "tableName": "RedSkullReplaces", "name": "HDRedObjective", "weight": "1", "persists": "true" }
+
+// Replace Yellow Skull with LT Yellow Objective
+removeSpawnTableEntry => { "tableName": "YellowSkullReplaces", "name": "HDYellowSkull" }
+addSpawnTableSingleEntry => { "tableName": "YellowSkullReplaces", "name": "HDYellowObjective", "weight": "1", "persists": "true" }
