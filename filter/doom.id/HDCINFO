@@ -1,11 +1,11 @@
 
 // Replace Lizard Jar with Commander Keen when in id Doom
-removeSpawnTableEntry => { "tableName": "CommanderKeenReplaces", "name": "HDLizardJar" }
-addSpawnTableSingleEntry => { "tableName": "CommanderKeenReplaces", "name": "HDKeen", "persists": "true" }
+removeSpawnTableEntry => { "tableName": "CommanderKeenPool", "name": "HDLizardJar" }
+addSpawnTableSingleEntry => { "tableName": "CommanderKeenPool", "name": "HDKeen", "persists": "true" }
 
 // Replace Hatchling with Lost Soul when in id Doom
-removeSpawnTableEntry => { "tableName": "LostSoulReplaces", "name": "Hatchling" }
-addSpawnTableSingleEntry => { "tableName": "LostSoulReplaces", "name": "FlyingSkull", "persists": "true" }
+removeSpawnTableEntry => { "tableName": "LostSoulPool", "name": "Hatchling" }
+addSpawnTableSingleEntry => { "tableName": "LostSoulPool", "name": "FlyingSkull", "persists": "true" }
 
 // Remove UndeadHomeboy from Zombiemen Spawn Table when in id Doom
-removeSpawnTableEntry => { "tableName": "ZombieManReplaces", "name": "UndeadHomeboy" }
+removeSpawnTableEntry => { "tableName": "ZombieManPool", "name": "UndeadHomeboy" }
