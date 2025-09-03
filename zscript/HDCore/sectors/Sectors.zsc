@@ -9,9 +9,15 @@ extend class HDCore {
      * @returns {double} The average length of all linedefs in the sector
      */
     static clearscope double, double, double, double getSectorSize(Sector s) {
+        let l = s.lines.size();
+
+        // If the sector has no lines, return all 0s.
+        if (!l) return 0.0, 0.0, 0.0, 0.0;
+
+        // Otherwise calculate the size.
         let c = HDCore.getSectorCircumference(s);
         let r = HDCore.getSectorRadius(s);
-        return HDCore.getSectorArea(s), c, r, c / s.lines.size();
+        return HDCore.getSectorArea(s), c, r, c / l;
     }
     
     /**
