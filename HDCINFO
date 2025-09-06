@@ -182,7 +182,7 @@ addSpawnTableSingleEntry => { "tableName": "HDHandgunRandomDrop", "name": "HDRev
 // Vanilla Weapon Spawn Tables
 
 // BFG-9000 Spawns: Total Weight = 1, Total Persistent Weight = 1
-newSpawnTable => { "spawnName": "BFG9000Replaces", "tableName": "BFG9000Replaces", "persists": "true" }
+newSpawnTable => { "spawnName": "BFGReplaces", "tableName": "BFG9000Replaces", "persists": "true" }
 addSpawnTableSingleEntry => { "tableName": "BFG9000Replaces", "name": "BFG9K", "weight": "1", "persists": "true" }
 
 // Chaingun Spawns: Total Weight = 13, Total Persistent Weight = 13
