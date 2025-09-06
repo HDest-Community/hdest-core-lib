@@ -131,7 +131,7 @@ class HDCoreSpawnTable play {
             }
         }
 
-        if (!arr.size()) HDCore.Log('HDCoreLib', LOGGING_WARN, "No valid entries found for Spawn Table \""..tableName.."\". This may cause unexpected behavior!");
+        if (!arr.size()) HDCore.Log('HDCoreLib', LOGGING_INFO, "No valid entries found for Spawn Table \""..tableName.."\".");
     }
 
     HDCoreSpawnTableEntry getRandomEntry(bool persistentOnly = false) {
