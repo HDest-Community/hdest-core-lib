@@ -70,7 +70,7 @@ class ClusterSpawner : IdleDummy abstract {
             }
 
             // Try to spawn the mob.  If it failed to spawn, or spawned stuck, remove it and try again.
-            let spawned = Spawn(invoker.actorClass, spawnPos);
+            let spawned = Spawn(invoker.actorClass, spawnPos, ALLOW_REPLACE);
             if (!spawned || !spawned.TestMobjLocation()) {
                 invoker.onSpawnError();
                 failedAttempts++;
