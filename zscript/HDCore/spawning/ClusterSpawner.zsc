@@ -93,7 +93,7 @@ class ClusterSpawner : IdleDummy abstract {
     }
 
     protected void onSpawnError() {
-        HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Failed to spawn "..actorClass.GetClassName().." #"..numSpawned.." of "..numToSpawn..", retrying");
+        HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Failed to spawn "..actorClass.GetClassName().." #"..(numSpawned + 1).." of "..numToSpawn..", retrying");
     }
 
 
