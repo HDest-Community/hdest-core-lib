@@ -1,6 +1,6 @@
 class HDCoreGameStatsThinker : Thinker {
 
-    Dictionary stats;
+    Dictionary _stats;
 
     static HDCoreGameStatsThinker Get() {
         ThinkerIterator it = ThinkerIterator.Create('HDCoreGameStatsThinker', STAT_STATIC);
@@ -8,7 +8,7 @@ class HDCoreGameStatsThinker : Thinker {
         // If the thinker finds one, return it
         HDCoreGameStatsThinker t = null;
         while (t = HDCoreGameStatsThinker(it.Next())) {
-            HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_DEBUG, "Thinker Found, stats: "..t.stats.toString());
+            HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_DEBUG, "Thinker Found, stats: "..t._stats.toString());
 
             return t;
         }
@@ -17,9 +17,9 @@ class HDCoreGameStatsThinker : Thinker {
         t = new('HDCoreGameStatsThinker');
         t.ChangeStatNum(STAT_STATIC);
 
-        t.stats = Dictionary.create();
+        t._stats = Dictionary.create();
         
-        HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_DEBUG, "Thinker Created, stats: "..t.stats.toString());
+        HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_DEBUG, "Thinker Created, stats: "..t._stats.toString());
 
         return t;
     }
@@ -27,7 +27,7 @@ class HDCoreGameStatsThinker : Thinker {
     clearscope string getValue(name key) {
         HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_TRACE, "Getting Game Stat '"..key.."'...");
 
-        let ret = stats.at(key);
+        let ret = _stats.at(key);
 
         HDCore.log('HDCoreLib.GameStatsThinker', LOGGING_TRACE, "Value: "..ret);
 
@@ -46,10 +46,10 @@ class HDCoreGameStatsThinker : Thinker {
     }
 
     void setValue(name key, string value) {
-        stats.insert(key, value);
+        _stats.insert(key, value);
     }
 
     void removeValue(name key) {
-        stats.remove(key);
+        _stats.remove(key);
     }
 }
