@@ -1,0 +1,94 @@
+class HDCoreFunctionProvider_And : HDCoreFunctionProvider {
+
+    override string getStringValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringValue() => \"\"");
+        return "";
+    }
+
+    override name getNameValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getNameValue() => ''");
+        return '';
+    }
+
+    override int getIntValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => 0");
+        return 0;
+    }
+
+    override double getDoubleValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => 0.0");
+        return 0.0;
+    }
+
+    override bool getBoolValue() {
+        let a = getBoolParam("valueA");
+        let b = getBoolParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolValue() => "..a.." && "..b.." => "..(a && b));
+
+        return a && b;
+    }
+}
+
+class HDCoreFunctionProvider_Or : HDCoreFunctionProvider {
+
+    override string getStringValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringValue() => \"\"");
+        return "";
+    }
+
+    override name getNameValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getNameValue() => ''");
+        return '';
+    }
+
+    override int getIntValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => 0");
+        return 0;
+    }
+
+    override double getDoubleValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => 0.0");
+        return 0.0;
+    }
+
+    override bool getBoolValue() {
+        let a = getBoolParam("valueA");
+        let b = getBoolParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolValue() => "..a.." || "..b.." => "..(a || b));
+
+        return a || b;
+    }
+}
+
+class HDCoreFunctionProvider_Not : HDCoreFunctionProvider {
+
+    override string getStringValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringValue() => \"\"");
+        return "";
+    }
+
+    override name getNameValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getNameValue() => ''");
+        return '';
+    }
+
+    override int getIntValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => 0");
+        return 0;
+    }
+
+    override double getDoubleValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => 0.0");
+        return 0.0;
+    }
+
+    override bool getBoolValue() {
+        let v = getBoolParam("value");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolValue() => !"..v.." => "..(!v));
+
+        return !v;
+    }
+}

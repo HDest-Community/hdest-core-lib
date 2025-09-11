@@ -1,4 +1,4 @@
-class HDCoreEventHandler : EventHandler abstract {
+class HDCoreStaticEventHandler : StaticEventHandler abstract {
 
     protected bool initialized;
 
@@ -34,11 +34,19 @@ class HDCoreEventHandler : EventHandler abstract {
     }
 
     /**
+     * Overrideable check to possibly ignore processing the given comnmand.
+     * @returns {bool} If true, the `HDCoreCommand` will be processed.
+     */
+    virtual bool shouldProcessCommand(HDCoreCommand cmd) {
+        return cmd.getBoolParam("enabled", true);
+    }
+
+    /**
      * Lifecycle Hook to process HDCoreCommands.
      * By default commands are simply iterated through, and the enabled ones are processed.
      */
     virtual void processCommands(Array<HDCoreCommand> commands) {
-        forEach(cmd : commands) if (cmd.getBoolParam("enabled", true)) processCommand(cmd);
+        forEach(cmd : commands) if (shouldProcessCommand(cmd)) processCommand(cmd);
     }
 
     /**
@@ -58,10 +66,10 @@ class HDCoreEventHandler : EventHandler abstract {
 
 
     /**
-     * WorldLoaded Event
+     * Register Event
      * By default will run initialization if necessary.
      */
-    override void worldLoaded(WorldEvent e) { init(); }
+    override void onRegister() { init(); }
 
     /**
      * WorldThingDied Event

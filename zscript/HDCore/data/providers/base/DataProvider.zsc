@@ -1,0 +1,40 @@
+class HDCoreDataProvider abstract {
+
+    string _value;
+
+    static HDCoreDataProvider create(name cls, string value = "") {
+        HDCore.log('HDCoreLib.DataProvider', LOGGING_TRACE, "Creating new "..cls.." instance, value="..value);
+
+        let provider = HDCoreDataProvider(new(cls));
+
+        if (provider) {
+            provider.setValue(value);
+        }
+
+        return provider;
+    }
+
+    virtual void setValue(string newVal = "") {
+        HDCore.log('HDCoreLib.DataProvider', LOGGING_TRACE, "Setting value from ".._value.." to "..newVal);
+
+        _value = newVal;
+    }
+
+    virtual string toString() {
+        return String.format(
+            "{ \"string\": \"%s\", \"name\": '%s', \"int\": %i, \"double\": %.3f, \"bool\": %i }",
+            getStringValue(), getNameValue(), getIntValue(), getDoubleValue(), getBoolValue()
+        );
+    }
+
+    abstract string getStringValue();
+
+    abstract name getNameValue();
+
+    abstract int getIntValue();
+
+    abstract double getDoubleValue();
+
+    abstract bool getBoolValue();
+
+}

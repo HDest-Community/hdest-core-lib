@@ -1,0 +1,34 @@
+class HDCoreFunctionProvider_Lerp : HDCoreFunctionProvider {
+
+    override string getStringValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringValue() => \"\"");
+        return "";
+    }
+
+    override name getNameValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getNameValue() => ''");
+        return '';
+    }
+
+    override int getIntValue() {
+        int v = getDoubleValue();
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => "..v);
+        return v;
+    }
+
+    override double getDoubleValue() {
+        let min = getDoubleParam("min");
+        let max = getDoubleParam("max");
+        let ratio = getDoubleParam("ratio");
+        let val = HDGMGlobalMaths.lerpDouble(min, max, ratio);
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => lerp("..min..", "..max..", "..ratio..") => "..val);
+
+        return val;
+    }
+
+    override bool getBoolValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolValue() => 0");
+        return false;
+    }
+}

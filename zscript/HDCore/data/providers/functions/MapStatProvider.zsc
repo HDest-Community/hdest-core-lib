@@ -1,0 +1,43 @@
+class HDCoreFunctionProvider_MapStat : HDCoreFunctionProvider {
+
+    private HDCoreMapStatsHandler _handler;
+
+    override void setValue(string newVal) {
+        HDCore.log('HDCoreLib.MapStatProvider', LOGGING_TRACE, "Setting value from ".._value.." to "..newVal);
+
+        super.setValue(newVal);
+
+        getHandler();
+    }
+
+    override string getStringValue() {
+        getHandler();
+
+        let v = !!_handler ? _handler.getValueOrDefault(getStringParam("key"), getStringParam("defaultValue")) : "";
+        
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringValue() => "..v);
+        
+        return v;
+    }
+
+    override name getNameValue() {
+        name value = getStringValue();
+        return value;
+    }
+
+    override int getIntValue() {
+        return getStringValue().toInt(10);
+    }
+
+    override double getDoubleValue() {
+        return getStringValue().toDouble();
+    }
+
+    override bool getBoolValue() {
+        return getStringValue() == 'true';
+    }
+
+    private void getHandler() {
+        if (!_handler) _handler = HDCoreMapStatsHandler(EventHandler.find("HDCoreMapStatsHandler"));
+    }
+}

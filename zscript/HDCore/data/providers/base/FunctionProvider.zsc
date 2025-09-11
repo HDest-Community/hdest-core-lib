@@ -1,0 +1,110 @@
+class HDCoreFunctionProvider : HDCoreDataProvider abstract {
+
+    name _prefix;
+
+    Map<name, HDCoreCommandParam> _fnParams;
+
+    static HDCoreDataProvider create(name cls, string prefix = "", string value = "") {
+        HDCore.log('HDCoreLib.FunctionProvider', LOGGING_TRACE, "Creating new "..cls.." instance, value="..value);
+
+        let provider = HDCoreFunctionProvider(new(cls));
+
+        if (provider) {
+
+            provider._prefix = prefix;
+
+            HDCore.log('HDCoreLib.FunctionProvider', LOGGING_TRACE, "Filtering out irrelevant parameters...");
+
+            Dictionary oldDict = Dictionary.fromString(value);
+            let i = DictionaryIterator.create(oldDict);
+            
+            let newDict = Dictionary.create();
+            while (i.next()) {
+                let key = i.key();
+                let val = i.value();
+                
+                HDCore.log('HDCoreLib.FunctionProvider', LOGGING_TRACE, "Key="..key..", value="..val..", prefix="..prefix..", Keep? "..(key.left((prefix..".").length()) ~== prefix.."."));
+
+                if (key.left((prefix..".").length()) ~== prefix..".") newDict.insert(key, val);
+            }
+
+            provider.setValue(newDict.toString());
+        }
+
+        return provider;
+    }
+
+    override void setValue(string newVal) {
+        HDCore.log('HDCoreLib.FunctionProvider', LOGGING_TRACE, "Setting value from ".._value.." to "..newVal);
+
+        super.setValue(newVal);
+        
+        HDCoreCommand.parseParams(_fnParams, newVal);
+    }
+
+    bool hasParam(string key) {
+        let v = _fnParams.checkKey(_prefix.."."..key);
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "hasParam(\"".._prefix.."."..key.."\") => "..v);
+        return v;
+    }
+
+    HDCoreCommandParam getParam(string key) {
+        let v = HDCoreCommandParam(_fnParams.getIfExists(_prefix.."."..key));
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getParam(\"".._prefix.."."..key.."\") => "..v);
+        return v;
+    }
+
+    string getStringParam(string key, string defaultValue = "") {
+        let v = hasParam(key) ? getParam(key).getStringValue() : defaultValue;
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringParam(\""..key.."\", \""..defaultValue.."\") => "..v);
+        return v;
+    }
+
+    name getNameParam(string key, name defaultValue = '') {
+        let v = hasParam(key) ? getParam(key).getNameValue() : defaultValue;
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getNameParam(\""..key.."\", \""..defaultValue.."\") => "..v);
+        return v;
+    }
+
+    int getIntParam(string key, int defaultValue = 0) {
+        let v = hasParam(key) ? getParam(key).getIntValue() : defaultValue;
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntParam(\""..key.."\", \""..defaultValue.."\") => "..v);
+        return v;
+    }
+
+    double getDoubleParam(string key, double defaultValue = 0.0) {
+        let v = hasParam(key) ? getParam(key).getDoubleValue() : defaultValue;
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleParam(\""..key.."\", \""..defaultValue.."\") => "..v);
+        return v;
+    }
+
+    bool getBoolParam(string key, bool defaultValue = false) {
+        let v = hasParam(key) ? getParam(key).getBoolValue() : defaultValue;
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolParam(\""..key.."\", \""..defaultValue.."\") => "..v);
+        return v;
+    }
+
+    bool equals(HDCoreFunctionProvider other) {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "equals(\""..other.toString().."\")...");
+
+        // First check if the command and size of _fnParams are equal
+        let isEqual = _value == other._value && _fnParams.countUsed() == other._fnParams.countUsed();
+
+        // If they are, check if each param matches the other, and quit early if they are not
+        if (isEqual) forEach(k, v : _fnParams) if (!other._fnParams.checkKey(k) || other._fnParams.getIfExists(k) != v) return false;
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "equals(\""..other.toString().."\") => "..isEqual);
+
+        return isEqual;
+    }
+
+    override string toString() {
+        let paramStr = "(";
+
+        forEach (k, v : _fnParams) paramStr = paramStr.."\"".._prefix.."."..k.."\": "..HDCoreCommandParam(v).getStringValue()..", ";
+
+        paramStr = paramStr..")";
+
+        return String.format("{ \"%s\": \"%s => %s\" }", _prefix, paramStr, super.toString());
+    }
+}

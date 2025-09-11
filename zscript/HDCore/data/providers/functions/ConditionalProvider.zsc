@@ -1,4 +1,4 @@
-class HDCoreCommandFunctionParam_Conditional : HDCoreCommandFunctionParam {
+class HDCoreFunctionProvider_Conditional : HDCoreFunctionProvider {
 
     override string getStringValue() {
         return getConditionalParam().getStringValue();
@@ -21,6 +21,12 @@ class HDCoreCommandFunctionParam_Conditional : HDCoreCommandFunctionParam {
     }
 
     private HDCoreCommandParam getConditionalParam() {
-        return getBoolParam("condition") ? getParam("value") : getParam("elseValue");
+        let condition = getBoolParam("condition");
+        let param = getParam("value");
+        let elseParam = getParam("elseValue");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getConditionalParam() => "..(condition).."\n ? "..(param.toString()).."\n : "..(elseParam.toString()).." => "..((condition ? param : elseParam).toString()));
+        
+        return condition ? param : param;
     }
 }

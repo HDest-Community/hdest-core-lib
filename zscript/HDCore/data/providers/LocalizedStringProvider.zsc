@@ -1,0 +1,6 @@
+class HDCoreLocalizedStringProvider : HDCoreStaticProvider {
+
+    override string getStringValue() {
+        return StringTable.localize("$".._value);
+    }
+}

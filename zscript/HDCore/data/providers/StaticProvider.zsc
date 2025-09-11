@@ -1,7 +1,7 @@
-class HDCoreCommandStaticParam : HDCoreCommandParam {
+class HDCoreStaticProvider : HDCoreDataProvider {
 
     override string getStringValue() {
-        return value;
+        return _value;
     }
 
     override name getNameValue() {
@@ -10,14 +10,14 @@ class HDCoreCommandStaticParam : HDCoreCommandParam {
     }
 
     override int getIntValue() {
-        return value.toInt(10);
+        return _value.toInt(10);
     }
 
     override double getDoubleValue() {
-        return value.toDouble();
+        return _value.toDouble();
     }
 
     override bool getBoolValue() {
-        return value == 'true';
+        return _value == 'true' || _value == 'y' || getIntValue();
     }
 }

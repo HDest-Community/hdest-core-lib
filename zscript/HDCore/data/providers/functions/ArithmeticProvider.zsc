@@ -1,0 +1,289 @@
+class HDCoreFunctionProvider_Add : HDCoreFunctionProvider {
+
+    override string getStringValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringValue() => \"\"");
+        return "";
+    }
+
+    override name getNameValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getNameValue() => ''");
+        return '';
+    }
+
+    override int getIntValue() {
+        let a = getIntParam("valueA");
+        let b = getIntParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => "..a.." + "..b.." => "..(a + b));
+
+        return a + b;
+    }
+
+    override double getDoubleValue() {
+        let a = getDoubleParam("valueA");
+        let b = getDoubleParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => "..a.." + "..b.." => "..(a + b));
+
+        return a + b;
+    }
+
+    override bool getBoolValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolValue() => 0");
+        return false;
+    }
+}
+
+class HDCoreFunctionProvider_Subtract : HDCoreFunctionProvider {
+
+    override string getStringValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringValue() => \"\"");
+        return "";
+    }
+
+    override name getNameValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getNameValue() => ''");
+        return '';
+    }
+
+    override int getIntValue() {
+        let a = getIntParam("valueA");
+        let b = getIntParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => "..a.." - "..b.." => "..(a - b));
+
+        return a - b;
+    }
+
+    override double getDoubleValue() {
+        let a = getDoubleParam("valueA");
+        let b = getDoubleParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => "..a.." - "..b.." => "..(a - b));
+
+        return a - b;
+    }
+
+    override bool getBoolValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolValue() => 0");
+        return false;
+    }
+}
+
+class HDCoreFunctionProvider_Multiply : HDCoreFunctionProvider {
+
+    override string getStringValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringValue() => \"\"");
+        return "";
+    }
+
+    override name getNameValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getNameValue() => ''");
+        return '';
+    }
+
+    override int getIntValue() {
+        let a = getIntParam("valueA");
+        let b = getIntParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => "..a.." + "..b.." => "..(a * b));
+
+        return a * b;
+    }
+
+    override double getDoubleValue() {
+        let a = getDoubleParam("valueA");
+        let b = getDoubleParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => "..a.." + "..b.." => "..(a * b));
+
+        return a * b;
+    }
+
+    override bool getBoolValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolValue() => 0");
+        return false;
+    }
+}
+
+class HDCoreFunctionProvider_Divide : HDCoreFunctionProvider {
+
+    override string getStringValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringValue() => \"\"");
+        return "";
+    }
+
+    override name getNameValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getNameValue() => ''");
+        return '';
+    }
+
+    override int getIntValue() {
+        let a = getIntParam("valueA");
+        let b = getIntParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => "..a.." + "..b.." => "..(a / b));
+
+        return a / b;
+    }
+
+    override double getDoubleValue() {
+        let a = getDoubleParam("valueA");
+        let b = getDoubleParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => "..a.." + "..b.." => "..(a / b));
+
+        return a / b;
+    }
+
+    override bool getBoolValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolValue() => 0");
+        return false;
+    }
+}
+
+class HDCoreFunctionProvider_Modulus : HDCoreFunctionProvider {
+
+    override string getStringValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringValue() => \"\"");
+        return "";
+    }
+
+    override name getNameValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getNameValue() => ''");
+        return '';
+    }
+
+    override int getIntValue() {
+        let a = getIntParam("valueA");
+        let b = getIntParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => "..a.." + "..b.." => "..(a % b));
+
+        return a % b;
+    }
+
+    override double getDoubleValue() {
+        let a = getDoubleParam("valueA");
+        let b = getDoubleParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => "..a.." + "..b.." => "..(a % b));
+
+        return a % b;
+    }
+
+    override bool getBoolValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolValue() => 0");
+        return false;
+    }
+}
+
+class HDCoreFunctionProvider_Min : HDCoreFunctionProvider {
+
+    override string getStringValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringValue() => \"\"");
+        return "";
+    }
+
+    override name getNameValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getNameValue() => ''");
+        return '';
+    }
+
+    override int getIntValue() {
+        let a = getIntParam("valueA");
+        let b = getIntParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => min("..a..", "..b..") => "..(min(a, b)));
+
+        return min(a, b);
+    }
+
+    override double getDoubleValue() {
+        let a = getDoubleParam("valueA");
+        let b = getDoubleParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => min("..a..", "..b..") => "..(min(a, b)));
+
+        return min(a, b);
+    }
+
+    override bool getBoolValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolValue() => 0");
+        return false;
+    }
+}
+
+class HDCoreFunctionProvider_Max : HDCoreFunctionProvider {
+
+    override string getStringValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringValue() => \"\"");
+        return "";
+    }
+
+    override name getNameValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getNameValue() => ''");
+        return '';
+    }
+
+    override int getIntValue() {
+        let a = getIntParam("valueA");
+        let b = getIntParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => min("..a..", "..b..") => "..(min(a, b)));
+
+        return min(a, b);
+    }
+
+    override double getDoubleValue() {
+        let a = getDoubleParam("valueA");
+        let b = getDoubleParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => min("..a..", "..b..") => "..(min(a, b)));
+
+        return min(a, b);
+    }
+
+    override bool getBoolValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolValue() => 0");
+        return false;
+    }
+}
+
+class HDCoreFunctionProvider_Clamp : HDCoreFunctionProvider {
+
+    override string getStringValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringValue() => \"\"");
+        return "";
+    }
+
+    override name getNameValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getNameValue() => ''");
+        return '';
+    }
+
+    override int getIntValue() {
+        let val = getIntParam("value");
+        let min = getIntParam("min");
+        let max = getIntParam("max");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => clamp("..val..", "..min..", "..max..") => "..(clamp(val, min, max)));
+
+        return clamp(val, min, max);
+    }
+
+    override double getDoubleValue() {
+        let val = getDoubleParam("value");
+        let min = getDoubleParam("min");
+        let max = getDoubleParam("max");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => clamp("..val..", "..min..", "..max..") => "..(clamp(val, min, max)));
+
+        return clamp(val, min, max);
+    }
+
+    override bool getBoolValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolValue() => 0");
+        return false;
+    }
+}

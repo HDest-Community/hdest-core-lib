@@ -1,4 +1,4 @@
-class HDCoreCommandFunctionParam_ClassExists : HDCoreCommandFunctionParam {
+class HDCoreFunctionProvider_ClassExists : HDCoreFunctionProvider {
 
     override string getStringValue() {
         return getBoolValue().."";
@@ -18,6 +18,11 @@ class HDCoreCommandFunctionParam_ClassExists : HDCoreCommandFunctionParam {
     }
 
     override bool getBoolValue() {
-        return HDCore.CheckClassExists(getNameParam("className"));
+        let cls = getNameParam("className");
+        let val = HDCore.CheckClassExists(cls);
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolValue() => '"..cls.."' => "..val);
+        
+        return val;
     }
 }

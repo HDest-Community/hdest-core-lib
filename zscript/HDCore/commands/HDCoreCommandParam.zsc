@@ -1,0 +1,43 @@
+class HDCoreCommandParam {
+
+    string _name;
+
+    HDCoreDataProvider _value;
+
+    static HDCoreCommandParam create(name name, HDCoreDataProvider value) {
+        HDCore.log('HDCoreLib.CommandParam', LOGGING_TRACE, "Creating new instance, name="..name..", value="..value);
+
+        let param = HDCoreCommandParam(new('HDCoreCommandParam'));
+
+        if (param) {
+            param._name = name;
+            param._value = value;
+        }
+
+        return param;
+    }
+
+    virtual string toString() {
+        return String.format("{ \"%s\": %s }", _name, _value.toString());
+    }
+
+    string getStringValue() {
+        return _value ? _value.getStringValue() : "";
+    }
+
+    name getNameValue() {
+        return _value ? _value.getNameValue() : '';
+    }
+
+    int getIntValue() {
+        return _value ? _value.getIntValue() : 0;
+    }
+
+    double getDoubleValue() {
+        return _value ? _value.getDoubleValue() : 0.0;
+    }
+
+    bool getBoolValue() {
+        return _value ? _value.getBoolValue() : false;
+    }
+}

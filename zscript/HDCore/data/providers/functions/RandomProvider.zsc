@@ -1,4 +1,4 @@
-class HDCoreCommandFunctionParam_Random : HDCoreCommandFunctionParam {
+class HDCoreFunctionProvider_Random : HDCoreFunctionProvider {
 
     override string getStringValue() {
         return "";

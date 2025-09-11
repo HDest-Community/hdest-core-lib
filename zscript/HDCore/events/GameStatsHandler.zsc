@@ -1,4 +1,4 @@
-class HDCoreGameStatsHandler : EventHandler {
+class HDCoreGameStatsHandler : HDCoreEventHandler {
 
     HDCoreGameStatsThinker t;
 
@@ -27,21 +27,36 @@ class HDCoreGameStatsHandler : EventHandler {
         return ret;
     }
 
+    // FIXME: Refactor to not require Play Scope to increment metadata.
+    play void setValue(name key, string value) {
+        if (t) t.setValue(key, value);
+    }
+
 
     // ------
     // EVENTS
     // ------
 
+    override void OnRegister() {
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Handler Registered...");
+
+        super.OnRegister();
+
+        SetOrder(-100);
+    }
+
     override void WorldLoaded(WorldEvent e) {
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "World Loaded...");
 
-        initThinker();
+        if (!t) initThinker();
 
         incrementLevelsStarted();
     }
 
     override void WorldThingSpawned(WorldEvent e) {
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Thing Spawned...");
+
+        if (!t) initThinker();
 
         // If thing is invalid, quit.
         if (!e.thing || !(e.thing is 'Actor') || ((e.thing is 'Inventory') && Inventory(e.thing).owner)) return;
@@ -80,47 +95,38 @@ class HDCoreGameStatsHandler : EventHandler {
     protected void incrementLevelsStarted() {
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Incrementing Levels Started GameStat...");
 
-        int prevValue = getValueOrDefault('levelsStarted', "0").toInt(10);
+        int prevValue = getValueOrDefault('levels.started', "0").toInt(10);
         int currValue = prevValue + 1;
 
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Levels Started: "..prevValue.." -> "..currValue);
 
-        setValue('levelsStarted', currValue.."");
+        setValue('levels.started', currValue.."");
     }
 
     protected void incrementThingsSpawned(name name) {
-        int prevValue = getValueOrDefault(name..'Spawned', "0").toInt(10);
+        int prevValue = getValueOrDefault(name..'.spawned', "0").toInt(10);
         int currValue = prevValue + 1;
 
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Number of "..name.." Spawned: "..prevValue.." -> "..currValue);
 
-        setValue(name..'Spawned', currValue.."");
+        setValue(name..'.spawned', currValue.."");
     }
 
     protected void incrementThingsDied(name name) {
-        int prevValue = getValueOrDefault(name..'Died', "0").toInt(10);
+        int prevValue = getValueOrDefault(name..'.died', "0").toInt(10);
         int currValue = prevValue + 1;
 
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Number of "..name.." Died: "..prevValue.." -> "..currValue);
 
-        setValue(name..'Died', currValue.."");
+        setValue(name..'.died', currValue.."");
     }
 
     protected void incrementLevelsCompleted() {
-        int prevValue = getValueOrDefault('levelsCompleted', "0").toInt(10);
+        int prevValue = getValueOrDefault('levels.completed', "0").toInt(10);
         int currValue = prevValue + 1;
 
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Levels Completed: "..prevValue.." -> "..currValue);
 
-        setValue('levelsCompleted', currValue.."");
-    }
-
-
-    // ---------------
-    // UTILITY METHODS
-    // ---------------
-
-    private void setValue(name key, string value) {
-        if (t) t.setValue(key, value);
+        setValue('levels.completed', currValue.."");
     }
 }

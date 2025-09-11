@@ -1,6 +1,11 @@
-class HDCoreMapStatsHandler : EventHandler {
+class HDCoreMapStatsHandler : HDCoreEventHandler {
 
-    Dictionary stats;
+    Dictionary _stats;
+
+    override void beforeProcessCommands() {
+        _stats = Dictionary.create();
+    }
+
 
     // ----------
     // PUBLIC API
@@ -9,7 +14,7 @@ class HDCoreMapStatsHandler : EventHandler {
     clearscope string getValue(name key) {
         HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Getting Map Stat '"..key.."'...");
 
-        let ret = stats.at(key);
+        let ret = _stats ? _stats.at(key) : "";
 
         HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Value: "..ret);
 
@@ -20,11 +25,15 @@ class HDCoreMapStatsHandler : EventHandler {
         HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Getting Map Stat '"..key.."', or '"..defaultValue.."' if it doesn't...");
 
         let val = getValue(key);
-        let ret = !!val ? val : defaultValue;
+        let ret = val ? val : defaultValue;
 
         HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Value: "..ret);
 
         return ret;
+    }
+
+    clearscope void setValue(name key, string value) {
+        _stats.insert(key, value);
     }
 
 
@@ -35,17 +44,25 @@ class HDCoreMapStatsHandler : EventHandler {
     override void OnRegister() {
         HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Handler Registered...");
 
-        stats = Dictionary.create();
+        super.OnRegister();
+
+        SetOrder(-100);
+
+        init();
     }
 
     override void WorldLoaded(WorldEvent e) {
         HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "World Loaded...");
+
+        init();
 
         incrementLevelsStarted();
     }
 
     override void WorldThingSpawned(WorldEvent e) {
         HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Thing Spawned...");
+
+        init();
 
         // If thing is invalid, quit.
         if (!e.thing || !(e.thing is 'Actor') || ((e.thing is 'Inventory') && Inventory(e.thing).owner)) return;
@@ -76,47 +93,38 @@ class HDCoreMapStatsHandler : EventHandler {
     protected void incrementLevelsStarted() {
         HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Incrementing Levels Started MapStat...");
 
-        int prevValue = getValueOrDefault('levelsStarted', "0").toInt(10);
+        int prevValue = getValueOrDefault('levels.started', "0").toInt(10);
         int currValue = prevValue + 1;
 
         HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Levels Started: "..prevValue.." -> "..currValue);
 
-        setValue('levelsStarted', currValue.."");
+        setValue('levels.started', currValue.."");
     }
 
     protected void incrementThingsSpawned(name name) {
-        int prevValue = getValueOrDefault(name..'Spawned', "0").toInt(10);
+        int prevValue = getValueOrDefault(name..'.spawned', "0").toInt(10);
         int currValue = prevValue + 1;
 
         HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Number of "..name.." Spawned: "..prevValue.." -> "..currValue);
 
-        setValue(name..'Spawned', currValue.."");
+        setValue(name..'.spawned', currValue.."");
     }
 
     protected void incrementThingsDied(name name) {
-        int prevValue = getValueOrDefault(name..'Died', "0").toInt(10);
+        int prevValue = getValueOrDefault(name..'.died', "0").toInt(10);
         int currValue = prevValue + 1;
 
         HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Number of "..name.." Died: "..prevValue.." -> "..currValue);
 
-        setValue(name..'Died', currValue.."");
+        setValue(name..'.died', currValue.."");
     }
 
     protected void incrementLevelsCompleted() {
-        int prevValue = getValueOrDefault('levelsCompleted', "0").toInt(10);
+        int prevValue = getValueOrDefault('levels.completed', "0").toInt(10);
         int currValue = prevValue + 1;
 
         HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Levels Completed: "..prevValue.." -> "..currValue);
 
-        setValue('levelsCompleted', currValue.."");
-    }
-
-
-    // ---------------
-    // UTILITY METHODS
-    // ---------------
-
-    private void setValue(name key, string value) {
-        stats.insert(key, value);
+        setValue('levels.completed', currValue.."");
     }
 }

@@ -1,9 +1,9 @@
-class HDCoreCommandFunctionParam_Service : HDCoreCommandFunctionParam {
+class HDCoreFunctionProvider_Service : HDCoreFunctionProvider {
 
     Service svc;
 
-    override void setParam(string newVal) {
-        super.setParam(newVal);
+    override void setValue(string newVal) {
+        super.setValue(newVal);
 
         svc = ServiceIterator.Find(getNameParam("name")).Next();
     }
