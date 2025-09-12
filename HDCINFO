@@ -22,6 +22,7 @@
 addSpawnHandlerMapBlacklist => { "name": "RANGE" }
 
 // Thing Blacklist
+addSpawnHandlerThingBlacklist => { "name": "HDPlayerCorpse" }
 addSpawnHandlerThingBlacklist => { "name": "HDSmoke" }
 addSpawnHandlerThingBlacklist => { "name": "BloodTrail" }
 addSpawnHandlerThingBlacklist => { "name": "CheckPuff" }
