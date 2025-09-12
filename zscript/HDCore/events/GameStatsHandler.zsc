@@ -2,6 +2,14 @@ class HDCoreGameStatsHandler : HDCoreEventHandler {
 
     HDCoreGameStatsThinker t;
 
+    Dictionary _stats;
+
+    override void beforeProcessCommands() {
+        _stats = Dictionary.create();
+
+        if (!t) initThinker();
+    }
+
 
     // ----------
     // PUBLIC API
@@ -10,9 +18,9 @@ class HDCoreGameStatsHandler : HDCoreEventHandler {
     clearscope string getValue(name key) {
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Getting Game Stat '"..key.."'...");
 
-        let ret = !!t ? t.getValue(key) : "";
+        let ret = _stats ? _stats.at(key) : "";
 
-        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Thinker: "..(!!t)..", value: "..ret);
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Value: "..ret);
 
         return ret;
     }
@@ -20,16 +28,16 @@ class HDCoreGameStatsHandler : HDCoreEventHandler {
     clearscope string getValueOrDefault(name key, string defaultValue = "") {
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Getting Game Stat '"..key.."', or '"..defaultValue.."' if it doesn't...");
 
-        let ret = !!t ? t.getValueOrDefault(key, defaultValue) : defaultValue;
+        let val = getValue(key);
+        let ret = val ? val : defaultValue;
 
-        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Thinker: "..(!!t)..", value: "..ret);
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Value: "..ret);
 
         return ret;
     }
 
-    // FIXME: Refactor to not require Play Scope to increment metadata.
-    play void setValue(name key, string value) {
-        if (t) t.setValue(key, value);
+    clearscope void setValue(name key, string value) {
+        _stats.insert(key, value);
     }
 
 
@@ -43,20 +51,26 @@ class HDCoreGameStatsHandler : HDCoreEventHandler {
         super.OnRegister();
 
         SetOrder(-100);
+
+        init();
     }
 
     override void WorldLoaded(WorldEvent e) {
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "World Loaded...");
 
-        if (!t) initThinker();
+        init();
 
         incrementLevelsStarted();
+    }
+
+    override void WorldTick() {
+        if (GameAction == GA_SAVEGAME || GameAction == GA_AUTOSAVE) saveStats();
     }
 
     override void WorldThingSpawned(WorldEvent e) {
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Thing Spawned...");
 
-        if (!t) initThinker();
+        init();
 
         // If thing is invalid, quit.
         if (!e.thing || !(e.thing is 'Actor') || ((e.thing is 'Inventory') && Inventory(e.thing).owner)) return;
@@ -77,6 +91,8 @@ class HDCoreGameStatsHandler : HDCoreEventHandler {
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "World Unloaded...");
 
         incrementLevelsCompleted();
+
+        saveStats();
     }
 
 
@@ -87,9 +103,35 @@ class HDCoreGameStatsHandler : HDCoreEventHandler {
     protected void initThinker() {
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Getting GameStats Thinker...");
 
-        t = HDCoreGameStatsThinker.get();
+        if (!t) {
+            t = HDCoreGameStatsThinker.get();
+    
+            loadStats();
+        }
         
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Thinker: "..t);
+    }
+
+    protected void loadStats() {
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Loading GameStats...");
+
+        let prevValue = _stats.toString();
+        let currValue = t._stats.toString();
+
+        _stats = Dictionary.fromString(currValue);
+
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "GameStats Loaded: "..prevValue.." -> "..currValue);
+    }
+
+    protected void saveStats() {
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Saving GameStats...");
+
+        let prevValue = t._stats.toString();
+        let currValue = _stats.toString();
+        
+        t._stats = Dictionary.fromString(currValue);
+
+        HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "GameStats Saved: "..prevValue.." -> "..currValue);
     }
 
     protected void incrementLevelsStarted() {
