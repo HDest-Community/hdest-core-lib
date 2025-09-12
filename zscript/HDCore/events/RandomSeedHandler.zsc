@@ -1,0 +1,149 @@
+class HDCoreRandomSeedHandler : StaticEventHandler {
+
+    int dailySeed;
+    // int gameSeed;
+    int mapSeed;
+    int userSeed;
+
+    string _prevUserSeed;
+
+    override void OnRegister() {
+        setOrder(-1000);
+    }
+
+    // override void NewGame() {
+    //     if (!gameSeed) {
+    //         setGameSeed();
+
+    //         syncSeeds();
+    //     }
+    // }
+
+    override void WorldLoaded(WorldEvent e) {
+        if (!mapSeed) {
+            setMapSeed();
+
+            syncSeeds();
+        }
+    }
+
+    override void WorldTick() {
+        let seedCvar = CVar.getCvar('hdc_user_seed');
+        let seedStr = seedCvar.getString();
+
+        if (seedStr.length() && seedStr != _prevUserSeed) {
+            setUserSeed(seedStr);
+
+            syncSeeds();
+        }
+    }
+
+    override void UiTick() {
+        if (!dailySeed) {
+            let t = SystemTime.Now();
+
+            // Get number of days in current year
+            String s = SystemTime.Format("%j", t);
+            int i = s.toInt();
+
+            // Get current year
+            s = SystemTime.Format("%G", t);
+            int y = s.toInt();
+
+            // Multiply number of days by current year
+            i = i * y;
+            y = 0;
+
+            while(i > y) {
+                y++;
+                i--;
+
+                if(y > 9999) y = 0;
+            }
+
+            // Update seed cache
+            EventHandler.sendNetworkEvent('setDailySeed', max(1, y));
+        }
+    }
+
+    override void CheckReplacement(ReplaceEvent e) {
+        if (!mapSeed) {
+            setMapSeed();
+
+            syncSeeds();
+        }
+    }
+
+    override void WorldThingSpawned(WorldEvent e) {
+        if (!mapSeed) {
+            setMapSeed();
+
+            syncSeeds();
+        }
+    }
+
+    override void WorldUnloaded(WorldEvent e) {
+        mapSeed = 0;
+    }
+
+    override void NetworkProcess(ConsoleEvent e) {
+        name eventName = e.name;
+        switch (eventName) {
+            case 'setDailySeed':
+                setDailySeed(e.args[0]);
+
+                syncSeeds();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void setDailySeed(int seed) {
+        // Update seed cache
+        dailySeed = seed;
+
+        HDCore.log('HDCoreLib.RandomSeedHandler', LOGGING_DEBUG, "Daily Seed: "..dailySeed);
+    }
+
+    // private void setGameSeed() {
+    //     // Update seed cache
+    //     gameSeed = random(0, 9999);
+
+    //     HDCore.log('HDCoreLib.RandomSeedHandler', LOGGING_DEBUG, "Game Seed: "..gameSeed);
+    // }
+
+    private void setMapSeed() {
+        string checksum = Level.getChecksum();
+        int length = checksum.length(); // should be always 32 for MD5 checksum
+        int seed = 0;
+
+        for (int i = 0; i < length; i++) seed ^= checksum.byteAt(i) << 8 * (i % 4);
+
+        // Update seed cache
+        mapSeed = seed;
+
+        HDCore.log('HDCoreLib.RandomSeedHandler', LOGGING_DEBUG, "Map Seed: "..mapSeed);
+    }
+
+    private void setUserSeed(string seedStr) {
+        _prevUserSeed = seedStr;
+
+        int length = seedStr.length();
+        int seed = 0;
+
+        for (int i = 0; i < length; i++) seed ^= seedStr.byteAt(i) << 8 * (i % 4);
+
+        // Update seed cache
+        userSeed = seed;
+
+        HDCore.log('HDCoreLib.RandomSeedHandler', LOGGING_DEBUG, "User Seed: "..userSeed);
+    }
+
+    private void syncSeeds() {
+        setRandomSeed[hdcDailySeed](dailySeed);
+        // setRandomSeed[hdcGameSeed](gameSeed);
+        setRandomSeed[hdcMapSeed](mapSeed);
+        setRandomSeed[hdcUserSeed](userSeed);
+    }
+}

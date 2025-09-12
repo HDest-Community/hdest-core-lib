@@ -50,11 +50,11 @@ class HDCoreSectorSpawnerHandler : EventHandler {
 
         // Somewhere between 0 and 1/256th the sector size in square meters should be good for a sector
         // TODO: Allow reduction rate to be configurable
-        int max = int(random(0, area) / HDCONST_ONEMETRE) >> 8;
+        int max = int(HDCore.getRandomInt(0, area, hdc_random_mode) / HDCONST_ONEMETRE) >> 8;
         int count = 0;
         for (let i = 0; i < max; i++) {
-            double angle = random(1, 360);
-            double dist  = frandom(0, radius);
+            double angle = HDCore.getRandomInt(1, 360, hdc_random_mode);
+            double dist  = HDCore.getRandomDouble(0, radius, hdc_random_mode);
             vector3 pos  = (s.centerspot + (dist * cos(angle), dist * sin(angle)), s.floorplane.ZAtPoint(s.centerspot));
 
             if (Level.IsPointInLevel(pos) && Level.PointInSector(pos.xy) == s) {

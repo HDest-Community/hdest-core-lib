@@ -326,7 +326,7 @@ class HDCoreSpawnTableSingleEntry : HDCoreSpawnTableEntry {
 
         // If a random value (0-255) falls below the success chance, return what's in the entry.
         // Otherwise return a "nothing" dummy spawner to simulate a RandomSpawner picking and failing to drop a thing.
-        return (chance > 0 && (chance > 255 || random() < chance)) ? getName() : 'NullSpawner';
+        return (chance > 0 && (chance > 255 || HDCore.getRandomInt(mode: hdc_random_mode) < chance)) ? getName() : 'NullSpawner';
     }
 
     override void getEntries(out Array<HDCoreSpawnTableEntry> entries) {
@@ -385,7 +385,7 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
 
         // If a random value (0-255) falls below the success chance, return what's in the entry.
         // Otherwise return a "nothing" dummy spawner to simulate a RandomSpawner picking and failing to drop a thing.
-        return (entry && chance > 0 && (chance > 255 || random() < chance)) ? entry.getValue() : 'NullSpawner';
+        return (entry && chance > 0 && (chance > 255 || HDCore.getRandomInt(mode: hdc_random_mode) < chance)) ? entry.getValue() : 'NullSpawner';
     }
 
     override double getWeight(bool persistentOnly) {

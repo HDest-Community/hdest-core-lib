@@ -8,14 +8,14 @@ extend class HDCore {
      * @param {int} [defaultValue=0] The value to return by default
      * @returns {int} The index of the given set of weights that was rolled
      */
-    static int getWeightedRandom(out Array<double> weights, int defaultValue = 0) {
+    static clearscope int getWeightedRandom(out Array<double> weights, int defaultValue = 0) {
 
         // Add up the sum total of all given weights
         let sum = 0.0;
         forEach (w : weights) sum += w;
 
         // Roll against that sum and find the index it fell within
-        let rng = frandom[weightrand](0.0, sum);
+        let rng = HDCore.getRandomDouble(0.0, sum, hdc_random_mode);
 
         HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Weighted Random Value: "..rng.." out of "..sum);
 
@@ -28,4 +28,70 @@ extend class HDCore {
         // All else fails, return the default value
         return defaultValue;
     }
+
+    static clearscope int getRandomInt(int min = 0, int max = 256, int mode = RAND_DEFAULT) {
+        HDCore.log('HDCoreLib.Random', LOGGING_TRACE, "Getting Random Integer between ("..min..", "..max.."), Mode: "..mode);
+
+        let val = 0;
+
+        switch (mode) {
+            case RAND_DAILYSEED:
+                val = random[hdcDailySeed](min, max);
+                break;
+            // case RAND_GAMESEED:
+            //     val = random[hdcGameSeed](min, max);
+            //     break;
+            case RAND_MAPSEED:
+                val = random[hdcMapSeed](min, max);
+                break;
+            case RAND_USERSEED:
+                val = random[hdcUserSeed](min, max);
+                break;
+            case RAND_DEFAULT:
+            default:
+                val = random[hdcRand](min, max);
+                break;
+        }
+
+        HDCore.log('HDCoreLib.Random', LOGGING_TRACE, "Random Integer: "..val);
+
+        return val;
+    }
+
+    static clearscope double getRandomDouble(double min = 0.0, double max = 1.0, int mode = RAND_DEFAULT) {
+        HDCore.log('HDCoreLib.Random', LOGGING_TRACE, "Getting Random Double between ("..min..", "..max.."), Mode: "..mode);
+
+        let val = 0.0;
+
+        switch (mode) {
+            case RAND_DAILYSEED:
+                val = frandom[hdcDailySeed](min, max);
+                break;
+            // case RAND_GAMESEED:
+            //     val = frandom[hdcGameSeed](min, max);
+            //     break;
+            case RAND_MAPSEED:
+                val = frandom[hdcMapSeed](min, max);
+                break;
+            case RAND_USERSEED:
+                val = frandom[hdcUserSeed](min, max);
+                break;
+            case RAND_DEFAULT:
+            default:
+                val = frandom[hdcRand](min, max);
+                break;
+        }
+
+        HDCore.log('HDCoreLib.Random', LOGGING_TRACE, "Random Double: "..val);
+
+        return val;
+    }
+}
+
+enum HDC_RANDOM_MODES {
+    RAND_DEFAULT,
+    RAND_DAILYSEED,
+    RAND_MAPSEED,
+    // RAND_GAMESEED,
+    RAND_USERSEED
 }

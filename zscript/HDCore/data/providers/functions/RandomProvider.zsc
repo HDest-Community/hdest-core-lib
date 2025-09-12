@@ -9,11 +9,11 @@ class HDCoreFunctionProvider_Random : HDCoreFunctionProvider {
     }
 
     override int getIntValue() {
-        return random(getIntParam("min", 0), getIntParam("max", 256));
+        return HDCore.getRandomInt(getIntParam("min", 0), getIntParam("max", 256), hdc_random_mode);
     }
 
     override double getDoubleValue() {
-        return frandom(getDoubleParam("min", 0.0), getDoubleParam("max", 1.0));
+        return HDCore.getRandomDouble(getDoubleParam("min", 0.0), getDoubleParam("max", 1.0), hdc_random_mode);
     }
 
     override bool getBoolValue() {

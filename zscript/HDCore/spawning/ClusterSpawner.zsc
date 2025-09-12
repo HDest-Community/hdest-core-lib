@@ -27,20 +27,20 @@ class ClusterSpawner : IdleDummy abstract {
         super.PostBeginPlay();
 
         if (!actorClass) {
-            HDCore.Log('HDCoreLib', LOGGING_WARN, GetClassName().." configured with invalid Actor Class!");
+            HDCore.Log('HDCoreLib.ClusterSpawner', LOGGING_WARN, GetClassName().." configured with invalid Actor Class!");
             destroy();
         }
 
         // Pick a random rotation, in case that matters.
-        angle = random(1, 360);
+        angle = HDCore.getRandomInt(1, 360, hdc_random_mode);
         
         // Clamp max spawns to within valid range
         let max = clamp(maxSpawns, 0, 30);
 
-        if (max != maxSpawns) HDCore.Log('HDCoreLib', LOGGING_WARN, GetClassName().." configured with invalid maxSpawns, clamped to "..max);
+        if (max != maxSpawns) HDCore.Log('HDCoreLib.ClusterSpawner', LOGGING_WARN, GetClassName().." configured with invalid maxSpawns, clamped to "..max);
 
         // Pick a random unsigned integer within range
-        uint i = frandom(0, 2 ** max);
+        uint i = HDCore.getRandomDouble(0, 2 ** max, hdc_random_mode);
 
         // Every extra spawn is half as likely as the previous
         for (let j = max; j >= 0; j--) {
@@ -58,9 +58,9 @@ class ClusterSpawner : IdleDummy abstract {
         while(invoker.numSpawned < invoker.numToSpawn && failedAttempts < invoker.maxAttempts) {
 
             // Pick a random spot around origin to spawn
-            let spawnPos = Vec3Offset(FRandom(-dist, dist), FRandom(-dist, dist), 0);
+            let spawnPos = Vec3Offset(HDCore.getRandomDouble(-dist, dist, hdc_random_mode), HDCore.getRandomDouble(-dist, dist, hdc_random_mode), 0);
 
-            HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Attempt #"..(failedAttempts + 1).." of "..ceil(invoker.maxAttempts).." to spawn "..invoker.actorClass.GetClassName().." #"..(invoker.numSpawned + 1).." of "..invoker.numToSpawn.." at pos="..spawnPos);
+            HDCore.Log('HDCoreLib.ClusterSpawner', LOGGING_DEBUG, "Attempt #"..(failedAttempts + 1).." of "..ceil(invoker.maxAttempts).." to spawn "..invoker.actorClass.GetClassName().." #"..(invoker.numSpawned + 1).." of "..invoker.numToSpawn.." at pos="..spawnPos);
 
             // If that point is outside the level, try again.
             if (!Level.IsPointInLevel(spawnPos)) {
@@ -93,7 +93,7 @@ class ClusterSpawner : IdleDummy abstract {
     }
 
     protected void onSpawnError() {
-        HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Failed to spawn "..actorClass.GetClassName().." #"..(numSpawned + 1).." of "..numToSpawn..", retrying");
+        HDCore.Log('HDCoreLib.ClusterSpawner', LOGGING_DEBUG, "Failed to spawn "..actorClass.GetClassName().." #"..(numSpawned + 1).." of "..numToSpawn..", retrying");
     }
 
 
