@@ -301,8 +301,8 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
 
                 // TODO: sendNetworkEvent to force play scope
                 let key = entry.getName()..'.replace.success';
-                if (_gameStatsHandler && _gameStatsHandler._stats) _gameStatsHandler.setValue(key, (_gameStatsHandler.getValue(key).toInt(10) + 1).."");
-                if (_mapStatsHandler && _mapStatsHandler._stats) _mapStatsHandler.setValue(key, (_mapStatsHandler.getValue(key).toInt(10) + 1).."");
+                if (_gameStatsHandler) _gameStatsHandler.setValue(key, (_gameStatsHandler.getValue(key).toInt(10) + 1).."");
+                if (_mapStatsHandler) _mapStatsHandler.setValue(key, (_mapStatsHandler.getValue(key).toInt(10) + 1).."");
     
                 return true;
             }
@@ -310,8 +310,8 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
             // TODO: sendNetworkEvent to force play scope
             if (replacement == 'NullSpawner') {
                 let key = entry.getName()..'.replace.fail';
-                if (_gameStatsHandler && _gameStatsHandler._stats) _gameStatsHandler.setValue(key, (_gameStatsHandler.getValue(key).toInt(10) + 1).."");
-                if (_mapStatsHandler && _mapStatsHandler._stats) _mapStatsHandler.setValue(key, (_mapStatsHandler.getValue(key).toInt(10) + 1).."");
+                if (_gameStatsHandler) _gameStatsHandler.setValue(key, (_gameStatsHandler.getValue(key).toInt(10) + 1).."");
+                if (_mapStatsHandler) _mapStatsHandler.setValue(key, (_mapStatsHandler.getValue(key).toInt(10) + 1).."");
             }
         }
 
@@ -337,8 +337,8 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
 
                 // TODO: sendNetworkEvent to force play scope
                 let key = entry.getName()..'.spawn.success';
-                if (_gameStatsHandler && _gameStatsHandler._stats) _gameStatsHandler.setValue(key, (_gameStatsHandler.getValue(key).toInt(10) + 1).."");
-                if (_mapStatsHandler && _mapStatsHandler._stats) _mapStatsHandler.setValue(key, (_mapStatsHandler.getValue(key).toInt(10) + 1).."");
+                if (_gameStatsHandler) _gameStatsHandler.setValue(key, (_gameStatsHandler.getValue(key).toInt(10) + 1).."");
+                if (_mapStatsHandler) _mapStatsHandler.setValue(key, (_mapStatsHandler.getValue(key).toInt(10) + 1).."");
     
                 return true;
             }
@@ -346,8 +346,8 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
             // TODO: sendNetworkEvent to force play scope
             if (value == 'NullSpawner') {
                 let key = entry.getName()..'.spawn.fail';
-                if (_gameStatsHandler && _gameStatsHandler._stats) _gameStatsHandler.setValue(key, (_gameStatsHandler.getValue(key).toInt(10) + 1).."");
-                if (_mapStatsHandler && _mapStatsHandler._stats) _mapStatsHandler.setValue(key, (_mapStatsHandler.getValue(key).toInt(10) + 1).."");
+                if (_gameStatsHandler) _gameStatsHandler.setValue(key, (_gameStatsHandler.getValue(key).toInt(10) + 1).."");
+                if (_mapStatsHandler) _mapStatsHandler.setValue(key, (_mapStatsHandler.getValue(key).toInt(10) + 1).."");
             }
         }
 
