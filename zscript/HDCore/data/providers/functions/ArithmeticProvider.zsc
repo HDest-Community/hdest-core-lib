@@ -230,7 +230,7 @@ class HDCoreFunctionProvider_Max : HDCoreFunctionProvider {
         let a = getIntParam("valueA");
         let b = getIntParam("valueB");
 
-        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => min("..a..", "..b..") => "..(min(a, b)));
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => max("..a..", "..b..") => "..(max(a, b)));
 
         return min(a, b);
     }
@@ -239,9 +239,9 @@ class HDCoreFunctionProvider_Max : HDCoreFunctionProvider {
         let a = getDoubleParam("valueA");
         let b = getDoubleParam("valueB");
 
-        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => min("..a..", "..b..") => "..(min(a, b)));
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => max("..a..", "..b..") => "..(max(a, b)));
 
-        return min(a, b);
+        return max(a, b);
     }
 
     override bool getBoolValue() {
