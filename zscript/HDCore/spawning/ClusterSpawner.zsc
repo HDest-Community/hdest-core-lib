@@ -63,7 +63,7 @@ class ClusterSpawner : IdleDummy abstract {
             HDCore.Log('HDCoreLib.ClusterSpawner', LOGGING_DEBUG, "Attempt #"..(failedAttempts + 1).." of "..ceil(invoker.maxAttempts).." to spawn "..invoker.actorClass.GetClassName().." #"..(invoker.numSpawned + 1).." of "..invoker.numToSpawn.." at pos="..spawnPos);
 
             // Try to spawn the mob.  If it failed to spawn, or spawned stuck, remove it and try again.
-            if (!HDCore.SpawnStuff(invoker.actorClass.getClassName(), 1, spawnPos, randomVel: false)) {
+            if (!HDCore.SpawnStuff(invoker.actorClass.getClassName(), spawnPos, randomVel: false)) {
                 invoker.onSpawnError();
                 failedAttempts++;
                 continue;
