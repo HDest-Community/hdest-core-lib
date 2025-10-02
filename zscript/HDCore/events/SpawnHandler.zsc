@@ -27,7 +27,7 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
         initProviders();
         initStatHandlers();
 
-        mapBlackList.clear();
+        mapBlacklist.clear();
         thingBlacklist.clear();
         spawnTables.clear();
     }
@@ -403,7 +403,7 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
         forEach (bl : thingBlacklist) if (e.replacee is bl) return;
 
         // If current map is blacklisted, quit.
-        forEach (bl : mapBlackList) if (Level.MapName == bl) return;
+        forEach (bl : mapBlacklist) if (Level.MapName == bl) return;
 
         handleSpawnReplacements(e);
     }
@@ -420,7 +420,7 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
         forEach (bl : thingBlacklist) if (e.thing is bl) return;
 
         // If current map is blacklisted, quit.
-        forEach (bl : mapBlackList) if (Level.MapName == bl) return;
+        forEach (bl : mapBlacklist) if (Level.MapName == bl) return;
 
         handleSpawns(e.thing);
     }
