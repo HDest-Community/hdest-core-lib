@@ -1,0 +1,50 @@
+extend class HDCore {
+
+    /**
+     * Helper method to spawn stuff
+     *   with included logic for handling positions outside of the level,
+     *   removing things spawned stuck, giving the spawned thing a bit of random velocity, etc.
+     * @param {cls} cls The 'name' of the Class to spawn
+     * @param {pos} pos The position to spawn the thing
+     * @param {count} count The number of times to try and spawn the thing(s).  Defaults to 1.
+     * @param {randomVel} randomVel When true, gives the thing spawned some random velocity.  Defaults to true.
+     * @param {allowReplace} allowReplace When true, will tell the GZDoom this actor can be replaced.  Defaults to true.
+     * @returns {Actor} the most recently successfully spawned Actor, otherwise null.
+     */
+    static play Actor SpawnStuff(name cls, vector3 pos, int count = 1, bool randomVel = true, bool allowReplace = true) {
+        
+        // If we aren't spawning at least one thing, quit.
+        if (count <= 0) return null;
+        
+        // If the position to spawn isn't in the level, quit.
+        if (!Level.IsPointInLevel(pos)) return null;
+        
+        Actor a;
+
+        for (int i = 0; i < count; i++) {
+
+            // FIXME: Clean up previously successful spawns if latest one fails?
+            a = Actor.Spawn(cls, pos, allowReplace ? ALLOW_REPLACE : NO_REPLACE);
+
+            // If the thing failed to spawn, quit.
+            if (!a) return null;
+
+            // If the thing spawned stuck, destroy it and quit.
+            if (!a.TestMobjLocation()) {
+                a.destroy();
+
+                return null;
+            }
+
+            if (randomVel) {
+                a.vel += (
+                    HDCore.getRandomDouble(-2, 2, hdc_random_mode),
+                    HDCore.getRandomDouble(-2, 2, hdc_random_mode),
+                    HDCore.getRandomDouble(-1, 2, hdc_random_mode)
+                );
+            }
+        }
+
+        return a;
+    }
+}
