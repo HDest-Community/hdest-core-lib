@@ -39,11 +39,7 @@ extend class HDCore {
      * @returns {double} 
      */
     static clearscope double getSectorHeight(Sector s) {
-        double ceil, floor;
-        [ceil, s] = s.highestCeilingAt(s.centerspot);
-        [floor, s] = s.lowestFloorAt(s.centerspot);
-
-        return ceil - floor;
+        return abs(s.ceilingplane.ZAtPoint(s.centerspot) - s.floorplane.ZAtPoint(s.centerspot));
     }
 
     /**
@@ -85,10 +81,6 @@ extend class HDCore {
      * @returns {double} 
      */
     static clearscope Vector3 getSectorCenter(Sector s) {
-        double ceil, floor;
-        [ceil, s] = s.highestCeilingAt(s.centerspot);
-        [floor, s] = s.lowestFloorAt(s.centerspot);
-
-        return (s.centerspot.x, s.centerspot.y, floor + ((ceil - floor) / 2));
+        return (s.centerspot.x, s.centerspot.y, HDGMGlobalMaths.LerpDouble(s.floorplane.ZAtPoint(s.centerspot), s.ceilingplane.ZAtPoint(s.centerspot), 0.5));
     }
 }
