@@ -86,6 +86,64 @@ extend class HDCore {
 
         return val;
     }
+
+    static ui int getRandomIntUI(int min = 0, int max = 256, int mode = RAND_DEFAULT) {
+        HDCore.log('HDCoreLib.Random', LOGGING_TRACE, "Getting Random Integer between ("..min..", "..max.."), Mode: "..mode);
+
+        let val = 0;
+
+        switch (mode) {
+            case RAND_DAILYSEED:
+                val = crandom[hdcDailySeed](min, max);
+                break;
+            // case RAND_GAMESEED:
+            //     val = crandom[hdcGameSeed](min, max);
+            //     break;
+            case RAND_MAPSEED:
+                val = crandom[hdcMapSeed](min, max);
+                break;
+            case RAND_USERSEED:
+                val = crandom[hdcUserSeed](min, max);
+                break;
+            case RAND_DEFAULT:
+            default:
+                val = crandom[hdcRand](min, max);
+                break;
+        }
+
+        HDCore.log('HDCoreLib.Random', LOGGING_TRACE, "Random Integer: "..val);
+
+        return val;
+    }
+
+    static ui double getRandomDoubleUI(double min = 0.0, double max = 1.0, int mode = RAND_DEFAULT) {
+        HDCore.log('HDCoreLib.Random', LOGGING_TRACE, "Getting Random Double between ("..min..", "..max.."), Mode: "..mode);
+
+        let val = 0.0;
+
+        switch (mode) {
+            case RAND_DAILYSEED:
+                val = cfrandom[hdcDailySeed](min, max);
+                break;
+            // case RAND_GAMESEED:
+            //     val = cfrandom[hdcGameSeed](min, max);
+            //     break;
+            case RAND_MAPSEED:
+                val = cfrandom[hdcMapSeed](min, max);
+                break;
+            case RAND_USERSEED:
+                val = cfrandom[hdcUserSeed](min, max);
+                break;
+            case RAND_DEFAULT:
+            default:
+                val = cfrandom[hdcRand](min, max);
+                break;
+        }
+
+        HDCore.log('HDCoreLib.Random', LOGGING_TRACE, "Random Double: "..val);
+
+        return val;
+    }
 }
 
 enum HDC_RANDOM_MODES {
