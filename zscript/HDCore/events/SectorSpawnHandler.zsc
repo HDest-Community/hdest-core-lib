@@ -86,11 +86,10 @@ class HDCoreSectorSpawnerHandler : EventHandler {
         for (let i = 0; i < max; i++) {
             double angle = HDCore.getRandomInt(1, 360, hdc_random_mode);
             double dist  = HDCore.getRandomDouble(0, radius, hdc_random_mode);
-            vector3 pos  = (s.centerspot + (dist * cos(angle), dist * sin(angle)), s.floorplane.ZAtPoint(s.centerspot));
+            vector2 xy   = s.centerspot + (dist * cos(angle), dist * sin(angle));
+            vector3 pos  = (xy.x, xy.y, HDCore.getRandomDouble(s.lowestFloorAt(xy), s.highestCeilingAt(xy), hdc_random_mode));
 
-            if (Level.IsPointInLevel(pos) && Level.PointInSector(pos.xy) == s) {
-                if (Actor.Spawn(spawnerName, pos, ALLOW_REPLACE)) count++;
-            }
+            if (Level.PointInSector(xy) == s && HDCore.SpawnStuff(spawnerName, 1, pos)) count++;
         }
 
         HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_DEBUG, "Spawned "..count.." out of "..max.." dummy actors.\n\t\tSector @"..s.centerspot.." area/circum/radius/avg is "..area.."/"..circum.."/"..radius.."/"..avgSize..".");
