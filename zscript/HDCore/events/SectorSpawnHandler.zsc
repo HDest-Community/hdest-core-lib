@@ -4,6 +4,13 @@ class HDCoreSectorSpawnerHandler : EventHandler {
     Array<Sector> outdoorSectors;
     Array<Sector> secretSectors;
 
+    Array<Sector> brightestSectors;
+    Array<Sector> brighterSectors;
+    Array<Sector> brightSectors;
+    Array<Sector> darkSectors;
+    Array<Sector> darkerSectors;
+    Array<Sector> darkestSectors;
+
     override void OnRegister() {
         // Spawn Dummy Actors after everything else
         SetOrder(666);
@@ -28,6 +35,14 @@ class HDCoreSectorSpawnerHandler : EventHandler {
         // For each secret sector, spawn dummy actors.
         foreach (s : secretSectors) SpawnDummySpawners(s, 'SecretSectorSpawner');
 
+        // For each sector, spawn dummy actors based on light level in sector.
+        foreach (s : brightestSectors) SpawnDummySpawners(s, 'BrightestSectorSpawner');
+        foreach (s : brighterSectors) SpawnDummySpawners(s, 'BrighterSectorSpawner');
+        foreach (s : brightSectors) SpawnDummySpawners(s, 'BrightSectorSpawner');
+        foreach (s : darkSectors) SpawnDummySpawners(s, 'DarkSectorSpawner');
+        foreach (s : darkerSectors) SpawnDummySpawners(s, 'DarkerSectorSpawner');
+        foreach (s : darkestSectors) SpawnDummySpawners(s, 'DarkestSectorSpawner');
+
         // Clean up after ourselves.
         Destroy();
     }
@@ -36,11 +51,27 @@ class HDCoreSectorSpawnerHandler : EventHandler {
         hurtfloorSectors.clear();
         outdoorSectors.clear();
         secretSectors.clear();
+        brightestSectors.clear();
+        brighterSectors.clear();
+        brightSectors.clear();
+        darkSectors.clear();
+        darkerSectors.clear();
+        darkestSectors.clear();
 
         foreach (s : Level.sectors) {
             if (s.IsSecret()) secretSectors.Push(s);
             if (s.GetTexture(1) == skyflatnum) outdoorSectors.Push(s);
             if (s.damageAmount > 0) hurtfloorSectors.Push(s);
+
+            // Divide all 65536 units of light level into 7 evenly spaced "regions" for spawning purposes
+                 if (s.lightLevel > 56174) brightestSectors.Push(s); // 56175..65536 =  9362 units
+            else if (s.lightLevel > 46812) brighterSectors.Push(s);  // 46813..56174 =  9362 units
+            else if (s.lightLevel > 37450) brightSectors.Push(s);    // 37451..46812 =  9362 units
+            else if (s.lightLevel > 28086) {}                        // 28087..37450 =  9364 units
+            else if (s.lightLevel > 18724) darkSectors.Push(s);      // 18725..28086 =  9362 units
+            else if (s.lightLevel >  9362) darkerSectors.Push(s);    //  9363..18724 =  9362 units
+            else if (s.lightLevel >     0) darkestSectors.Push(s);   //     0..9362  =  9362 units
+                                                                     //              = 65536 units
         }
     }
 

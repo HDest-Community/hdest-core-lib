@@ -21,5 +21,23 @@ class OutdoorSectorSpawner : DummySpawner {
 class SecretSectorSpawner : DummySpawner {
 }
 
+class BrightestSectorSpawner : DummySpawner {
+}
+
+class BrighterSectorSpawner : DummySpawner {
+}
+
+class BrightSectorSpawner : DummySpawner {
+}
+
+class DarkSectorSpawner : DummySpawner {
+}
+
+class DarkerSectorSpawner : DummySpawner {
+}
+
+class DarkestSectorSpawner : DummySpawner {
+}
+
 class NullSpawner : DummySpawner final {
 }
