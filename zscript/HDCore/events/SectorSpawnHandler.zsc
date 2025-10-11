@@ -18,7 +18,12 @@ class HDCoreSectorSpawnerHandler : EventHandler {
 
     override void WorldLoaded(WorldEvent e) {
 
-        // TODO: Allow Sector-based Spawners to be toggled off
+        // TODO: Enhance Check for Sector-based Spawners being enabled/disabled
+        //   Actor.GetReplacement() static method to pre-emptively replace, or skip if not replaced?
+        //   Service for addons to inform HDCoreLib they want to leverage the feature, with user-specific override if desired?
+
+        // If Sector-based Spawners are explicitly disabled, quit.
+        if (!hdc_sector_spawners < 0) return;
 
         // If we're re-opening the level, quit.
         if (e.IsReopen) return;
@@ -75,7 +80,14 @@ class HDCoreSectorSpawnerHandler : EventHandler {
         }
     }
 
-    private void SpawnDummySpawners(Sector s, name spawnerName)  {
+    private void SpawnDummySpawners(Sector s, name spawnerName) {
+        Class<Actor> spawnerCls = spawnerName;
+        Class<Actor> replacement = Actor.getReplacement(spawnerName);
+
+        // If Sector-based Spawners are conditionally enabled,
+        // and we didn't find a replacement actor for the dummy spawner, quit.
+        if (!hdc_sector_spawners && (spawnerCls == replacement || replacement == 'NullSpawner')) return;
+
         double area, circum, radius, avgSize;
         [area, circum, radius, avgSize] = HDCore.GetSectorSize(s);
 
@@ -89,9 +101,9 @@ class HDCoreSectorSpawnerHandler : EventHandler {
             vector2 xy   = s.centerspot + (dist * cos(angle), dist * sin(angle));
             vector3 pos  = (xy.x, xy.y, HDCore.getRandomDouble(s.lowestFloorAt(xy), s.highestCeilingAt(xy), hdc_random_mode));
 
-            if (Level.PointInSector(xy) == s && HDCore.SpawnStuff(spawnerName, pos)) count++;
+            if (Level.PointInSector(xy) == s && HDCore.SpawnStuff(replacement.getClassName(), pos)) count++;
         }
 
         HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_DEBUG, "Spawned "..count.." out of "..max.." dummy actors.\n\t\tSector @"..s.centerspot.." area/circum/radius/avg is "..area.."/"..circum.."/"..radius.."/"..avgSize..".");
     }
-} 
+}

@@ -1,6 +1,8 @@
-server int    hdc_logging_level  = 200;
-server int    hdc_random_mode    = 0;
-server string hdc_user_seed      = "";
+server int    hdc_logging_level   = 200;
+server int    hdc_random_mode     = 0;
+server string hdc_user_seed       = "";
 
-server int    acl_spawnscale_min = 0;
-server int    acl_spawnscale_max = 0;
+server int    hdc_sector_spawners = 0;
+
+server int    acl_spawnscale_min  = 0;
+server int    acl_spawnscale_max  = 0;
