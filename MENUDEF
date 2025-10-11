@@ -10,7 +10,9 @@ OptionMenu "HDCoreLibMenu" {
 	StaticText ""
 	StaticText ""
 
+    StaticText "$HDC_FEATURES"
 	Option "$HDC_SECTOR_SPAWNERS", "hdc_sector_spawners", "OnOffAuto"
+	Option "$HDC_STAT_TRACKERS", "hdc_stat_trackers", "OnOff"
 	StaticText ""
 	StaticText ""
 

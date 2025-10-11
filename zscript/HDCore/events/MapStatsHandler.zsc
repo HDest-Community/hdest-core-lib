@@ -52,34 +52,48 @@ class HDCoreMapStatsHandler : HDCoreEventHandler {
     }
 
     override void WorldLoaded(WorldEvent e) {
-        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "World Loaded...");
-
         init();
+
+        // If Stat Tracking is disabled, quit.
+        if (!hdc_stat_trackers) return;
+
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "World Loaded...");
 
         incrementLevelsStarted();
     }
 
     override void WorldThingSpawned(WorldEvent e) {
-        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Thing Spawned...");
-
         init();
+
+        // If Stat Tracking is disabled, quit.
+        if (!hdc_stat_trackers) return;
 
         // If thing is invalid, quit.
         if (!e.thing || !(e.thing is 'Actor') || ((e.thing is 'Inventory') && Inventory(e.thing).owner)) return;
+
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Thing Spawned...");
 
         incrementThingsSpawned(e.thing.getClassName());
     }
 
     override void WorldThingDied(WorldEvent e) {
-        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Thing Died...");
+        init();
+
+        // If Stat Tracking is disabled, quit.
+        if (!hdc_stat_trackers) return;
 
         // If thing is invalid, quit.
         if (!e.thing || !(e.thing is 'Actor') || ((e.thing is 'Inventory') && Inventory(e.thing).owner)) return;
+
+        HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "Thing Died...");
 
         incrementThingsDied(e.thing.getClassName());
     }
 
     override void WorldUnloaded(WorldEvent e) {
+        // If Stat Tracking is disabled, quit.
+        if (!hdc_stat_trackers) return;
+
         HDCore.log('HDCoreLib.MapStatsHandler', LOGGING_TRACE, "World Unloaded...");
 
         incrementLevelsCompleted();

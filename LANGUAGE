@@ -21,5 +21,7 @@ HDC_MENU             = "\c[gold][ WIP ]\c- \c[olive]Ⓗ\c- HDCoreLib Options";
 HDC_LOGGING_LEVEL    = "Logging Level";
 HDC_RANDOM_MODE      = "Random Mode";
 HDC_USER_SEED        = "User-Defined Seed";
+HDC_FEATURES         = "Feature Toggles";
 HDC_SECTOR_SPAWNERS  = "Sector-based Spawners";
+HDC_STAT_TRACKERS    = "Statistic Trackers";
 HDC_RESETALLOPTIONS  = "Reset all options for HDCoreLib";

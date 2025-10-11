@@ -3,6 +3,7 @@ server int    hdc_random_mode     = 0;
 server string hdc_user_seed       = "";
 
 server int    hdc_sector_spawners = 0;
+server bool   hdc_stat_trackers   = false;
 
 server int    acl_spawnscale_min  = 0;
 server int    acl_spawnscale_max  = 0;
