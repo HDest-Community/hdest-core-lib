@@ -1,0 +1,50 @@
+OptionMenu "HDCoreLibMenu" {
+	Title "$HDC_MENU"
+	StaticText ""
+
+	Option "$HDC_LOGGING_LEVEL", "hdc_logging_level", "LoggingLevels"
+	StaticText ""
+	
+	Option "$HDC_RANDOM_MODE", "hdc_random_mode", "RandomMode"
+	TextField "$HDC_USER_SEED", "hdc_user_seed"
+	StaticText ""
+	StaticText ""
+
+	Option "$HDC_SECTOR_SPAWNERS", "hdc_sector_spawners", "OnOffAuto"
+	StaticText ""
+	StaticText ""
+
+	SafeCommand "$HDC_RESETALLOPTIONS", "hdc_reset_cvars"
+}
+
+AddOptionMenu "OptionsMenu" {
+	Submenu "$HDC_MENU", "HDCoreLibMenu"
+}
+
+AddOptionMenu "HDAddonMenu" {
+	Submenu "$HDC_MENU", "HDCoreLibMenu"
+}
+
+OptionValue "OnOffAuto" {
+    -1, "Off"
+     0, "Auto"
+     1, "On"
+}
+
+OptionValue "LoggingLevels" {
+      0, "Off"
+    100, "Errors"
+    200, "Warnings"
+    300, "Info Messages"
+    400, "Debug Messages"
+    500, "Trace Messages"
+    600, "Everything"
+}
+
+OptionValue "RandomMode" {
+    0, "Normal"
+    1, "Seeded Daily"
+    2, "Seeded per Map"
+    /* 3, "Seeded per Game" */
+    4, "Seeded manually"
+}

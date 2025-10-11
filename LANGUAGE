@@ -15,3 +15,11 @@ HDC_LOG_COLOR_INFO   = "\c[ice]";
 HDC_LOG_COLOR_DEBUG  = "\c[teal]";
 HDC_LOG_COLOR_TRACE  = "\c[darkgray]";
 HDC_LOG_COLOR_LOG    = "\c-";
+
+// Menu Labels
+HDC_MENU             = "\c[gold][ WIP ]\c- \c[olive]Ⓗ\c- HDCoreLib Options";
+HDC_LOGGING_LEVEL    = "Logging Level";
+HDC_RANDOM_MODE      = "Random Mode";
+HDC_USER_SEED        = "User-Defined Seed";
+HDC_SECTOR_SPAWNERS  = "Sector-based Spawners";
+HDC_RESETALLOPTIONS  = "Reset all options for HDCoreLib";
