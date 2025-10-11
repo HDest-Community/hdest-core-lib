@@ -993,6 +993,18 @@ addSpawnTableSingleEntry => { "tableName": "GibbedMarineReplaces", "name": "Real
 newSpawnTable => { "spawnName": "GibbedMarineExtra", "tableName": "GibbedMarineExtraReplaces" }
 addSpawnTableSingleEntry => { "tableName": "GibbedMarineExtraReplaces", "name": "ReallyDeadRiflemanCrouched", "weight": "1", "persists": "true" }
 
+// Sector-based Spawn Tables
+newSpawnTable => { "spawnName": "DeathMatchSpawner", "tableName": "DeathMatchSpawnerReplaces", "replaces": "true" }
+newSpawnTable => { "spawnName": "HurtfloorSectorSpawner", "tableName": "HurtfloorSectorSpawnerReplaces", "replaces": "true" }
+newSpawnTable => { "spawnName": "OutdoorSectorSpawner", "tableName": "OutdoorSectorSpawnerReplaces", "replaces": "true" }
+newSpawnTable => { "spawnName": "SecretSectorSpawner", "tableName": "SecretSectorSpawnerReplaces", "replaces": "true" }
+newSpawnTable => { "spawnName": "BrightestSectorSpawner", "tableName": "BrightestSectorSpawnerReplaces", "replaces": "true" }
+newSpawnTable => { "spawnName": "BrighterSectorSpawner", "tableName": "BrighterSectorSpawnerReplaces", "replaces": "true" }
+newSpawnTable => { "spawnName": "BrightSectorSpawner", "tableName": "BrightSectorSpawnerReplaces", "replaces": "true" }
+newSpawnTable => { "spawnName": "DarkSectorSpawner", "tableName": "DarkSectorSpawnerReplaces", "replaces": "true" }
+newSpawnTable => { "spawnName": "DarkerSectorSpawner", "tableName": "DarkerSectorSpawnerReplaces", "replaces": "true" }
+newSpawnTable => { "spawnName": "DarkestSectorSpawner", "tableName": "DarkestSectorSpawnerReplaces", "replaces": "true" }
+
 
 
 // AMMO ASSOCIATIONS
