@@ -1,4 +1,11 @@
 class DummySpawner : Actor abstract {
+    default {
+        +NOBLOCKMAP;
+        +NOINTERACTION;
+        +NOSECTOR;
+        -SHOOTABLE;
+    }
+
     states {
         spawn:
             TNT1 A 0;
