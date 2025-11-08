@@ -283,15 +283,18 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
 
     // Tries to replace the thing during spawning.
     bool tryReplaceThing(ReplaceEvent e, HDCoreSpawnTable table) {
+        
+        Dictionary params = Dictionary.create();
+        params.insert("persistentOnly", (Level.mapTime > 1).."");
 
-        let persistentOnly = Level.mapTime > 1;
+        let predicateFn = HDCoreSpawnTable.shouldGetEntry;
 
-        let entry = table.getRandomEntry(persistentOnly);
+        let entry = HDCoreSpawnTableEntry(table.getRandomEntry(predicateFn, params));
 
         if (entry) {
             initStatHandlers();
 
-            let replacement = entry.getValue(persistentOnly);
+            let replacement = entry.getValue(predicateFn, params);
     
             if (replacement != e.replacee) {
                 HDCore.Log('HDCoreLib.SpawnHandler', LOGGING_DEBUG, e.replacee.getClassName().." -> "..replacement);
@@ -321,14 +324,17 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
     // Tries to create the thing via random spawning.
     bool tryCreateThing(Actor a, HDCoreSpawnTable table) {
         
-        let persistentOnly = Level.mapTime > 1;
+        Dictionary params = Dictionary.create();
+        params.insert("persistentOnly", (Level.mapTime > 1).."");
 
-        let entry = table.getRandomEntry(persistentOnly);
+        let predicateFn = HDCoreSpawnTable.shouldGetEntry;
+
+        let entry = HDCoreSpawnTableEntry(table.getRandomEntry(predicateFn, params));
 
         if (entry) {
             initStatHandlers();
 
-            let value = entry.getValue(persistentOnly);
+            let value = entry.getValue(predicateFn, params);
 
             if (HDCore.CheckClassExists(value) && value != a.getClassName() && value != 'NullSpawner') {
                 HDCore.Log('HDCoreLib.SpawnHandler', LOGGING_DEBUG, a.getClassName().." + "..value);

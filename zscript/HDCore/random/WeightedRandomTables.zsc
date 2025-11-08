@@ -1,0 +1,201 @@
+class HDCoreWeightedRandomTable abstract {
+
+    // Unique Name of the table.
+    HDCoreDataProvider _tableName;
+
+    // List of entries of things to spawn.
+    Array<HDCoreWeightedRandomTableEntry> _entries;
+
+    virtual name getName() {
+        return _tableName.getNameValue();
+    }
+
+    virtual bool equals(HDCoreWeightedRandomTable other) {
+        return getName() == other.getName();
+    }
+
+    virtual string toString() {
+
+        let entriesStr = "[";
+
+        forEach (entry : _entries) entriesStr = entriesStr..", "..entry.toString();
+
+        entriesStr = entriesStr.."]";
+
+        return String.format(
+            "{ \"tableName\": \"%s\", \"totalWeight\": %.3f, \"entries\": %s }",
+               getName(),            getTotalWeight(_entries), entriesStr
+        );
+    }
+
+    void addEntry(HDCoreWeightedRandomTableEntry entry) {
+        HDCore.Log('HDCoreLib.WeightedRandomTable', LOGGING_TRACE, "Adding '"..entry.getName().."' to Weighted Random Table '"..getName().."' Entries...");
+
+        _entries.push(entry);
+    }
+
+    void addEntries(Array<HDCoreWeightedRandomTableEntry> arr) {
+        HDCore.Log('HDCoreLib.WeightedRandomTable', LOGGING_TRACE, "Appending entries to Weighted Random Table '"..getName().."'...");
+
+        _entries.append(arr);
+    }
+
+    void removeEntry(name name) {
+        HDCore.Log('HDCoreLib.WeightedRandomTable', LOGGING_TRACE, "Removing '"..name.."' from Weighted Random Table '"..getName().."' Entries...");
+
+        HDCoreWeightedRandomTableEntry tableEntry;
+
+        forEach (entry : _entries) {
+            if (entry.getName() == name) {
+                HDCore.Log('HDCoreLib.WeightedRandomTable', LOGGING_TRACE, "Entry for '"..entry.getName().."' found.");
+
+                tableEntry = entry;
+                break;
+            }
+        }
+
+        _entries.delete(_entries.find(tableEntry));
+    }
+
+    void clearEntries() {
+        HDCore.Log('HDCoreLib.WeightedRandomTable', LOGGING_TRACE, "Clearing all entries from Weighted Random Table '"..getName().."'.");
+
+        _entries.clear();
+    }
+
+    HDCoreWeightedRandomTableEntry getEntry(name name) {
+        forEach (entry : _entries) if (entry.getName() == name) return entry;
+
+        return null;
+    }
+
+    void getEntries(out Array<HDCoreWeightedRandomTableEntry> arr, Function<clearscope bool(HDCoreWeightedRandomTableEntry, Dictionary)> predicateFn = null, Dictionary params = null) {
+        arr.clear();
+
+        forEach (entry : _entries) {
+
+            // If the predicate fails, skip.
+            if (predicateFn && !predicateFn.call(entry, params)) continue;
+
+            let weight = entry.getWeight(predicateFn, params);
+
+            // If weight is negative, treat as only possible outcome (replace all)
+            if (weight < 0.0) {
+                HDCore.Log('HDCoreLib.WeightedRandomTable', LOGGING_DEBUG, "'"..entry.getName().."' has negative weight, returning single entry.");
+
+                arr.clear();
+                arr.push(entry);
+
+                return;
+            }
+
+            // Otherwise, as long as we have a valid weight, add it to array
+            if (!HDGMGlobalMaths.nearZero(weight)) {
+                HDCore.Log('HDCoreLib.WeightedRandomTable', LOGGING_TRACE, "Adding '"..entry.getName().."' to list of relevant entries.");
+
+                arr.push(entry);
+            }
+            
+            arr.push(entry);
+        }
+
+        if (!arr.size()) HDCore.Log('HDCoreLib.WeightedRandomTable', LOGGING_INFO, "No valid entries found for Weighted Random Table \""..getName().."\".");
+    }
+
+    HDCoreWeightedRandomTableEntry getRandomEntry(Function<clearscope bool(HDCoreWeightedRandomTableEntry, Dictionary)> predicateFn = null, Dictionary params = null) {
+        HDCore.Log('HDCoreLib.WeightedRandomTableEntry', LOGGING_TRACE, "Getting random entry from Weighted Random Table '"..getName().."'...");
+
+        Array<HDCoreWeightedRandomTableEntry> entries;
+        entries.clear();
+
+        getEntries(entries, predicateFn, params);
+
+        Array<double> weights;
+        weights.clear();
+
+        getWeights(weights, entries, predicateFn, params);
+
+        if (HDCore.ShouldLog('HDCoreLib.WeightedRandomTableEntry', LOGGING_DEBUG)) {
+            let msg = getName().." Entries:\n";
+            let totalWeight = getTotalWeight(entries, predicateFn, params);
+            
+            forEach (entry : entries) {
+                let weight = entry.getWeight(predicateFn, params);
+
+                msg = msg.." * "..entry.getName().." ["..weight.." ("..((weight / totalWeight) * 100.0).."%)]\n";
+            }
+
+            HDCore.Log('HDCoreLib.WeightedRandomTableEntry', LOGGING_DEBUG, msg);
+        }
+
+        HDCoreWeightedRandomTableEntry entry;
+
+        if (entries.size() > 1) {
+            entry = entries[HDCore.getWeightedRandom(weights)];
+        } else if (entries.size() > 0) {
+            entry = entries[0];
+        }
+        
+        HDCore.Log('HDCoreLib.WeightedRandomTableEntry', LOGGING_DEBUG, "Selected Entry: "..(entry ? "\""..entry.getName().."\"" : "Nothing"));
+
+        return entry;
+    }
+
+    static void getWeights(out Array<double> weights, Array<HDCoreWeightedRandomTableEntry> entries, Function<clearscope bool(HDCoreWeightedRandomTableEntry, Dictionary)> predicateFn = null, Dictionary params = null) {
+        weights.clear();
+
+        forEach (entry : entries) weights.push(entry.getWeight(predicateFn, params));
+    }
+
+    static double getTotalWeight(Array<HDCoreWeightedRandomTableEntry> entries, Function<clearscope bool(HDCoreWeightedRandomTableEntry, Dictionary)> predicateFn = null, Dictionary params = null) {
+        let weight = 0.0;
+
+        forEach (entry : entries) {
+            let w = entry.getWeight(predicateFn, params);
+            if (w > 0.0) {
+                weight += w;
+            } else {
+                return 1.0;
+            }
+        }
+
+        return weight;
+    }
+}
+
+class HDCoreWeightedRandomTableEntry abstract {
+
+    // Whether this entry is currently enabled
+    HDCoreDataProvider _enabled;
+
+    // Name of entry.
+    // Single Entries are named according to the thing they'll spawn,
+    // whereas Nested Entries are named according to their table's name.
+    HDCoreDataProvider _name;
+
+    // The relative weight that this entry will spawn within the table
+    HDCoreDataProvider _weight;
+
+    virtual bool isEnabled() {
+        return _enabled.getBoolValue();
+    }
+
+    // Getter to return the name of this entry
+    virtual name getName() {
+        return _name.getNameValue();
+    }
+
+    // Getter to return the weight of this entry
+    virtual double getWeight(Function<clearscope bool(HDCoreWeightedRandomTableEntry, Dictionary)> predicateFn = null, Dictionary params = null) {
+        return _weight.getDoubleValue();
+    }
+
+    // Getter to return the name of the thing to spawn for this entry
+    abstract name getValue(Function<clearscope bool(HDCoreWeightedRandomTableEntry, Dictionary)> predicateFn = null, Dictionary params = null);
+
+    // Getter to return the relevant list of entries for this 
+    abstract void getEntries(out Array<HDCoreWeightedRandomTableEntry> entries, Function<clearscope bool(HDCoreWeightedRandomTableEntry, Dictionary)> predicateFn = null, Dictionary params = null);
+
+    // Helper method to easily write this entry to the console
+    abstract string toString();
+}

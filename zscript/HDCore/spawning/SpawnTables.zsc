@@ -1,13 +1,7 @@
-class HDCoreSpawnTable play {
-
-    // Unique Name of the table.
-    HDCoreDataProvider _tableName;
+class HDCoreSpawnTable : HDCoreWeightedRandomTable play {
 
     // Name of thing to react to being spawned.
     HDCoreDataProvider _spawnName;
-
-    // List of entries of things to spawn.
-    Array<HDCoreSpawnTableEntry> _entries;
 
     // Whether or not to replace the original thing or just spawn alongside it.
     HDCoreDataProvider _replace;
@@ -32,7 +26,7 @@ class HDCoreSpawnTable play {
         return table;
     }
 
-    name getName() {
+    override name getName() {
         if (_tableName && _tableName._value != '') {
             return getTableName();
         } else if (_spawnName && _spawnName._value != '') {
@@ -42,27 +36,27 @@ class HDCoreSpawnTable play {
         }
     }
 
-    name getTableName() {
+    clearscope name getTableName() {
         return _tableName.getNameValue();
     }
 
-    name getSpawnName() {
+    clearscope name getSpawnName() {
         return _spawnName.getNameValue();
     }
 
-    bool isReplace() {
+    clearscope bool isReplace() {
         return _replace.getBoolValue();
     }
 
-    bool matches(name name, bool replace = true) {
+    clearscope bool matches(name name, bool replace = true) {
         return getName() == name && isReplace() == replace;
     }
 
-    bool equals(HDCoreSpawnTable other) {
-        return getName() == other.getName() && isReplace() == other.isReplace();
+    override bool equals(HDCoreWeightedRandomTable other) {
+        return super.equals(other) && other is 'HDCoreSpawnTable' && isReplace() == HDCoreSpawnTable(other).isReplace();
     }
 
-    string toString() {
+    override string toString() {
 
         let entriesStr = "[";
 
@@ -72,170 +66,40 @@ class HDCoreSpawnTable play {
 
         return String.format(
             "{ \"tableName\": \"%s\", \"spawnName\": \"%s\", \"isReplace\": %i, \"totalWeight\": %.3f, \"entries\": %s }",
-                 getTableName(),        getSpawnName(),        isReplace(),     getTotalWeight(_entries), entriesStr
+                 getTableName(),        getSpawnName(),        isReplace(),    getTotalWeight(_entries), entriesStr
         );
     }
 
-    void addEntry(HDCoreSpawnTableEntry entry) {
-        HDCore.Log('HDCoreLib.SpawnTable', LOGGING_TRACE, "Adding '"..entry.getName().."' to Spawn Table '"..getTableName().."' Entries...");
+    clearscope static bool shouldGetEntry(HDCoreWeightedRandomTableEntry entry, Dictionary params) {
 
-        _entries.push(entry);
-    }
+        HDCoreSpawnTableEntry spawnEntry = HDCoreSpawnTableEntry(entry);
 
-    void addEntries(Array<HDCoreSpawnTableEntry> arr) {
-        HDCore.Log('HDCoreLib.SpawnTable', LOGGING_TRACE, "Appending entries to Spawn Table '"..getTableName().."'...");
+        // If the entry isn't a SpawnTable Entry, or it isn't enabled, skip.
+        if (!spawnEntry || !spawnEntry.isEnabled()) {
+            // HDCore.Log('HDCoreLib.SpawnTable', LOGGING_DEBUG, "Spawn Table Entry for "..getTableName().." is not enabled, skipping.");
 
-        _entries.append(arr);
-    }
-
-    void removeEntry(name name) {
-        HDCore.Log('HDCoreLib.SpawnTable', LOGGING_TRACE, "Removing '"..name.."' from Spawn Table '"..getTableName().."' Entries...");
-
-        HDCoreSpawnTableEntry tableEntry;
-
-        forEach (entry : _entries) {
-            if (entry.getName() == name) {
-                HDCore.Log('HDCoreLib.SpawnTable', LOGGING_TRACE, "Entry for '"..entry.getName().."' found.");
-
-                tableEntry = entry;
-                break;
-            }
+            return false;
         }
 
-        _entries.delete(_entries.find(tableEntry));
-    }
+        // If entry is not nested, yet has an invalid actor, skip.
+        if (spawnEntry is 'HDCoreSpawnTableSingleEntry' && !HDCore.CheckClassExists(spawnEntry.getName())) {
+            // HDCore.Log('HDCoreLib.SpawnTable', LOGGING_WARN, "Spawn Table Entry for "..getTableName().." includes a class '"..entry.getName().."' that does not exist!");
 
-    void clearEntries() {
-        HDCore.Log('HDCoreLib.SpawnTable', LOGGING_TRACE, "Clearing all entries from Spawn Table '"..getTableName().."'.");
-
-        _entries.clear();
-    }
-
-    HDCoreSpawnTableEntry getEntry(name name, bool persistentOnly = false) {
-        forEach (entry : _entries) if (entry.getName() == name && (!persistentOnly || entry.isPersistent())) return entry;
-
-        return null;
-    }
-
-    void getEntries(out Array<HDCoreSpawnTableEntry> arr, bool persistentOnly = false) {
-        arr.clear();
-
-        forEach (entry : _entries) {
-
-            if (!entry || !entry.isEnabled()) {
-                HDCore.Log('HDCoreLib.SpawnTable', LOGGING_DEBUG, "Spawn Table Entry for "..getTableName().." is not enabled, skipping.");
-
-                continue;
-            }
-
-            // If entry is not nested, yet has an invalid actor, skip.
-            if (entry is 'HDCoreSpawnTableSingleEntry' && !HDCore.CheckClassExists(entry.getName())) {
-                HDCore.Log('HDCoreLib.SpawnTable', LOGGING_WARN, "Spawn Table Entry for "..getTableName().." includes a class '"..entry.getName().."' that does not exist!");
-
-                continue;
-            }
-
-            // If we're beyond inital map spawns and are not persistent, skip.
-            if (persistentOnly && !entry.isPersistent()) {
-                HDCore.Log('HDCoreLib.SpawnTable', LOGGING_DEBUG, "Spawn Table Entry '"..entry.getName().."' is not persistent, skipping.");
-
-                continue;
-            }
-
-
-            // If weight is negative, treat as only possible outcome (replace all)
-            if (entry.getWeight(persistentOnly) < 0.0) {
-                HDCore.Log('HDCoreLib.SpawnTable', LOGGING_DEBUG, "'"..entry.getName().."' has negative weight, returning single entry.");
-
-                arr.clear();
-                arr.push(entry);
-                return;
-            }
-
-            // Otherwise, as long as we have a valid weight, add it to array
-            if (!HDGMGlobalMaths.nearZero(entry.getWeight(persistentOnly))) {
-                HDCore.Log('HDCoreLib.SpawnTable', LOGGING_TRACE, "Adding '"..entry.getName().."' to list of relevant entries.");
-
-                arr.push(entry);
-            }
+            return false;
         }
 
-        if (!arr.size()) HDCore.Log('HDCoreLib.SpawnTable', LOGGING_INFO, "No valid entries found for Spawn Table \""..getTableName().."\".");
-    }
+        // If we're beyond inital map spawns and are not persistent, skip.
+        if (params.at("persistentOnly").toInt() && !spawnEntry.isPersistent()) {
+            // HDCore.Log('HDCoreLib.SpawnTable', LOGGING_DEBUG, "Spawn Table Entry '"..entry.getName().."' is not persistent, skipping.");
 
-    HDCoreSpawnTableEntry getRandomEntry(bool persistentOnly = false) {
-        HDCore.Log('HDCoreLib.SpawnTableEntry', LOGGING_TRACE, "Getting random entry from Spawn Table '"..getTableName().."'...");
-
-        Array<HDCoreSpawnTableEntry> entries;
-        entries.clear();
-
-        getEntries(entries, persistentOnly);
-
-        Array<double> weights;
-        weights.clear();
-
-        getWeights(weights, entries, persistentOnly);
-
-        if (HDCore.ShouldLog('HDCoreLib.SpawnTableEntry', LOGGING_DEBUG)) {
-            let msg = getTableName().." Entries:\n";
-            let totalWeight = getTotalWeight(entries, persistentOnly);
-            
-            forEach (entry : entries) {
-                let weight = entry.getWeight(persistentOnly);
-
-                msg = msg.." * "..entry.getName().." ["..weight.." ("..((weight / totalWeight) * 100.0).."%)]\n";
-            }
-
-            HDCore.Log('HDCoreLib.SpawnTableEntry', LOGGING_DEBUG, msg);
+            return false;
         }
 
-        HDCoreSpawnTableEntry entry;
-
-        if (entries.size() > 1) {
-            entry = entries[HDCore.getWeightedRandom(weights)];
-        } else if (entries.size() > 0) {
-            entry = entries[0];
-        }
-        
-        HDCore.Log('HDCoreLib.SpawnTableEntry', LOGGING_DEBUG, "Selected Entry: "..(entry ? "\""..entry.getName().."\"" : "Nothing"));
-
-        return entry;
-    }
-
-    static void getWeights(out Array<double> weights, Array<HDCoreSpawnTableEntry> entries, bool persistentOnly = false) {
-        weights.clear();
-
-        forEach (entry : entries) weights.push(entry.getWeight(persistentOnly));
-    }
-
-    static double getTotalWeight(Array<HDCoreSpawnTableEntry> entries, bool persistentOnly = false) {
-        let weight = 0.0;
-
-        forEach (entry : entries) {
-            let w = entry.getWeight(persistentOnly);
-            if (w > 0.0) {
-                weight += w;
-            } else {
-                return 1.0;
-            }
-        }
-
-        return weight;
+        return true;
     }
 }
 
-class HDCoreSpawnTableEntry play abstract {
-
-    // Whether this entry is currently enabled
-    HDCoreDataProvider _enabled;
-
-    // Name of entry.
-    // Single Entries are named according to the thing they'll spawn,
-    // whereas Nested Entries are named according to their table's name.
-    HDCoreDataProvider _name;
-
-    // The relative weight that this entry will spawn within the table
-    HDCoreDataProvider _weight;
+class HDCoreSpawnTableEntry : HDCoreWeightedRandomTableEntry play abstract {
 
     // Whether or not to use this table beyond initial map spawn.
     HDCoreDataProvider _persistent;
@@ -246,45 +110,20 @@ class HDCoreSpawnTableEntry play abstract {
     // Whether or not this entry should be considered final.
     HDCoreDataProvider _final;
 
-    virtual bool isEnabled() {
-        return _enabled.getBoolValue();
-    }
-
-    // Getter to return the name of this entry
-    virtual name getName() {
-        return _name.getNameValue();
-    }
-
-    // Getter to return the weight of this entry
-    virtual double getWeight(bool persistentOnly = false) {
-        return !persistentOnly || isPersistent()
-            ? _weight.getDoubleValue()
-            : 0.0;
-    }
-
     // Getter to return whether this entry is persistent
-    virtual bool isPersistent() {
+    clearscope virtual bool isPersistent() {
         return _persistent.getBoolValue();
     }
 
     // Getter to return the success chance of this entry
-    virtual int getChance() {
+    clearscope virtual int getChance() {
         return _chance.getIntValue();
     }
 
     // Getter to return whether this entry is final
-    virtual bool isFinal() {
+    clearscope virtual bool isFinal() {
         return _final.getBoolValue();
     }
-
-    // Getter to return the name of the thing to spawn for this entry
-    abstract name getValue(bool persistentOnly = false);
-
-    // Getter to return the relevant list of entries for this 
-    abstract void getEntries(out Array<HDCoreSpawnTableEntry> entries, bool persistentOnly = false);
-
-    // Helper method to easily write this entry to the console
-    abstract string toString();
 }
 
 class HDCoreSpawnTableSingleEntry : HDCoreSpawnTableEntry {
@@ -329,7 +168,7 @@ class HDCoreSpawnTableSingleEntry : HDCoreSpawnTableEntry {
         return (chance > 0 && (chance > 255 || HDCore.getRandomInt(mode: hdc_random_mode) < chance)) ? getName() : 'NullSpawner';
     }
 
-    override void getEntries(out Array<HDCoreSpawnTableEntry> entries) {
+    override void getEntries(out Array<HDCoreWeightedRandomTableEntry> entries) {
         // no-op
     }
 
@@ -377,39 +216,39 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
         return entry;
     }
 
-    override name getValue(bool persistentOnly) {
-        let entry = _table.getRandomEntry(persistentOnly);
+    override double getWeight(Function<clearscope bool(HDCoreWeightedRandomTableEntry, Dictionary)> predicateFn, Dictionary params) {
+        let weight = super.getWeight(predicateFn, params);
+
+        if (weight >= 0.0) {
+            return weight;
+        } else {        
+            Array<HDCoreWeightedRandomTableEntry> entries;
+
+            getEntries(entries, predicateFn, params);
+
+            return HDCoreWeightedRandomTable.getTotalWeight(entries, predicateFn, params);
+        }
+    }
+
+    override name getValue(Function<clearscope bool(HDCoreWeightedRandomTableEntry, Dictionary)> predicateFn, Dictionary params) {
+        let entry = _table.getRandomEntry(predicateFn, params);
         let chance = getChance();
 
         HDCore.log('HDCoreLib.SpawnTableEntry', LOGGING_DEBUG, "Chance of selected Entry '"..entry.getName().."': "..chance.." / 255 ("..(100.0 * clamp(chance, 0, 255) / 255.0).."%)");
 
         // If a random value (0-255) falls below the success chance, return what's in the entry.
         // Otherwise return a "nothing" dummy spawner to simulate a RandomSpawner picking and failing to drop a thing.
-        return (entry && chance > 0 && (chance > 255 || HDCore.getRandomInt(mode: hdc_random_mode) < chance)) ? entry.getValue() : 'NullSpawner';
+        return (entry && chance > 0 && (chance > 255 || HDCore.getRandomInt(mode: hdc_random_mode) < chance)) ? entry.getValue(predicateFn, params) : 'NullSpawner';
     }
 
-    override double getWeight(bool persistentOnly) {
-        let weight = _weight.getDoubleValue();
-        if (weight >= 0.0) {
-            return weight;
-        } else {        
-            Array<HDCoreSpawnTableEntry> entries;
-            entries.clear();
-
-            getEntries(entries, persistentOnly);
-
-            return HDCoreSpawnTable.getTotalWeight(entries, persistentOnly);
-        }
-    }
-
-    override void getEntries(out Array<HDCoreSpawnTableEntry> entries, bool persistentOnly) {
-        _table.getEntries(entries, persistentOnly);
+    override void getEntries(out Array<HDCoreWeightedRandomTableEntry> entries, Function<clearscope bool(HDCoreWeightedRandomTableEntry, Dictionary)> predicateFn, Dictionary params) {
+        _table.getEntries(entries, predicateFn, params);
     }
 
     override string toString() {
         return String.format(
             "{ \"name\": \"%s\", \"table\": %s, \"weight\": %.3f, \"isPersistent\": %i, \"chance\": %i, \"isFinal\": %i }",
-                 getName(),  _table.toString(),   getWeight(),      isPersistent(),       getChance(),    isFinal()
+                 getName(), _table.toString(),    getWeight(),      isPersistent(),       getChance(),    isFinal()
         );
     }
 }
