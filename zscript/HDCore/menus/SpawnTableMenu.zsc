@@ -1,0 +1,142 @@
+class HDCoreSpawnTableMenu : HDZFGenericMenu {
+
+    Font font;
+
+    Vector2 basePos;
+    Vector2 baseSize;
+    const spacing = 3;
+
+    HDCoreSpawnTableMenuHandler handler;
+    
+    Array<HDCoreSpawnTable> tables;
+    HDCoreSpawnTable selectedTable;
+
+    HDZFDropdownList tableDropdown;
+    HDCoreSpawnTableFrame tableFrame;
+
+    override void init(Menu parent) {
+        super.init(parent);
+
+        tables.clear();
+
+        // Get all of the currently configured Spawn Tables
+        let spawnHandler = HDCoreSpawnHandler(StaticEventHandler.find('HDCoreSpawnHandler'));
+        if (spawnHandler) {
+            tables.copy(spawnHandler.spawnTables);
+        } else {
+            HDCore.log('HDCore.SpawnTableMenu', LOGGING_ERROR, "Spawn Handler not found!");
+        }
+
+        // Initialize Event Handler
+        handler = new('HDCoreSpawnTableMenuHandler');
+        handler.menu = self;
+        
+        // Set default menu position & size
+        basePos = (16, 32);
+        baseSize = (640, 480);
+
+        // Set default menu resolution
+        setBaseResolution(baseSize);
+        
+        // Gather global sizes such as fonts, etc.
+        font = Font.getFont('SmallFont');
+        let fontHeight = font.getHeight();
+
+        // Build Menu Elements
+        buildTableDropdown(basePos, (192, fontHeight + (spacing * 2)), mainFrame); // TODO: calculate size based on string width & font height
+        buildTableFrame(basePos + (0, tableDropdown.getHeight()), baseSize - (48, tableDropdown.getHeight() + 96), tables[0], mainFrame);
+    }
+
+    void buildTableDropdown(Vector2 pos, Vector2 size, HDZFFrame parent) {
+
+        // Build the options for the dropdown
+        let tableDropdownOptions = HDZFDropdownItems(new('HDZFDropdownItems'));
+
+        forEach (table : tables) tableDropdownOptions.items.push(table.getName());
+
+        // Build the dropdown itself
+        tableDropdown = HDZFDropdownList.create(
+            pos, size,
+            tableDropdownOptions,
+            // textScale: 1.0,
+            boxBG:  HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundNormal.png', (7,7), (14,14), true, true),
+            listBG: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackground.png', (7,7), (14,14), true, true),
+            highlightBG: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundHover.png', (7,7), (14,14), true, true),
+            dropTex: "graphics/menus/CommonArrowDown.png",
+            defaultSelection: tableDropdownOptions.items.size() ? 0 : -1,
+            cmdHandler: handler,
+            command: 'SelectSpawnTable'
+        );
+        tableDropdown.pack(parent);
+    }
+
+    void buildTableFrame(Vector2 pos, Vector2 size, HDCoreSpawnTable table, HDZFFrame parent) {
+        if (tableFrame) {
+            tableFrame.unpack();
+            tableFrame.destroy();
+        }
+
+        if (table) {
+            tableFrame = HDCoreSpawnTableFrame.create(pos, size, self, table);
+    
+            tableFrame.pack(parent);
+        }
+    }
+
+    void selectTable(HDCoreSpawnTable table) {
+
+        // If the selection was different from the current value,
+        // update it and rebuild the screen
+        if (selectedTable != table) {
+
+            selectedTable = table;
+            
+            buildTableFrame(basePos + (0, tableDropdown.getHeight()), baseSize - (32, tableDropdown.getHeight() + 64), selectedTable, mainFrame);
+        }
+    }
+
+    override void drawer() {
+        super.drawer();
+
+        HDCoreSpawnTableMenu.drawDebugBox(mainFrame);
+        HDCoreSpawnTableMenu.drawDebugBox(tableDropdown);
+        HDCoreSpawnTableMenu.drawDebugBox(tableFrame);
+    }
+
+    static void drawDebugBox(HDZFElement el, Color color = 0xFF0000, double alpha = 0.5) {
+        if (hd_debug && el) {
+            el.fill((0, 0), (el.getWidth(), 1), color, alpha);
+            el.fill((0, 0), (1, el.getHeight()), color, alpha);
+            el.fill((0, el.getHeight() - 1), (el.getWidth(), 1), color, alpha);
+            el.fill((el.getWidth() - 1, 0), (1, el.getHeight()), color, alpha);
+        }
+    }
+}
+
+class HDCoreSpawnTableMenuHandler : HDZFHandler {
+    
+    HDCoreSpawnTableMenu menu;
+
+    override void dropdownChanged(HDZFDropdownList caller, name command) {
+        switch (command) {
+            case 'SelectSpawnTable':
+                selectSpawnTable(caller.getItems().items[caller.getSelection()]);
+                break;
+            default:
+                HDCore.log('HDCore.SpawnTableMenu', LOGGING_DEBUG, "Unknown dropdownChanged Command: '"..command.."'");
+                break;
+        }
+    }
+
+    private void selectSpawnTable(name tableName) {
+        forEach (table : menu.tables) {
+            if (table.getName() == tableName) {
+                HDCore.log('HDCore.SpawnTableMenu', LOGGING_DEBUG, "Selected Spawn Table: '"..table.getName().."'");
+
+                menu.selectTable(table);
+
+                break;
+            }
+        }
+    }
+}
