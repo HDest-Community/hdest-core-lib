@@ -234,7 +234,7 @@ class HDCoreSpawnTableNestedEntry : HDCoreSpawnTableEntry {
         let entry = _table.getRandomEntry(predicateFn, params);
         let chance = getChance();
 
-        HDCore.log('HDCoreLib.SpawnTableEntry', LOGGING_DEBUG, "Chance of selected Entry '"..entry.getName().."': "..chance.." / 255 ("..(100.0 * clamp(chance, 0, 255) / 255.0).."%)");
+        if (entry) HDCore.log('HDCoreLib.SpawnTableEntry', LOGGING_DEBUG, "Chance of selected Entry '"..entry.getName().."': "..chance.." / 255 ("..(100.0 * clamp(chance, 0, 255) / 255.0).."%)");
 
         // If a random value (0-255) falls below the success chance, return what's in the entry.
         // Otherwise return a "nothing" dummy spawner to simulate a RandomSpawner picking and failing to drop a thing.
