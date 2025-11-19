@@ -1,0 +1,214 @@
+
+
+class HDCoreSpawnTableEntryFrame : HDZFFrame {
+    HDCoreSpawnTableMenu menu;
+
+    HDCoreSpawnTableEntryHandler handler;
+
+    HDCoreSpawnTable table;
+    HDCoreSpawnTableEntry entry;
+
+    HDZFToggleButton enableBtn;
+    HDZFLabel entryLabel;
+    HDZFTextInput weightInput;
+    HDZFLabel weightPercentLabel;
+    HDZFTextInput chanceInput;
+    HDZFLabel chancePercentLabel;
+    // HDZFToggleButton replaceBtn;
+    HDZFToggleButton persistBtn;
+
+    static HDCoreSpawnTableEntryFrame create(
+        Vector2 pos,
+        Vector2 size,
+        HDCoreSpawnTableMenu menu,
+        HDCoreSpawnTable table,
+        HDCoreSpawnTableEntry entry
+    ) {
+        let ret = new('HDCoreSpawnTableEntryFrame');
+
+        ret.setBox(pos, size);
+        ret.alpha = 1.0;
+
+        ret.menu = menu;
+        ret.table = table;
+        ret.entry = entry;
+
+        // Initialize Event Handler
+        ret.handler = new('HDCoreSpawnTableEntryHandler');
+        ret.handler.menu = menu;
+        ret.handler.table = table;
+        ret.handler.entry = entry;
+
+        Vector2 elPos = (0, menu.spacing);
+
+        let fontHeight = menu.font.getHeight();
+
+        // Build Entry Lables & Controls
+
+        // let height = ret.getHeight();
+
+        // ----- ENABLED TOGGLE -----
+
+		/* Vector2 pos, Vector2 size, string text = "",
+		HDZFBoxTextures inactive = NULL, HDZFBoxTextures hover = NULL, HDZFBoxTextures click = NULL,
+		HDZFBoxTextures disabled = NULL, Font fnt = NULL, double textScale = 1, int textColor = Font.CR_WHITE,
+		AlignType alignment = AlignType_Center, HDZFHandler cmdHandler = NULL, Name command = '' */
+
+        ret.enableBtn = HDZFToggleButton.create(
+            elPos + (0, -menu.spacing),
+            (fontHeight + (menu.spacing * 2), fontHeight + (menu.spacing * 2)),
+            cmdHandler: ret.handler,
+            command: 'setEntryEnabled',
+            inactive: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackground.png', (7,7), (14,14), true, true),
+            hover: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundHover.png', (7,7), (14,14), true, true),
+            click: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundClick.png', (7,7), (14,14), true, true),
+            disabled: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundNormal.png', (7,7), (14,14), true, true)
+        );
+        ret.enableBtn.pack(ret);
+
+        elPos += (ret.enableBtn.getWidth() + menu.spacing, 0);
+
+
+        // ----- TABLE NAME LABEL -----
+
+        let entryLabelText = entry.getName()..": weight: ";
+        ret.entryLabel = HDZFLabel.create(
+            elPos, (menu.font.stringWidth(entryLabelText), fontHeight),
+            text: entryLabelText,
+            wrap: false
+        );
+        ret.entryLabel.pack(ret);
+
+        elPos += (ret.entryLabel.getWidth() + menu.spacing, 0);
+
+
+        // ----- ENTRY WEIGHT -----
+
+        let weightEditable = !!HDCoreCVarProvider(entry._weight);
+        ret.weightInput = HDZFTextInput.create(
+            elPos + (0, -menu.spacing),
+            (menu.font.stringWidth(weightEditable ? "1000.000" : entry._weight.getStringValue().."  "), fontHeight + (menu.spacing * 2)),
+            menu.font,
+            textColor: weightEditable ? Font.CR_WHITE : Font.CR_GRAY,
+            background: HDZFBoxTextures.createTexturePixels(weightEditable ? 'graphics/menus/CommonBackgroundNormal.png' : 'graphics/menus/CommonBackground.png', (7,7), (14,14), true, true),
+            cmdHandler: ret.handler,
+            command: 'setEntryWeight'
+        );
+        ret.weightInput.setText(entry._weight.getStringValue());
+        ret.weightInput.setDisabled(!weightEditable);
+        ret.weightInput.pack(ret);
+
+        elPos += (ret.weightInput.getWidth() + menu.spacing, 0);
+
+
+        // ----- WEIGHT PERCENTAGE -----
+        
+        let weightPercentText = ret.buildWeightPercentLabelText();
+        ret.weightPercentLabel = HDZFLabel.create(
+            elPos, (menu.font.stringWidth(weightPercentText), fontHeight),
+            text: weightPercentText,
+            wrap: false
+        );
+        ret.weightPercentLabel.pack(ret);
+
+        elPos += (ret.weightPercentLabel.getWidth() + menu.spacing, 0);
+
+
+        // ----- ENTRY CHANCE -----
+
+        let chanceEditable = !!HDCoreCVarProvider(entry._chance);
+        ret.chanceInput = HDZFTextInput.create(
+            elPos + (0, -menu.spacing),
+            (menu.font.stringWidth(chanceEditable ? "1000.000" : entry._chance.getStringValue().."  "), fontHeight + (menu.spacing * 2)),
+            menu.font,
+            textColor: chanceEditable ? Font.CR_WHITE : Font.CR_GRAY,
+            background: HDZFBoxTextures.createTexturePixels(chanceEditable ? 'graphics/menus/CommonBackgroundNormal.png' : 'graphics/menus/CommonBackground.png', (7,7), (14,14), true, true),
+            cmdHandler: ret.handler,
+            command: 'setEntryChance'
+        );
+        ret.chanceInput.setText(entry._chance.getStringValue());
+        ret.chanceInput.setDisabled(!chanceEditable);
+        ret.chanceInput.pack(ret);
+
+        elPos += (ret.chanceInput.getWidth() + menu.spacing, 0);
+
+
+        // ----- CHANCE PERCENTAGE -----
+        
+        let chancePercentText = ret.buildchancePercentLabelText();
+        ret.chancePercentLabel = HDZFLabel.create(
+            elPos, (menu.font.stringWidth(chancePercentText), fontHeight),
+            text: chancePercentText,
+            wrap: false
+        );
+        ret.weightPercentLabel.pack(ret);
+
+        return ret;
+    }
+
+    string buildWeightPercentLabelText() {
+        let totalTableWeight = HDCoreWeightedRandomTable.getTotalWeight(table._entries);
+        return " / "..String.format("%.2f%", totalTableWeight).." ("..String.format("%.2f%%", entry.getWeight() / totalTableWeight * 100.0)..")";
+    }
+
+    string buildChancePercentLabelText() {
+        return " / 256 ("..String.format("%.2f%%", entry.getChance() / 256.0 * 100.0)..")";
+    }
+
+    override void drawer() {
+        super.drawer();
+
+        HDCoreSpawnTableMenu.drawDebugBox(self);
+        HDCoreSpawnTableMenu.drawDebugBox(enableBtn);
+        HDCoreSpawnTableMenu.drawDebugBox(entryLabel);
+        HDCoreSpawnTableMenu.drawDebugBox(weightInput);
+        HDCoreSpawnTableMenu.drawDebugBox(weightPercentLabel);
+        HDCoreSpawnTableMenu.drawDebugBox(chanceInput);
+        HDCoreSpawnTableMenu.drawDebugBox(chancePercentLabel);
+        HDCoreSpawnTableMenu.drawDebugBox(persistBtn);
+    }
+}
+
+class HDCoreSpawnTableEntryHandler : HDZFHandler {
+
+    HDCoreSpawnTableMenu menu;
+    
+    HDCoreSpawnTable table;
+    HDCoreSpawnTableEntry entry;
+	
+    override void textInputChanged(HDZFTextInput caller, Name command) {
+        switch (command) {
+            case 'setEntryWeight':
+                setEntryWeight(caller.getText().toDouble());
+                break;
+            default:
+                HDCore.log('HDCore.SpawnTableMenu', LOGGING_DEBUG, "Unknown textInputChanged Command: '"..command.."'");
+                break;
+        }
+    }
+
+    override void toggleButtonChanged(HDZFToggleButton caller, Name command, bool on) {
+        switch (command) {
+            case 'setEntryEnabled':
+                setEntryEnabled(on);
+                break;
+            default:
+                HDCore.log('HDCore.SpawnTableMenu', LOGGING_DEBUG, "Unknown toggleButtonChanged Command: '"..command.."'");
+                break;
+        }
+    }
+
+    private void setEntryEnabled(bool value) {
+        HDCore.log('HDCore.SpawnTableMenu', LOGGING_DEBUG, "Setting '"..entry.getName().."' to "..(value ? "enabled" : "disabled"));
+        
+        let cvarProvider = HDCoreCVarProvider(entry._enabled);
+        if (cvarProvider) cvarProvider._cvar.setBool(value);
+    }
+
+    private void setEntryWeight(double value) {
+        HDCore.log('HDCore.SpawnTableMenu', LOGGING_DEBUG, "Setting '"..entry.getName().."' weight to "..value);
+ 
+        let cvarProvider = HDCoreCVarProvider(entry._weight);
+        if (cvarProvider) cvarProvider._cvar.setFloat(value);
+    }
+}
