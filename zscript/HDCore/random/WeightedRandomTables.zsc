@@ -95,8 +95,6 @@ class HDCoreWeightedRandomTable abstract {
 
                 arr.push(entry);
             }
-            
-            arr.push(entry);
         }
 
         if (!arr.size()) HDCore.Log('HDCoreLib.WeightedRandomTable', LOGGING_INFO, "No valid entries found for Weighted Random Table \""..getName().."\".");
