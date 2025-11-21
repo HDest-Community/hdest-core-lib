@@ -43,6 +43,12 @@ class HDCoreSpawnTableMenu : HDZFGenericMenu {
         let fontHeight = font.getHeight();
 
         // Build Menu Elements
+        // TODO: use HDZFTabs to categorize spawn tables by various flavors:
+        //   - Monsters
+        //   - Items
+        //   - Weapons
+        //   - Decorations
+        //   - Miscellanoeous
         buildTableDropdown(basePos, (192, fontHeight + (spacing * 2)), mainFrame); // TODO: calculate size based on string width & font height
         buildTableFrame(basePos + (0, tableDropdown.getHeight()), baseSize - (48, tableDropdown.getHeight() + 96), tables[0], mainFrame);
     }
