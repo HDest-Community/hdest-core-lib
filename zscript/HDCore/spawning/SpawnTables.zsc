@@ -89,7 +89,7 @@ class HDCoreSpawnTable : HDCoreWeightedRandomTable play {
         }
 
         // If we're beyond inital map spawns and are not persistent, skip.
-        if (params.at("persistentOnly").toInt() && !spawnEntry.isPersistent()) {
+        if (params && params.at("persistentOnly").toInt() && !spawnEntry.isPersistent()) {
             // HDCore.Log('HDCoreLib.SpawnTable', LOGGING_DEBUG, "Spawn Table Entry '"..entry.getName().."' is not persistent, skipping.");
 
             return false;
