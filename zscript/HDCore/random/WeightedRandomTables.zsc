@@ -101,7 +101,7 @@ class HDCoreWeightedRandomTable abstract {
     }
 
     HDCoreWeightedRandomTableEntry getRandomEntry(Function<clearscope bool(HDCoreWeightedRandomTableEntry, Dictionary)> predicateFn = null, Dictionary params = null) {
-        HDCore.Log('HDCoreLib.WeightedRandomTableEntry', LOGGING_TRACE, "Getting random entry from Weighted Random Table '"..getName().."'...");
+        HDCore.Log('HDCoreLib.WeightedRandomTable', LOGGING_TRACE, "Getting random entry from Weighted Random Table '"..getName().."'...");
 
         Array<HDCoreWeightedRandomTableEntry> entries;
         entries.clear();
@@ -113,7 +113,7 @@ class HDCoreWeightedRandomTable abstract {
 
         getWeights(weights, entries, predicateFn, params);
 
-        if (HDCore.ShouldLog('HDCoreLib.WeightedRandomTableEntry', LOGGING_DEBUG)) {
+        if (HDCore.ShouldLog('HDCoreLib.WeightedRandomTable', LOGGING_DEBUG)) {
             let msg = getName().." Entries:\n";
             let totalWeight = getTotalWeight(entries, predicateFn, params);
             
@@ -123,7 +123,7 @@ class HDCoreWeightedRandomTable abstract {
                 msg = msg.." * "..entry.getName().." ["..weight.." ("..((weight / totalWeight) * 100.0).."%)]\n";
             }
 
-            HDCore.Log('HDCoreLib.WeightedRandomTableEntry', LOGGING_DEBUG, msg);
+            HDCore.Log('HDCoreLib.WeightedRandomTable', LOGGING_DEBUG, msg);
         }
 
         HDCoreWeightedRandomTableEntry entry;
@@ -134,7 +134,7 @@ class HDCoreWeightedRandomTable abstract {
             entry = entries[0];
         }
         
-        HDCore.Log('HDCoreLib.WeightedRandomTableEntry', LOGGING_DEBUG, "Selected Entry: "..(entry ? "\""..entry.getName().."\"" : "Nothing"));
+        HDCore.Log('HDCoreLib.WeightedRandomTable', LOGGING_DEBUG, "Selected Entry: "..(entry ? "\""..entry.getName().."\"" : "Nothing"));
 
         return entry;
     }
