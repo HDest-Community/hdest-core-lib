@@ -150,7 +150,7 @@ class HDCoreWeightedRandomTable abstract {
 
         forEach (entry : entries) {
             let w = entry.getWeight(predicateFn, params);
-            if (w > 0.0) {
+            if (w >= 0.0) {
                 weight += w;
             } else {
                 return 1.0;
