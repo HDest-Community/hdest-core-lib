@@ -111,8 +111,8 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
 
                 let entry = HDCoreSpawnTableNestedEntry.create(
                     nestedTable,
-                    cmd.getParamValue("weight"),
                     cmd.getParamValue("enabled"),
+                    cmd.getParamValue("weight"),
                     cmd.getParamValue("persists"),
                     cmd.getParamValue("chance"),
                     cmd.getParamValue("isFinal")
