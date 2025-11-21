@@ -120,7 +120,7 @@ class HDCoreWeightedRandomTable abstract {
             forEach (entry : entries) {
                 let weight = entry.getWeight(predicateFn, params);
 
-                msg = msg.." * "..entry.getName().." ["..weight.." ("..((weight / totalWeight) * 100.0).."%)]\n";
+                msg = msg.." * "..entry.getName().." ["..weight.." ("..(totalWeight > 0 ? ((weight / totalWeight) * 100.0) : Double.INFINITY).."%)]\n";
             }
 
             HDCore.Log('HDCoreLib.WeightedRandomTable', LOGGING_DEBUG, msg);
