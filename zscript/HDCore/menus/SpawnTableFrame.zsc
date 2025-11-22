@@ -105,7 +105,7 @@ class HDCoreSpawnTableFrame : HDZFFrame {
 
         scrollContainer = HDZFScrollContainer.create(
             (0, pos.y), size,
-            8.0, entryListFrame.getHeight(), 15.0,
+            8.0, entryListFrame.getHeight() + (menu.spacing * 2), 15.0,
             HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundNormal.png', (7,7), (14,14), true, true),
             HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundHover.png', (7,7), (14,14), true, true),
             HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundClick.png', (7,7), (14,14), true, true),

@@ -1,3 +1,24 @@
+class HDCoreSpawnTableMenuCategory {
+    name id;
+
+    string label;
+
+    Array<HDCoreSpawnTable> tables;
+
+    static HDCoreSpawnTableMenuCategory create(name id, string label) {
+        let category = new("HDCoreSpawnTableMenuCategory");
+
+        if (category) {
+            category.id = id;
+            category.label = label;
+
+            category.tables.clear();
+        }
+
+        return category;
+    }
+}
+
 class HDCoreSpawnTableMenu : HDZFGenericMenu {
 
     Font font;
@@ -6,33 +27,25 @@ class HDCoreSpawnTableMenu : HDZFGenericMenu {
     Vector2 baseSize;
     const spacing = 3;
 
-    HDCoreSpawnTableMenuHandler handler;
-    
-    Array<HDCoreSpawnTable> tables;
-    HDCoreSpawnTable selectedTable;
-
-    HDZFDropdownList tableDropdown;
-    HDCoreSpawnTableFrame tableFrame;
+    Array<HDCoreSpawnTableMenuCategory> categories;
+    HDZFTabs categoryTabs;
+    Array<HDCoreSpawnTableCategoryFrame> categoryFrames;
+    HDZFFrame currentCategory;
 
     override void init(Menu parent) {
         super.init(parent);
 
-        tables.clear();
+        Array<HDCoreSpawnTable> tables;
 
         // Get all of the currently configured Spawn Tables
         let spawnHandler = HDCoreSpawnHandler(StaticEventHandler.find('HDCoreSpawnHandler'));
-        if (spawnHandler) {
-            tables.copy(spawnHandler.spawnTables);
-        } else {
+        if (!spawnHandler) {
             HDCore.log('HDCore.SpawnTableMenu', LOGGING_ERROR, "Spawn Handler not found!");
+            return;
         }
-
-        // Initialize Event Handler
-        handler = new('HDCoreSpawnTableMenuHandler');
-        handler.menu = self;
         
         // Set default menu position & size
-        basePos = (16, 32);
+        basePos = (16, 16);
         baseSize = (640, 480);
 
         // Set default menu resolution
@@ -40,73 +53,160 @@ class HDCoreSpawnTableMenu : HDZFGenericMenu {
         
         // Gather global sizes such as fonts, etc.
         font = Font.getFont('SmallFont');
-        let fontHeight = font.getHeight();
 
-        // Build Menu Elements
-        // TODO: use HDZFTabs to categorize spawn tables by various flavors:
-        //   - Monsters
-        //   - Items
-        //   - Weapons
-        //   - Decorations
-        //   - Miscellanoeous
-        buildTableDropdown(basePos, (192, fontHeight + (spacing * 2)), mainFrame); // TODO: calculate size based on string width & font height
-        buildTableFrame(basePos + (0, tableDropdown.getHeight()), baseSize - (48, tableDropdown.getHeight() + 96), tables[0], mainFrame);
+        buildCategoryTabs(basePos, baseSize - (48, 48), spawnHandler.spawnTables, mainFrame);
     }
 
-    void buildTableDropdown(Vector2 pos, Vector2 size, HDZFFrame parent) {
+    void buildCategoryTabs(Vector2 pos, Vector2 size, Array<HDCoreSpawnTable> tables, HDZFFrame parent) {
 
-        // Build the options for the dropdown
-        let tableDropdownOptions = HDZFDropdownItems(new('HDZFDropdownItems'));
-
-        forEach (table : tables) tableDropdownOptions.items.push(table.getName());
-
-        // Build the dropdown itself
-        tableDropdown = HDZFDropdownList.create(
+        categoryTabs = HDZFTabs.create(
             pos, size,
-            tableDropdownOptions,
-            // textScale: 1.0,
-            boxBG:  HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundNormal.png', (7,7), (14,14), true, true),
-            listBG: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackground.png', (7,7), (14,14), true, true),
-            highlightBG: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundHover.png', (7,7), (14,14), true, true),
-            dropTex: "graphics/menus/CommonArrowDown.png",
-            defaultSelection: tableDropdownOptions.items.size() ? 0 : -1,
-            cmdHandler: handler,
-            command: 'SelectSpawnTable'
+            font.getHeight() + (spacing * 2),
+            spacing,
+            font,
+            tabNormal:  HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackground.png', (7,7), (14,14), true, true),
+            tabHover: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundHover.png', (7,7), (14,14), true, true),
+            tabActive: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundNormal.png', (7,7), (14,14), true, true)
         );
-        tableDropdown.pack(parent);
+        categoryTabs.pack(parent);
+
+        populateCategories(tables);
+
+        Array<HDCoreSpawnTableMenuCategory> sortedCategories;
+
+        sortCategories(sortedCategories);
+
+        for (let i = 0; i < sortedCategories.size(); i++) {
+
+            let category = sortedCategories[i];
+
+            // If the category has no tables, skip.
+            if (!category.tables.size()) continue;
+
+            categoryTabs.addTab(category.label);
+
+            let categoryTab = categoryTabs.getTabFrame(i);
+
+            buildCategoryFrame((0, 0), categoryTab.getSize(), spacing, category, categoryTab);
+        }
     }
 
-    void buildTableFrame(Vector2 pos, Vector2 size, HDCoreSpawnTable table, HDZFFrame parent) {
-        if (tableFrame) {
-            tableFrame.unpack();
-            tableFrame.destroy();
-        }
+    protected void populateCategories(Array<HDCoreSpawnTable> tables) {
+        forEach(table : tables) {
+            Class<Actor> spawnCls = table.getSpawnName();
 
-        if (table) {
-            tableFrame = HDCoreSpawnTableFrame.create(pos, size, self, table);
-    
-            tableFrame.pack(parent);
+            // If the thing isn't a valid class, skip.
+            if (!spawnCls) continue;
+
+            // selectCategory(spawnCls, table);
+
+            addTableToCategory((table.getName().."").left(1).makeUpper(), table);
         }
     }
 
-    void selectTable(HDCoreSpawnTable table) {
+    protected bool selectCategory(Class<Actor> cls, HDCoreSpawnTable table) {
+        let clsDefaults = getDefaultByType(cls);
 
-        // If the selection was different from the current value,
-        // update it and rebuild the screen
-        if (selectedTable != table) {
+        // If the thing doesn't have any valid defaults, skip.
+        if (!clsDefaults) return false;
 
-            selectedTable = table;
-            
-            buildTableFrame(basePos + (0, tableDropdown.getHeight()), baseSize - (32, tableDropdown.getHeight() + 64), selectedTable, mainFrame);
+        if (cls is 'HDStealthPorter') {
+            addTableToCategory("Stealth Monsters", table);
+
+            return true;
+        } else if (cls is 'HDMobBase' || clsDefaults.bISMONSTER) {
+            if (cls is 'ScriptedMarine') addTableToCategory(clsDefaults.bFRIENDLY ? "Operators" : "Goons", table);
+            else addTableToCategory("Mobs", table);
+
+            return true;
+        } else if (cls is 'HDWeapon' || cls is 'Weapon' || clsDefaults.bWEAPONSPAWN) {
+            addTableToCategory("Weps", table);
+
+            return true;
+        } else if (cls is 'HDMagAmmo') {
+            addTableToCategory(/* clsDefaults.bISARMOR ? "Armor" : */ "Mags", table);
+
+            return true;
+        } else if (cls is 'HDAmmo') {
+            addTableToCategory("Ammo", table);
+
+            return true;
+        } else if (cls is 'HDUPK' || cls is 'Inventory') {
+            addTableToCategory(/* (clsDefaults.bISARMOR || clsDefaults.wornLayer > 0) ? "Armor" : */ "Items", table);
+
+            return true;
+        } else if (cls is 'RandomSpawner') {
+            // TODO: Dig Deeper, find better category
+            addTableToCategory("Other", table);
+        
+            return true;
+        } else {
+            let replacee = Actor.getReplacee(cls);
+            if (replacee != cls && !selectCategory(replacee, table)) {
+                addTableToCategory("Misc", table);
+
+                return true;
+            }
         }
+
+        return false;
+    }
+
+    protected void addTableToCategory(string catId, HDCoreSpawnTable table) {
+        // let isReplace = table.isReplace();
+        // let replaceId = id.." [R]";
+        // let spawnerId = id.." [S]";
+
+        // let catId = isReplace ? replaceId : spawnerId;
+
+        forEach(category : categories) {
+            if (category.id == catId) {
+                category.tables.push(table);
+
+                return;
+            }
+        }
+
+        let newCategory = HDCoreSpawnTableMenuCategory.create(catId, catId);
+        newCategory.tables.push(table);
+
+        categories.push(newCategory);
+    }
+
+    protected void sortCategories(out Array<HDCoreSpawnTableMenuCategory> arr) {
+        arr.clear();
+
+        forEach(category : categories) {
+            let found = false;
+
+            let catFirstChar = (category.id.."").makeUpper().byteAt(0);
+            for (let i = 0; i < arr.size(); i++) {
+                let cat = arr[i];
+
+                if ((cat.id.."").makeUpper().byteAt(0) > catFirstChar) {
+                    arr.insert(i, category);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) arr.push(category);
+        }
+
+        categories = arr;
+    }
+
+    void buildCategoryFrame(Vector2 pos, Vector2 size, double spacing, HDCoreSpawnTableMenuCategory category, HDZFFrame parent) {
+        let categoryFrame = HDCoreSpawnTableCategoryFrame.create(pos, size, spacing, self, category);
+        categoryFrame.pack(parent);
+        categoryFrames.push(categoryFrame);
     }
 
     override void drawer() {
         super.drawer();
 
         HDCoreSpawnTableMenu.drawDebugBox(mainFrame);
-        HDCoreSpawnTableMenu.drawDebugBox(tableDropdown);
-        HDCoreSpawnTableMenu.drawDebugBox(tableFrame);
+        HDCoreSpawnTableMenu.drawDebugBox(categoryTabs);
     }
 
     static void drawDebugBox(HDZFElement el, Color color = 0xFF0000, double alpha = 0.5) {
@@ -115,34 +215,6 @@ class HDCoreSpawnTableMenu : HDZFGenericMenu {
             el.fill((0, 0), (1, el.getHeight()), color, alpha);
             el.fill((0, el.getHeight() - 1), (el.getWidth(), 1), color, alpha);
             el.fill((el.getWidth() - 1, 0), (1, el.getHeight()), color, alpha);
-        }
-    }
-}
-
-class HDCoreSpawnTableMenuHandler : HDZFHandler {
-    
-    HDCoreSpawnTableMenu menu;
-
-    override void dropdownChanged(HDZFDropdownList caller, name command) {
-        switch (command) {
-            case 'SelectSpawnTable':
-                selectSpawnTable(caller.getItems().items[caller.getSelection()]);
-                break;
-            default:
-                HDCore.log('HDCore.SpawnTableMenu', LOGGING_DEBUG, "Unknown dropdownChanged Command: '"..command.."'");
-                break;
-        }
-    }
-
-    private void selectSpawnTable(name tableName) {
-        forEach (table : menu.tables) {
-            if (table.getName() == tableName) {
-                HDCore.log('HDCore.SpawnTableMenu', LOGGING_DEBUG, "Selected Spawn Table: '"..table.getName().."'");
-
-                menu.selectTable(table);
-
-                break;
-            }
         }
     }
 }
