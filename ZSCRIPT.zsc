@@ -60,6 +60,7 @@ version "4.14"
 // Custom Menus
 #include "zscript/HDCore/menus/SpawnTableEntryFrame.zsc"
 #include "zscript/HDCore/menus/SpawnTableFrame.zsc"
+#include "zscript/HDCore/menus/SpawnTableCategoryFrame.zsc"
 #include "zscript/HDCore/menus/SpawnTableMenu.zsc"
 
 // Event Handlers
