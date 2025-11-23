@@ -21,6 +21,7 @@ class HDCoreSpawnTableCategoryFrame : HDZFListFrame {
         let ret = new('HDCoreSpawnTableCategoryFrame');
 
         ret.setBox(pos, size);
+        ret.setPadding(padding);
         ret.alpha = 1.0;
 
         ret.menu = menu;
@@ -67,7 +68,7 @@ class HDCoreSpawnTableCategoryFrame : HDZFListFrame {
         }
 
         if (table) {
-            tableFrame = HDCoreSpawnTableFrame.create(pos, size, menu, table);
+            tableFrame = HDCoreSpawnTableFrame.create(pos, size, menu.spacing, menu, table);
     
             tableFrame.pack(parent);
         }
