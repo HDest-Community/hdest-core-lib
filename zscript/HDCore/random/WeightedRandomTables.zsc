@@ -146,14 +146,14 @@ class HDCoreWeightedRandomTable abstract {
     }
 
     static double getTotalWeight(Array<HDCoreWeightedRandomTableEntry> entries, Function<clearscope bool(HDCoreWeightedRandomTableEntry, Dictionary)> predicateFn = null, Dictionary params = null) {
-        HDCore.log('HDCore.WeightedRandomTableEntry', LOGGING_TRACE, "Getting total weight of Weighted Random Table...");
+        HDCore.log('HDCore.WeightedRandomTable', LOGGING_TRACE, "Getting total weight of Weighted Random Table...");
 
         let weight = 0.0;
 
         forEach (entry : entries) {
             let w = entry.getWeight(predicateFn, params);
 
-            HDCore.log('HDCore.WeightedRandomTableEntry', LOGGING_DEBUG, "Weight of Entry '"..entry.getName().."': "..w..", total weight: "..(weight + w));
+            HDCore.log('HDCore.WeightedRandomTable', LOGGING_TRACE, "Weight of Entry '"..entry.getName().."': "..w..", total weight: "..(weight + w));
 
             if (w >= 0.0) {
                 weight += w;
@@ -162,7 +162,7 @@ class HDCoreWeightedRandomTable abstract {
             }
         }
 
-        HDCore.log('HDCore.WeightedRandomTableEntry', LOGGING_DEBUG, "Total Weight: "..String.format("%.2f%", weight));
+        HDCore.log('HDCore.WeightedRandomTable', LOGGING_TRACE, "Total Weight: "..String.format("%.2f%", weight));
 
         return weight;
     }
