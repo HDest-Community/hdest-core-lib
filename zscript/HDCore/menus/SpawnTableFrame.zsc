@@ -1,6 +1,6 @@
 
 
-class HDCoreSpawnTableFrame : HDZFFrame {
+class HDCoreSpawnTableFrame : HDZFListFrame {
     HDCoreSpawnTableMenu menu;
 
     HDCoreSpawnTableHandler handler;
@@ -19,12 +19,14 @@ class HDCoreSpawnTableFrame : HDZFFrame {
     static HDCoreSpawnTableFrame create(
         Vector2 pos,
         Vector2 size,
+        double padding,
         HDCoreSpawnTableMenu menu,
         HDCoreSpawnTable table
     ) {
         let ret = new('HDCoreSpawnTableFrame');
 
         ret.setBox(pos, size);
+        ret.setPadding(padding);
         ret.alpha = 1.0;
 
         ret.menu = menu;
@@ -42,11 +44,9 @@ class HDCoreSpawnTableFrame : HDZFFrame {
         ret.handler = new('HDCoreSpawnTableHandler');
         ret.handler.menu = menu;
         ret.handler.table = table;
-
-        // TODO: build scroll frame & entries
         
         // Add all of the entries in the current table to the screen
-        ret.buildTableLabel((0, 0), (size.x, menu.font.getHeight() * 3.0), table, ret);
+        ret.buildTableLabel((0, 0), (size.x, menu.font.getHeight() * 4.0), table, ret);
         ret.buildEntryListFrame((0, ret.tableLabel.getHeight() + menu.spacing), size - (0, ret.tableLabel.getHeight() + menu.spacing), table, ret);
 
         return ret;
@@ -64,7 +64,8 @@ class HDCoreSpawnTableFrame : HDZFFrame {
         tableLabel = HDZFLabel.create(
             pos, size,
             text: tableLabelText,
-            textScale: 1.5
+            textScale: 1.5,
+            lineSpacing: menu.spacing
         );
         tableLabel.pack(parent);
 
@@ -72,7 +73,7 @@ class HDCoreSpawnTableFrame : HDZFFrame {
     }
 
     private string buildTableLabelText() {
-        return (table.isReplace() ? "Replacement" : "Spawning").." Table for '"..table.getSpawnName().."'\nTotal weight: "..String.format("%.2f%", totalWeight);
+        return (table.isReplace() ? "Replacement" : "Spawning").." Table for '"..table.getSpawnName().."'\n\c[Cream]Total weight: "..String.format("%.2f%", totalWeight);
     }
 
     void buildEntryListFrame(Vector2 pos, Vector2 size, HDCoreSpawnTable table, HDZFFrame parent) {
@@ -105,7 +106,7 @@ class HDCoreSpawnTableFrame : HDZFFrame {
 
         scrollContainer = HDZFScrollContainer.create(
             (0, pos.y), size,
-            8.0, entryListFrame.getHeight() + (menu.spacing * 2), 15.0,
+            24.0, entryListFrame.getHeight() + (menu.spacing * 2), 15.0,
             HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundNormal.png', (7,7), (14,14), true, true),
             HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundHover.png', (7,7), (14,14), true, true),
             HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundClick.png', (7,7), (14,14), true, true),
@@ -130,17 +131,21 @@ class HDCoreSpawnTableFrame : HDZFFrame {
             entryFrames.clear();
         }
 
+        Array<HDCoreWeightedRandomTableEntry> entries;
+
+        table.getEntries(entries, HDCoreSpawnTable.shouldGetEntry);
+
         // Build new frames
         let totalHeight = 0;
-        forEach (entry : table._entries) {
+        forEach (entry : entries) {
 
             if (entry.isEnabled() || !!HDCoreCVarProvider(entry._enabled)) {
 
                 HDCore.log('HDCore.SpawnTableFrame', LOGGING_TRACE, "Building Entry Frame pos="..pos..", size="..size..", entry="..entry.toString()..", parent="..parent);
-    
+
                 let entryFrame = HDCoreSpawnTableEntryFrame.create(pos, size, menu, self, table, HDCoreSpawnTableEntry(entry));
     
-                totalHeight += entryFrame.getHeight();
+                totalHeight += entryFrame.getHeight() + menu.spacing; // FIXME: should be adding parent ListFrame's padding
     
                 entryFrame.pack(parent);
                 entryFrames.push(entryFrame);
