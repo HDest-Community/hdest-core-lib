@@ -25,7 +25,7 @@ class HDCoreSpawnTableMenu : HDZFGenericMenu {
 
     Vector2 basePos;
     Vector2 baseSize;
-    const spacing = 3;
+    const spacing = 4;
 
     Array<HDCoreSpawnTableMenuCategory> categories;
     HDZFTabs categoryTabs;
@@ -43,18 +43,18 @@ class HDCoreSpawnTableMenu : HDZFGenericMenu {
             HDCore.log('HDCore.SpawnTableMenu', LOGGING_ERROR, "Spawn Handler not found!");
             return;
         }
-        
+
         // Set default menu position & size
-        basePos = (16, 16);
-        baseSize = (640, 480);
+        basePos = (spacing, spacing) * 4;
+        baseSize = (480, 640);
 
         // Set default menu resolution
         setBaseResolution(baseSize);
-        
+
         // Gather global sizes such as fonts, etc.
         font = Font.getFont('SmallFont');
 
-        buildCategoryTabs(basePos, baseSize - (48, 48), spawnHandler.spawnTables, mainFrame);
+        buildCategoryTabs(basePos, baseSize - (basePos * 2), spawnHandler.spawnTables, mainFrame);
     }
 
     void buildCategoryTabs(Vector2 pos, Vector2 size, Array<HDCoreSpawnTable> tables, HDZFFrame parent) {
@@ -87,7 +87,8 @@ class HDCoreSpawnTableMenu : HDZFGenericMenu {
 
             let categoryTab = categoryTabs.getTabFrame(i);
 
-            buildCategoryFrame((0, 0), categoryTab.getSize(), spacing, category, categoryTab);
+            let padding = (spacing, spacing);
+            buildCategoryFrame(padding, categoryTab.getSize() - (padding * 2), spacing, category, categoryTab);
         }
     }
 
@@ -203,6 +204,8 @@ class HDCoreSpawnTableMenu : HDZFGenericMenu {
     }
 
     override void drawer() {
+        categoryTabs.fill((0, font.getHeight() + (spacing * 2)), categoryTabs.getSize() - (0, font.getHeight() + (spacing * 2)), 0x000000, 0.5);
+        
         super.drawer();
 
         HDCoreSpawnTableMenu.drawDebugBox(mainFrame);
