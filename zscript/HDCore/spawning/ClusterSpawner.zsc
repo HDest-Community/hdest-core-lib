@@ -23,8 +23,8 @@ class ClusterSpawner : IdleDummy abstract {
         ClusterSpawner.maxDist 64.0;
     }
 
-    override void PostBeginPlay() {
-        super.PostBeginPlay();
+    override void BeginPlay() {
+        super.BeginPlay();
 
         if (!actorClass) {
             HDCore.Log('HDCoreLib.ClusterSpawner', LOGGING_WARN, GetClassName().." configured with invalid Actor Class!");
@@ -50,6 +50,8 @@ class ClusterSpawner : IdleDummy abstract {
                 break;
             }
         }
+
+        A_SpawnClass(maxSpawns > 1 ? maxDist : 0);
     }
 
     action void A_SpawnClass(int dist) {
@@ -87,7 +89,7 @@ class ClusterSpawner : IdleDummy abstract {
 
     states {
         spawn:
-            TNT1 A 0 nodelay A_SpawnClass(maxSpawns > 1 ? maxDist : 0);
+            TNT1 A 0;
             stop;
     }
 }
