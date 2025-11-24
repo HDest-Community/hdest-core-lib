@@ -327,7 +327,7 @@ class HDCoreSpawnTableEntryFrame : HDZFFrame {
     }
 
     void setEntryEnabled(bool value) {
-        HDCore.log('HDCore.SpawnTableMenu', LOGGING_DEBUG, "Setting '"..entry.getName().."' to "..(value ? "enabled" : "disabled"));
+        HDCore.log('HDCoreLib.SpawnTableMenu', LOGGING_DEBUG, "Setting '"..entry.getName().."' to "..(value ? "enabled" : "disabled"));
 
         let cvarProvider = HDCoreCVarProvider(entry._enabled);
         if (cvarProvider) cvarProvider._cvar.setBool(value);
@@ -421,7 +421,7 @@ class HDCoreSpawnTableEntryFrame : HDZFFrame {
     }
 
     void setEntryFinal(bool value) {
-        HDCore.log('HDCore.SpawnTableMenu', LOGGING_DEBUG, "Setting '"..entry.getName().."' to "..(value ? "" : "Non-").."Final");
+        HDCore.log('HDCoreLib.SpawnTableMenu', LOGGING_DEBUG, "Setting '"..entry.getName().."' to "..(value ? "" : "Non-").."Final");
 
         let cvarProvider = HDCoreCVarProvider(entry._final);
         if (cvarProvider && cvarProvider._cvar) cvarProvider._cvar.setBool(value);
@@ -430,7 +430,7 @@ class HDCoreSpawnTableEntryFrame : HDZFFrame {
     }
 
     void setEntryPersists(bool value) {
-        HDCore.log('HDCore.SpawnTableMenu', LOGGING_DEBUG, "Setting '"..entry.getName().."' to "..(value ? "" : "Non-").."Persistent");
+        HDCore.log('HDCoreLib.SpawnTableMenu', LOGGING_DEBUG, "Setting '"..entry.getName().."' to "..(value ? "" : "Non-").."Persistent");
 
         let cvarProvider = HDCoreCVarProvider(entry._persistent);
         if (cvarProvider && cvarProvider._cvar) cvarProvider._cvar.setBool(value);
@@ -439,7 +439,7 @@ class HDCoreSpawnTableEntryFrame : HDZFFrame {
     }
 
     void setEntryWeight(double value) {
-        HDCore.log('HDCore.SpawnTableMenu', LOGGING_DEBUG, "Setting '"..entry.getName().."' weight to "..value);
+        HDCore.log('HDCoreLib.SpawnTableMenu', LOGGING_DEBUG, "Setting '"..entry.getName().."' weight to "..value);
 
         let cvarProvider = HDCoreCVarProvider(entry._weight);
         if (cvarProvider && cvarProvider._cvar) cvarProvider._cvar.setFloat(value);
@@ -484,7 +484,7 @@ class HDCoreSpawnTableEntryHandler : HDZFHandler {
                 frame.setEntryWeight(caller.getText().toDouble());
                 break;
             default:
-                HDCore.log('HDCore.SpawnTableMenu', LOGGING_DEBUG, "Unknown textInputChanged Command: '"..command.."'");
+                HDCore.log('HDCoreLib.SpawnTableMenu', LOGGING_DEBUG, "Unknown textInputChanged Command: '"..command.."'");
                 break;
         }
     }
@@ -498,7 +498,7 @@ class HDCoreSpawnTableEntryHandler : HDZFHandler {
                 frame.setEntryPersists(on);
                 break;
             default:
-                HDCore.log('HDCore.SpawnTableMenu', LOGGING_DEBUG, "Unknown toggleButtonChanged Command: '"..command.."'");
+                HDCore.log('HDCoreLib.SpawnTableMenu', LOGGING_DEBUG, "Unknown toggleButtonChanged Command: '"..command.."'");
                 break;
         }
     }
