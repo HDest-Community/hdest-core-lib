@@ -34,7 +34,7 @@ class HDCoreSpawnTableFrame : HDZFListFrame {
 
         Array<HDCoreWeightedRandomTableEntry> entries;
 
-        table.getEntries(entries, HDCoreSpawnTable.shouldGetEntry);
+        table.getEntries(entries, HDCoreSpawnTableEntry.shouldGetEntry);
 
         ret.totalWeight = HDCoreWeightedRandomTable.getTotalWeight(entries);
             
@@ -133,7 +133,7 @@ class HDCoreSpawnTableFrame : HDZFListFrame {
 
         Array<HDCoreWeightedRandomTableEntry> entries;
 
-        table.getEntries(entries, HDCoreSpawnTable.shouldGetEntry);
+        table.getEntries(entries, HDCoreSpawnTableEntry.shouldGetEntry);
 
         // Build new frames
         let totalHeight = 0;
@@ -164,7 +164,7 @@ class HDCoreSpawnTableFrame : HDZFListFrame {
 
         Array<HDCoreWeightedRandomTableEntry> entries;
 
-        table.getEntries(entries, HDCoreSpawnTable.shouldGetEntry);
+        table.getEntries(entries, HDCoreSpawnTableEntry.shouldGetEntry);
 
         let totalTableWeight = HDCoreWeightedRandomTable.getTotalWeight(entries);
 

@@ -69,34 +69,6 @@ class HDCoreSpawnTable : HDCoreWeightedRandomTable play {
                  getTableName(),        getSpawnName(),        isReplace(),    getTotalWeight(_entries), entriesStr
         );
     }
-
-    clearscope static bool shouldGetEntry(HDCoreWeightedRandomTableEntry entry, Dictionary params) {
-
-        HDCoreSpawnTableEntry spawnEntry = HDCoreSpawnTableEntry(entry);
-
-        // If the entry isn't a SpawnTable Entry, or it isn't enabled, skip.
-        if (!spawnEntry || !spawnEntry.isEnabled()) {
-            // HDCore.Log('HDCoreLib.SpawnTable', LOGGING_DEBUG, "Spawn Table Entry for "..getTableName().." is not enabled, skipping.");
-
-            return false;
-        }
-
-        // If entry is not nested, yet has an invalid actor, skip.
-        if (spawnEntry is 'HDCoreSpawnTableSingleEntry' && !HDCore.CheckClassExists(spawnEntry.getName())) {
-            // HDCore.Log('HDCoreLib.SpawnTable', LOGGING_WARN, "Spawn Table Entry for "..getTableName().." includes a class '"..entry.getName().."' that does not exist!");
-
-            return false;
-        }
-
-        // If we're beyond inital map spawns and are not persistent, skip.
-        if (params && params.at("persistentOnly").toInt() && !spawnEntry.isPersistent()) {
-            // HDCore.Log('HDCoreLib.SpawnTable', LOGGING_DEBUG, "Spawn Table Entry '"..entry.getName().."' is not persistent, skipping.");
-
-            return false;
-        }
-
-        return true;
-    }
 }
 
 class HDCoreSpawnTableEntry : HDCoreWeightedRandomTableEntry play abstract {
@@ -123,6 +95,34 @@ class HDCoreSpawnTableEntry : HDCoreWeightedRandomTableEntry play abstract {
     // Getter to return whether this entry is final
     clearscope virtual bool isFinal() {
         return _final.getBoolValue();
+    }
+
+    clearscope static bool shouldGetEntry(HDCoreWeightedRandomTableEntry entry, Dictionary params) {
+
+        HDCoreSpawnTableEntry spawnEntry = HDCoreSpawnTableEntry(entry);
+
+        // If the entry isn't a SpawnTable Entry, or it isn't enabled, skip.
+        if (!spawnEntry || !spawnEntry.isEnabled()) {
+            HDCore.Log('HDCoreLib.SpawnTableEntry', LOGGING_DEBUG, "Spawn Table Entry '"..entry.getName().."' is not enabled, skipping.");
+
+            return false;
+        }
+
+        // If entry is not nested, yet has an invalid actor, skip.
+        if (spawnEntry is 'HDCoreSpawnTableSingleEntry' && !HDCore.CheckClassExists(spawnEntry.getName())) {
+            HDCore.Log('HDCoreLib.SpawnTableEntry', LOGGING_WARN, "Spawn Table Entry '"..entry.getName().."' uses a class that does not exist!");
+
+            return false;
+        }
+
+        // If we're beyond inital map spawns and are not persistent, skip.
+        if (params && params.at("persistentOnly").toInt() && !spawnEntry.isPersistent()) {
+            HDCore.Log('HDCoreLib.SpawnTableEntry', LOGGING_DEBUG, "Spawn Table Entry '"..entry.getName().."' is not persistent, skipping.");
+
+            return false;
+        }
+
+        return true;
     }
 }
 
