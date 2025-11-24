@@ -77,7 +77,7 @@ class HDCoreSpawnTableCategoryFrame : HDZFListFrame {
     void selectTable(name tableName) {
         forEach (table : category.tables) {
             if (table.getName() == tableName) {
-                HDCore.log('HDCore.SpawnTableCategoryFrame', LOGGING_DEBUG, "Selected Spawn Table: '"..table.getName().."'");
+                HDCore.log('HDCoreLib.SpawnTableCategoryFrame', LOGGING_DEBUG, "Selected Spawn Table: '"..table.getName().."'");
 
                 // If the selection was different from the current value,
                 // update it and rebuild the screen
@@ -112,7 +112,7 @@ class HDCoreSpawnTableCategoryFrameHandler : HDZFHandler {
                 frame.selectTable(caller.getItems().items[caller.getSelection()]);
                 break;
             default:
-                HDCore.log('HDCore.SpawnTableMenu', LOGGING_DEBUG, "Unknown dropdownChanged Command: '"..command.."'");
+                HDCore.log('HDCoreLib.SpawnTableMenu', LOGGING_DEBUG, "Unknown dropdownChanged Command: '"..command.."'");
                 break;
         }
     }

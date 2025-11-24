@@ -40,7 +40,7 @@ class HDCoreSpawnTableMenu : HDZFGenericMenu {
         // Get all of the currently configured Spawn Tables
         let spawnHandler = HDCoreSpawnHandler(StaticEventHandler.find('HDCoreSpawnHandler'));
         if (!spawnHandler) {
-            HDCore.log('HDCore.SpawnTableMenu', LOGGING_ERROR, "Spawn Handler not found!");
+            HDCore.log('HDCoreLib.SpawnTableMenu', LOGGING_ERROR, "Spawn Handler not found!");
             return;
         }
 

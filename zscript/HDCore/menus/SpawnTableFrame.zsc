@@ -53,7 +53,7 @@ class HDCoreSpawnTableFrame : HDZFListFrame {
     }
 
     void buildTableLabel(Vector2 pos, Vector2 size, HDCoreSpawnTable table, HDZFFrame parent) {
-        HDCore.log('HDCore.SpawnTableFrame', LOGGING_TRACE, "Building Table Label pos="..pos..", size="..size..", table="..table.toString()..", parent="..parent);
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Building Table Label pos="..pos..", size="..size..", table="..table.toString()..", parent="..parent);
 
         if (tableLabel) {
             tableLabel.unpack();
@@ -69,7 +69,7 @@ class HDCoreSpawnTableFrame : HDZFListFrame {
         );
         tableLabel.pack(parent);
 
-        HDCore.log('HDCore.SpawnTableFrame', LOGGING_TRACE, "Table Label pos="..tableLabel.getPos()..", size="..tableLabel.getSize());
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Table Label pos="..tableLabel.getPos()..", size="..tableLabel.getSize());
     }
 
     private string buildTableLabelText() {
@@ -77,7 +77,7 @@ class HDCoreSpawnTableFrame : HDZFListFrame {
     }
 
     void buildEntryListFrame(Vector2 pos, Vector2 size, HDCoreSpawnTable table, HDZFFrame parent) {
-        HDCore.log('HDCore.SpawnTableFrame', LOGGING_TRACE, "Building Entry List Frame pos="..pos..", size="..size..", table="..table.toString()..", parent="..parent);
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Building Entry List Frame pos="..pos..", size="..size..", table="..table.toString()..", parent="..parent);
 
         if (entryListFrame) {
             entryListFrame.unpack();
@@ -100,9 +100,9 @@ class HDCoreSpawnTableFrame : HDZFListFrame {
         //  [X] Chance Percentage not showing?
         buildEntryFrames(pos, (size.x, menu.font.getHeight() + (menu.spacing * 2)), table, entryListFrame);
 
-        HDCore.log('HDCore.SpawnTableFrame', LOGGING_TRACE, "Entry List Frame pos="..entryListFrame.getPos()..", size="..entryListFrame.getSize());
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Entry List Frame pos="..entryListFrame.getPos()..", size="..entryListFrame.getSize());
 
-        HDCore.log('HDCore.SpawnTableFrame', LOGGING_TRACE, "Building Scroll Container pos="..(0, pos.y)..", size="..(size + (8, 0))..", scrollArea="..(8, size.y));
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Building Scroll Container pos="..(0, pos.y)..", size="..(size + (8, 0))..", scrollArea="..(8, size.y));
 
         scrollContainer = HDZFScrollContainer.create(
             (0, pos.y), size,
@@ -116,11 +116,11 @@ class HDCoreSpawnTableFrame : HDZFListFrame {
         );
         scrollContainer.pack(parent);
 
-        HDCore.log('HDCore.SpawnTableFrame', LOGGING_TRACE, "Scroll Container pos="..scrollContainer.getPos()..", size="..scrollContainer.getSize()..", scrollArea="..scrollContainer.getScrollArea().getSize());
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Scroll Container pos="..scrollContainer.getPos()..", size="..scrollContainer.getSize()..", scrollArea="..scrollContainer.getScrollArea().getSize());
     }
 
     void buildEntryFrames(Vector2 pos, Vector2 size, HDCoreSpawnTable table, HDZFFrame parent) {
-        HDCore.log('HDCore.SpawnTableFrame', LOGGING_TRACE, "Building Entry Frames pos="..pos..", size="..size..", table="..table.toString()..", parent="..parent);
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Building Entry Frames pos="..pos..", size="..size..", table="..table.toString()..", parent="..parent);
 
         // Clear out previous frames
         if (entryFrames.size()) {
@@ -141,7 +141,7 @@ class HDCoreSpawnTableFrame : HDZFListFrame {
 
             if (entry.isEnabled() || !!HDCoreCVarProvider(entry._enabled)) {
 
-                HDCore.log('HDCore.SpawnTableFrame', LOGGING_TRACE, "Building Entry Frame pos="..pos..", size="..size..", entry="..entry.toString()..", parent="..parent);
+                HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Building Entry Frame pos="..pos..", size="..size..", entry="..entry.toString()..", parent="..parent);
 
                 let entryFrame = HDCoreSpawnTableEntryFrame.create(pos, size, menu, self, table, HDCoreSpawnTableEntry(entry));
     
@@ -150,13 +150,13 @@ class HDCoreSpawnTableFrame : HDZFListFrame {
                 entryFrame.pack(parent);
                 entryFrames.push(entryFrame);
     
-                HDCore.log('HDCore.SpawnTableFrame', LOGGING_TRACE, "Entry Frame pos="..entryFrame.getPos()..", size="..entryFrame.getSize());
+                HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Entry Frame pos="..entryFrame.getPos()..", size="..entryFrame.getSize());
             }
         }
 
         parent.setHeight(max(1, totalHeight));
 
-        HDCore.log('HDCore.SpawnTableFrame', LOGGING_TRACE, "Entry Frames Parent Height="..parent.getHeight());
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Entry Frames Parent Height="..parent.getHeight());
     }
 
     override void ticker () {
