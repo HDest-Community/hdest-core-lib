@@ -4,10 +4,18 @@ class HDCoreGameStatsHandler : HDCoreEventHandler {
 
     Dictionary _stats;
 
+    Array<name> blacklist;
+
     override void beforeProcessCommands() {
         _stats = Dictionary.create();
 
         if (!t) initThinker();
+
+        blacklist.clear();
+    }
+    
+    override void afterProcessCommands() {
+        blacklist.copy(HDCoreSpawnHandler(StaticEventHandler.find('HDCoreSpawnHandler')).thingBlacklist);
     }
 
 
@@ -78,6 +86,10 @@ class HDCoreGameStatsHandler : HDCoreEventHandler {
 
         // If thing is invalid, quit.
         if (!e.thing || !(e.thing is 'Actor') || ((e.thing is 'Inventory') && Inventory(e.thing).owner)) return;
+
+        // If thing is blacklisted, quit.
+        // TODO: Track separately from SpawnHandler's blacklist?
+        forEach (bl : blacklist) if (e.thing is bl) return;
 
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "Thing Spawned...");
 
