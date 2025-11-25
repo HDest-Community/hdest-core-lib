@@ -81,12 +81,9 @@ class HDCoreSectorSpawnerHandler : EventHandler {
     }
 
     private void SpawnDummySpawners(Sector s, name spawnerName) {
-        Class<Actor> spawnerCls = spawnerName;
-        Class<Actor> replacement = Actor.getReplacement(spawnerName);
 
-        // If Sector-based Spawners are conditionally enabled,
-        // and we didn't find a replacement actor for the dummy spawner, quit.
-        if (!hdc_sector_spawners && (spawnerCls == replacement || replacement == 'NullSpawner')) return;
+        // If Sector-based Spawners are disabled, quit.
+        if (hdc_sector_spawners < 0) return;
 
         double area, circum, radius, avgSize;
         [area, circum, radius, avgSize] = HDCore.GetSectorSize(s);
@@ -100,6 +97,13 @@ class HDCoreSectorSpawnerHandler : EventHandler {
             double dist  = HDCore.getRandomDouble(0, radius, hdc_random_mode);
             vector2 xy   = s.centerspot + (dist * cos(angle), dist * sin(angle));
             vector3 pos  = (xy.x, xy.y, HDCore.getRandomDouble(s.lowestFloorAt(xy), s.highestCeilingAt(xy), hdc_random_mode));
+
+            Class<Actor> spawnerCls = spawnerName;
+            Class<Actor> replacement = Actor.getReplacement(spawnerName);
+
+            // If Sector-based Spawners are conditionally enabled,
+            // and we didn't find a replacement actor for the dummy spawner, skip.
+            if (!hdc_sector_spawners && (spawnerCls == replacement || replacement == 'NullSpawner')) continue;
 
             if (Level.PointInSector(xy) == s && HDCore.SpawnStuff(replacement.getClassName(), pos)) count++;
         }
