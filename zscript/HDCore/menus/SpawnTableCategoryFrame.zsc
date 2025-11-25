@@ -43,7 +43,7 @@ class HDCoreSpawnTableCategoryFrame : HDZFListFrame {
         // Build the options for the dropdown
         let tableDropdownOptions = new('HDZFDropdownItems');
 
-        forEach (table : tables) tableDropdownOptions.items.push(table.getName());
+        forEach (table : tables) if (table._entries.size() > 0) tableDropdownOptions.items.push(table.getName());
 
         // Build the dropdown itself
         tableDropdown = HDZFDropdownList.create(
