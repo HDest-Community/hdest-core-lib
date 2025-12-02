@@ -2,7 +2,7 @@ extend class AceCore
 {
 	static void DrawCollisionBox(Actor a, Color col = 0xFF0000, double density = 0.25, double psize = 0.5)
 	{
-		HDCore.log('AceCoreLib', LOGGING_WARN, "DrawCollisionBox is Deprecated, contact developer to update!");
+		HDCore.log('AceCoreLib', LOGGING_WARN, "AceCore.DrawCollisionBox() is deprecated, contact developer to update!");
 
 		// [Ace] Dots.
 		a.A_SpawnParticle(col, SPF_FULLBRIGHT, 1, psize, 0, 0, 0, a.Height);

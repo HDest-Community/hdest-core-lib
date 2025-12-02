@@ -1,0 +1,10 @@
+extend class HDCore {
+
+    static clearscope int playerCount() {
+        int total = 0;
+
+        for (int i = 0; i < MAXPLAYERS; i++) if (PlayerInGame[i]) total++;
+
+        return total;
+    }
+}

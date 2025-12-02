@@ -1,6 +1,6 @@
 extend class AceCore {
 	static int GetScaledChance(int lowest, int highest, int minLevel, int maxLevel) {
-		HDCore.log('AceCoreLib', LOGGING_WARN, "GetScaledChance is Deprecated, contact developer to update!");
+		HDCore.log('AceCoreLib', LOGGING_WARN, "AceCore.GetScaledChance() is deprecated, contact developer to update!");
 
 		if (level.MapName ~== "LOTSAGUN" || minLevel <= 0 && maxLevel <= 0 || maxLevel < minLevel) return highest;
 		

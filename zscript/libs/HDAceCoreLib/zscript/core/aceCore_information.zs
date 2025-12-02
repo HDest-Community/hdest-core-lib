@@ -2,7 +2,7 @@ extend class AceCore
 {
 	static clearscope double, double GetSectorSize(Sector sec)
 	{
-		HDCore.log('AceCoreLib', LOGGING_WARN, "GetSectorSize is Deprecated, contact developer to update!");
+		HDCore.log('AceCoreLib', LOGGING_WARN, "AceCore.GetSectorSize() is deprecated, contact developer to update!");
 
 		if (sec.lines.Size())
 		{
@@ -35,6 +35,8 @@ extend class AceCore
 
 	static clearscope int GetActivePlayerCount()
 	{
+		HDCore.log('AceCoreLib', LOGGING_WARN, "AceCore.GetActivePlayerCount() is deprecated, contact developer to update!");
+
 		int total = 0;
 		for (int i = 0; i < MAXPLAYERS; ++i)
 		{

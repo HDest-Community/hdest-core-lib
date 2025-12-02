@@ -1,0 +1,55 @@
+extend class HDCore {
+
+    static clearscope bool checkForItem(Actor a, name item, int amount = 1) {
+        let hasItem = HDCore.checkClassExists(item) && a && a.countInv(cls) >= amount;
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "checkForItem("..a..", '"..item.."', "..amount..") => "..hasItem);
+        return hasItem;
+    }
+
+    static clearscope bool checkForAnyItems(Actor a, Array<name> items, int amount = 1) {
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "checkForAnyItems("..a..", ["..items.."], "..amount..")...");
+
+        let hasItem = false;
+        forEach(item : items) {
+            if (CheckForItem(a, item, amount)) {
+                hasItem = true;
+                break;
+            }
+        }
+
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "checkForAnyItems("..a..", ["..items.."], "..amount..") => "..hasItem);
+        return hasItem;
+    }
+
+    static clearscope bool checkForAllItems(Actor a, Array<name> items, int amount = 1) {
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "checkForAllItems("..a..", ["..items.."], "..amount..")...");
+
+        let hasItem = true;
+        forEach(item : items) {
+            if (!CheckForItem(a, item, amount)) {
+                hasItem = false;
+                break;
+            }
+        }
+
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "checkForAllItems("..a..", ["..items.."], "..amount..") => "..hasItem);
+        return hasItem;
+    }
+
+    static int giveToPlayers(name item, int amount, bool split = true) {
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "giveToPlayers('"..item.."', "..amount..", "..split..")...");
+
+        let amt = max(amount, 0);
+
+        if (HDCore.checkClassExists(item) && amt > 0) {
+
+            if (split) amt = int(ceil(amt / Double(HDCore.playerCount())));
+
+            for (int i = 0; i < MAXPLAYERS; ++i) if (players[i].mo) players[i].mo.A_GiveInventory(item, amt);
+        }
+        
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "giveToPlayers('"..item.."', "..amount..", "..split..") => "..amt);
+
+        return amt;
+    }
+}

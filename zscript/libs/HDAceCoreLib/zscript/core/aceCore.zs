@@ -16,6 +16,8 @@ class AceCore play
 	// [Ace] If split is false, return amount is the same as amt. Otherwise it returns how much each player received.
 	static int GiveToPlayers(class<Inventory> cls, int amt, bool split = true)
 	{
+		HDCore.log('AceCoreLib', LOGGING_WARN, "AceCore.GiveToPlayers() is deprecated, contact developer to update!");
+
 		if (!cls || amt <= 0)
 		{
 			return 0;
