@@ -1,7 +1,7 @@
 extend class HDCore {
 
     static clearscope bool checkForItem(Actor a, name item, int amount = 1) {
-        let hasItem = HDCore.checkClassExists(item) && a && a.countInv(cls) >= amount;
+        let hasItem = HDCore.checkClassExists(item) && a && a.countInv(item) >= amount;
         HDCore.log('HDCoreLib', LOGGING_TRACE, "checkForItem("..a..", '"..item.."', "..amount..") => "..hasItem);
         return hasItem;
     }
