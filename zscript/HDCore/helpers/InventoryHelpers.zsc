@@ -45,7 +45,7 @@ extend class HDCore {
 
             if (split) amt = int(ceil(amt / Double(HDCore.playerCount())));
 
-            for (int i = 0; i < MAXPLAYERS; ++i) if (players[i].mo) players[i].mo.A_GiveInventory(item, amt);
+            for (int i = 0; i < MAXPLAYERS; ++i) if (playerInGame[i] && players[i].mo) HDF.give(players[i].mo, item, amt);
         }
         
         HDCore.log('HDCoreLib', LOGGING_TRACE, "giveToPlayers('"..item.."', "..amount..", "..split..") => "..amt);
