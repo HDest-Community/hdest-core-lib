@@ -36,7 +36,7 @@ extend class HDCore {
         return hasItem;
     }
 
-    static int giveToPlayers(name item, int amount, bool split = true) {
+    static int giveToPlayers(name item, int amount = 1, bool split = true) {
         HDCore.log('HDCoreLib', LOGGING_TRACE, "giveToPlayers('"..item.."', "..amount..", "..split..")...");
 
         let amt = max(amount, 0);
