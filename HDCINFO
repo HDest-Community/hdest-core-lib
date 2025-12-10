@@ -26,6 +26,7 @@ addSpawnHandlerThingBlacklist => { "name": "BFGSpark" }
 addSpawnHandlerThingBlacklist => { "name": "BloodSplatSilent" }
 addSpawnHandlerThingBlacklist => { "name": "BloodTrail" }
 addSpawnHandlerThingBlacklist => { "name": "btAdrenaline" }
+addSpawnHandlerThingBlacklist => { "name": "BulletSoundTrail" }
 addSpawnHandlerThingBlacklist => { "name": "CheckPuff" }
 addSpawnHandlerThingBlacklist => { "name": "DistanceCheckerCeiling" }
 addSpawnHandlerThingBlacklist => { "name": "DustCloud" }
