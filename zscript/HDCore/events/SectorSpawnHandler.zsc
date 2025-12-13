@@ -104,10 +104,10 @@ class HDCoreSectorSpawnerHandler : EventHandler {
         int max = int(HDCore.getRandomInt(0, area, hdc_random_mode) / HDCONST_ONEMETRE) >> 8;
         int count = 0;
         for (let i = 0; i < max; i++) {
-            double angle = HDCore.getRandomInt(1, 360, hdc_random_mode);
-            double dist  = HDCore.getRandomDouble(0, radius, hdc_random_mode);
-            vector2 xy   = s.centerspot + (dist * cos(angle), dist * sin(angle));
-            vector3 pos  = (xy.x, xy.y, HDCore.getRandomDouble(s.lowestFloorAt(xy), s.highestCeilingAt(xy), hdc_random_mode));
+            let angle = HDCore.getRandomInt(1, 360, hdc_random_mode);
+            let dist  = HDCore.getRandomDouble(0, radius, hdc_random_mode);
+            let xy    = s.centerspot + (dist * cos(angle), dist * sin(angle));
+            let pos   = (xy.x, xy.y, HDCore.getRandomDouble(s.centerFloor(), s.centerCeiling(), hdc_random_mode));
 
             Class<Actor> spawnerCls = spawnerName;
             Class<Actor> replacement = Actor.getReplacement(spawnerName);
