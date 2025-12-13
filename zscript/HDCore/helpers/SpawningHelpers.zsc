@@ -8,10 +8,11 @@ extend class HDCore {
      * @param {pos} pos The position to spawn the thing
      * @param {count} count The number of times to try and spawn the thing(s).  Defaults to 1.
      * @param {randomVel} randomVel When true, gives the thing spawned some random velocity.  Defaults to true.
-     * @param {allowReplace} allowReplace When true, will tell the GZDoom this actor can be replaced.  Defaults to true.
+     * @param {allowReplace} allowReplace When true, will tell ZDoom this actor can be replaced.  Defaults to true.
+     * @param {allowInvalidPos} allowInvalidPos When false, will check if the spawned actor is stuck and remove if it is.  Defaults to false.
      * @returns {Actor} the most recently successfully spawned Actor, otherwise null.
      */
-    static play Actor SpawnStuff(name cls, vector3 pos, int count = 1, bool randomVel = true, bool allowReplace = true) {
+    static play Actor SpawnStuff(name cls, vector3 pos, int count = 1, bool randomVel = true, bool allowReplace = true, bool allowInvalidPos = false) {
         
         // If we aren't spawning at least one thing, quit.
         if (count <= 0) return null;
@@ -30,7 +31,9 @@ extend class HDCore {
             if (!a) return null;
 
             // If the thing spawned stuck, destroy it and quit.
-            if (!a.TestMobjLocation()) {
+            if (!(allowInvalidPos || a.TestMobjLocation())) {
+                HDCore.log('HDCore.SpawnStuff', LOGGING_DEBUG, a.getClassName().." Spawned in invalid location "..pos..", Destroying.");
+
                 a.destroy();
 
                 return null;
