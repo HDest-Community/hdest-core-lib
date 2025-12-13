@@ -1,0 +1,505 @@
+class HDCoreSpawnTableEntryFrame : HDZFFrame {
+    HDCoreSpawnTableMenu menu;
+    HDCoreSpawnTableFrame parent;
+
+    HDCoreSpawnTableEntryHandler handler;
+
+    HDCoreSpawnTable table;
+    HDCoreSpawnTableEntry entry;
+
+    HDZFToggleButton enableBtn;
+    HDZFLabel entryLabel;
+    HDZFLabel weightLabel;
+    HDZFTextInput weightInput;
+    HDZFLabel weightPercentLabel;
+    HDZFLabel chanceLabel;
+    HDZFTextInput chanceInput;
+    HDZFLabel chancePercentLabel;
+    // HDZFToggleButton replaceBtn;
+    HDZFLAbel persistLabel;
+    HDZFToggleButton persistBtn;
+    HDZFLAbel finalLabel;
+    HDZFToggleButton finalBtn;
+
+    static HDCoreSpawnTableEntryFrame create(
+        Vector2 pos,
+        Vector2 size,
+        HDCoreSpawnTableMenu menu,
+        HDCoreSpawnTableFrame parent,
+        HDCoreSpawnTable table,
+        HDCoreSpawnTableEntry entry
+    ) {
+        let ret = new('HDCoreSpawnTableEntryFrame');
+
+        ret.setBox(pos, size);
+        ret.alpha = 1.0;
+
+        ret.menu = menu;
+        ret.parent = parent;
+        ret.table = table;
+        ret.entry = entry;
+
+        // Initialize Event Handler
+        ret.handler = new('HDCoreSpawnTableEntryHandler');
+        ret.handler.menu = menu;
+        ret.handler.frame = ret;
+        ret.handler.table = table;
+        ret.handler.entry = entry;
+
+        double colOffs = 0.0;
+        double rowOffs = menu.spacing;
+
+        let fontHeight = menu.font.getHeight();
+
+        // Build Entry Lables & Controls
+        
+        let enableEditable = !!HDCoreCVarProvider(entry._enabled);
+        let weightEditable = !!HDCoreCVarProvider(entry._weight);
+        let chanceEditable = !!HDCoreCVarProvider(entry._chance);
+        let persistEditable = !!HDCoreCVarProvider(entry._persistent);
+        let finalEditable = !!HDCoreCVarProvider(entry._final);
+
+        let enableColor = enableEditable ? Font.CR_WHITE : Font.CR_GRAY;
+        let weightColor = weightEditable ? Font.CR_TAN : Font.CR_BROWN;
+        let chanceColor = chanceEditable ? Font.CR_SAPPHIRE: Font.CR_TEAL;
+        let persistColor = persistEditable ? Font.CR_OLIVE : Font.CR_DARKGREEN;
+        let finalColor = finalEditable ? Font.CR_RED : Font.CR_DARKRED;
+
+        // ----- ENABLED TOGGLE -----
+
+        ret.enableBtn = HDZFToggleButton.create(
+            (colOffs, rowOffs - menu.spacing),
+            (fontHeight + (menu.spacing * 2), fontHeight + (menu.spacing * 2)),
+            text: entry.isEnabled() ? "Y" : "N",
+            inactive: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundNormal.png', (7,7), (14,14), true, true),
+            hover: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundHover.png', (7,7), (14,14), true, true),
+            click: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundClick.png', (7,7), (14,14), true, true),
+            disabled: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackground.png', (7,7), (14,14), true, true),
+            fnt: menu.font,
+            textColor: enableColor,
+            cmdHandler: ret.handler,
+            command: 'setEntryEnabled'
+        );
+        ret.enableBtn.setOn(entry.isEnabled());
+        ret.enableBtn.setAlpha(enableEditable ? 1.0 : 0.0);
+        ret.enableBtn.setDisabled(!enableEditable);
+        ret.enableBtn.pack(ret);
+
+        colOffs += ret.enableBtn.getWidth() + menu.spacing;
+
+
+        // ----- ENTRY NAME LABEL -----
+
+        let entryLabelText = ret.buildEntryLabelText();
+        ret.entryLabel = HDZFLabel.create(
+            (colOffs, rowOffs),
+            (menu.font.stringWidth(entryLabelText), fontHeight),
+            text: entryLabelText,
+            fnt: menu.font,
+            wrap: false
+        );
+        ret.entryLabel.pack(ret);
+
+        colOffs = fontHeight + (menu.spacing * menu.spacing);
+        rowOffs += fontHeight + (menu.spacing * 3);
+
+
+        // ----- ENTRY WEIGHT LABEL -----
+
+        let weightLabelText = ret.buildWeightLabelText();
+        ret.weightLabel = HDZFLabel.create(
+            (colOffs, rowOffs),
+            (menu.font.stringWidth(weightLabelText), fontHeight),
+            text: weightLabelText,
+            fnt: menu.font,
+            wrap: false,
+            textColor: weightColor
+        );
+        ret.weightLabel.pack(ret);
+
+        colOffs += ret.weightLabel.getWidth() + menu.spacing;
+
+
+        // ----- ENTRY WEIGHT INPUT -----
+
+        let entryRawWeight = entry._weight.getDoubleValue();
+        let weightInputValue = weightEditable || entryRawWeight >= 0.0 ? entryRawWeight : entry.getWeight();
+        ret.weightInput = HDZFTextInput.create(
+            (colOffs, rowOffs - menu.spacing),
+            (menu.font.stringWidth(weightEditable ? "1000.000" : weightInputValue.."  "), fontHeight + (menu.spacing * 2)),
+            fnt: menu.font,
+            textColor: weightColor,
+            background: HDZFBoxTextures.createTexturePixels(weightEditable ? 'graphics/menus/CommonBackgroundNormal.png' : 'graphics/menus/CommonBackground.png', (7,7), (14,14), true, true),
+            cmdHandler: ret.handler,
+            command: 'setEntryWeight'
+        );
+        ret.weightInput.setText(weightEditable ? weightInputValue.."" : String.format("%.2f%", weightInputValue));
+        ret.weightInput.setDisabled(!weightEditable);
+        ret.weightInput.pack(ret);
+
+        colOffs += ret.weightInput.getWidth() + menu.spacing;
+
+
+        // ----- WEIGHT PERCENTAGE -----
+
+        let weightPercentText = ret.buildWeightPercentLabelText();
+        ret.weightPercentLabel = HDZFLabel.create(
+            (colOffs, rowOffs),
+            (menu.font.stringWidth(weightPercentText), fontHeight),
+            text: weightPercentText,
+            fnt: menu.font,
+            wrap: false,
+            textColor: weightColor
+        );
+        ret.weightPercentLabel.pack(ret);
+
+        colOffs = fontHeight + (menu.spacing * menu.spacing);
+        rowOffs += fontHeight + (menu.spacing * 3);
+
+
+        // ----- ENTRY CHANCE -----
+
+        if (chanceEditable || entry._chance.getIntValue() < 256) {
+
+
+            // ----- ENTRY CHANCE LABEL -----
+
+            let chanceLabelText = ret.buildChanceLabelText();
+            ret.chanceLabel = HDZFLabel.create(
+                (colOffs, rowOffs),
+                (menu.font.stringWidth(chanceLabelText), fontHeight),
+                text: chanceLabelText,
+                fnt: menu.font,
+                wrap: false,
+                textColor: chanceColor
+            );
+            ret.chanceLabel.pack(ret);
+
+            colOffs += ret.chanceLabel.getWidth() + menu.spacing;
+
+
+            // ----- ENTRY CHANCE INPUT -----
+
+            ret.chanceInput = HDZFTextInput.create(
+                (colOffs, rowOffs - menu.spacing),
+                (menu.font.stringWidth(chanceEditable ? "1000.000" : entry._chance.getStringValue().."  "), fontHeight + (menu.spacing * 2)),
+                fnt: menu.font,
+                textColor: chanceColor,
+                background: HDZFBoxTextures.createTexturePixels(chanceEditable ? 'graphics/menus/CommonBackgroundNormal.png' : 'graphics/menus/CommonBackground.png', (7,7), (14,14), true, true),
+                cmdHandler: ret.handler,
+                command: 'setEntryChance'
+            );
+            ret.chanceInput.setText(entry._chance.getStringValue());
+            ret.chanceInput.setAlpha(enableEditable || entry._chance.getIntValue() < 256 ? 1.0 : 0.0);
+            ret.chanceInput.setDisabled(!chanceEditable);
+            ret.chanceInput.pack(ret);
+
+            colOffs += ret.chanceInput.getWidth() + menu.spacing;
+
+
+            // ----- CHANCE PERCENTAGE -----
+
+            let chancePercentText = ret.buildChancePercentLabelText();
+            ret.chancePercentLabel = HDZFLabel.create(
+                (colOffs, rowOffs),
+                (menu.font.stringWidth(chancePercentText), fontHeight),
+                text: chancePercentText,
+                fnt: menu.font,
+                wrap: false,
+                textColor: chanceColor
+            );
+            ret.chancePercentLabel.setAlpha(chanceEditable || entry._chance.getIntValue() < 256 ? 1.0 : 0.0);
+            ret.chancePercentLabel.pack(ret);
+
+            colOffs = fontHeight + (menu.spacing * menu.spacing);
+            rowOffs += fontHeight + (menu.spacing * 3);
+        }
+
+
+        // ----- PERSISTENCE TOGGLE LABEL -----
+
+        let persistLabelText = ret.buildPersistLabelText();
+        ret.persistLabel = HDZFLabel.create(
+            (colOffs, rowOffs),
+            (menu.font.stringWidth(persistLabelText), fontHeight),
+            text: persistLabelText,
+            fnt: menu.font,
+            wrap: false,
+            textColor: persistColor
+        );
+        ret.persistLabel.pack(ret);
+
+        colOffs += ret.persistLabel.getWidth() + menu.spacing;
+
+
+        // ----- PERSISTENCE TOGGLE BUTTON -----
+
+        ret.persistBtn = HDZFToggleButton.create(
+            (colOffs, rowOffs - menu.spacing),
+            (fontHeight + (menu.spacing * 2), fontHeight + (menu.spacing * 2)),
+            text: entry.isPersistent() ? "Y" : "N",
+            inactive: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundNormal.png', (7,7), (14,14), true, true),
+            hover: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundHover.png', (7,7), (14,14), true, true),
+            click: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundClick.png', (7,7), (14,14), true, true),
+            disabled: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackground.png', (7,7), (14,14), true, true),
+            fnt: menu.font,
+            textColor: persistColor,
+            cmdHandler: ret.handler,
+            command: 'setEntryPersists'
+        );
+        ret.persistBtn.setDisabled(!persistEditable);
+        ret.persistBtn.pack(ret);
+
+        colOffs = fontHeight + (menu.spacing * menu.spacing);
+        rowOffs += fontHeight + (menu.spacing * 3);
+
+
+        // ----- FINAL TOGGLE LABEL -----
+
+        let finalLabelText = ret.buildFinalLabelText();
+        ret.finalLabel = HDZFLabel.create(
+            (colOffs, rowOffs),
+            (menu.font.stringWidth(finalLabelText), fontHeight),
+            text: finalLabelText,
+            fnt: menu.font,
+            wrap: false,
+            textColor: finalColor
+        );
+        ret.finalLabel.pack(ret);
+
+        colOffs += ret.finalLabel.getWidth() + menu.spacing;
+
+
+        // ----- FINAL TOGGLE BUTTON -----
+
+        ret.finalBtn = HDZFToggleButton.create(
+            (colOffs, rowOffs - menu.spacing),
+            (fontHeight + (menu.spacing * 2), fontHeight + (menu.spacing * 2)),
+            text: entry.isFinal() ? "Y" : "N",
+            inactive: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundNormal.png', (7,7), (14,14), true, true),
+            hover: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundHover.png', (7,7), (14,14), true, true),
+            click: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundClick.png', (7,7), (14,14), true, true),
+            disabled: HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackground.png', (7,7), (14,14), true, true),
+            fnt: menu.font,
+            textColor: finalColor,
+            cmdHandler: ret.handler,
+            command: 'setEntryFinal'
+        );
+        ret.finalBtn.setDisabled(!finalEditable);
+        ret.finalBtn.pack(ret);
+
+        ret.setHeight(rowOffs + ret.finalBtn.getHeight());
+
+        return ret;
+    }
+
+    private string buildEntryLabelText() {
+        Class<Actor> spawnCls = entry.getName();
+
+        let clsDefaults = spawnCls ? getDefaultByType(spawnCls) : null;
+
+        return "[ "..(clsDefaults ? clsDefaults.getTag() : entry.getName().."").." ]";
+    }
+
+    private string buildWeightLabelText() {
+        return "Weight:";
+    }
+
+    private string buildWeightPercentLabelText() {
+        let totalWeight = parent.totalWeight;
+        return "/ "..String.format("%.2f%", totalWeight).." ("..String.format("%.2f%%", totalWeight > 0 ? (entry.getWeight() / totalWeight * 100.0) : Double.INFINITY)..")";
+    }
+
+    private string buildChanceLabelText() {
+        return "Chance:";
+    }
+
+    private string buildChancePercentLabelText() {
+        return "/ 256 ("..String.format("%.2f%%", entry.getChance() / 256.0 * 100.0)..")";
+    }
+
+    private string buildPersistLabelText() {
+        return "Persists?";
+    }
+
+    private string buildFinalLabelText() {
+        return "Is Final?";
+    }
+
+    void setEntryEnabled(bool value) {
+        HDCore.log('HDCoreLib.SpawnTableMenu', LOGGING_DEBUG, "Setting '"..entry.getName().."' to "..(value ? "enabled" : "disabled"));
+
+        let cvarProvider = HDCoreCVarProvider(entry._enabled);
+        if (cvarProvider) cvarProvider._cvar.setBool(value);
+
+        enableBtn.setText(value ? "Y" : "N");
+
+        if (value) {
+            let weightEditable = !!HDCoreCVarProvider(entry._weight);
+            let chanceEditable = !!HDCoreCVarProvider(entry._chance);
+            let persistEditable = !!HDCoreCVarProvider(entry._persistent);
+            let finalEditable = !!HDCoreCVarProvider(entry._final);
+
+
+            // Enable/Disable Elements
+            entryLabel.setDisabled(false);
+
+            weightLabel.setDisabled(!weightEditable);
+            weightInput.setDisabled(!weightEditable);
+            weightPercentLabel.setDisabled(!weightEditable);
+
+            if (chanceLabel) chanceLabel.setDisabled(!chanceEditable);
+            if (chanceInput) chanceInput.setDisabled(!chanceEditable);
+            if (chancePercentLabel) chancePercentLabel.setDisabled(!chanceEditable);
+
+            persistLabel.setDisabled(!persistEditable);
+            persistBtn.setDisabled(!persistEditable);
+
+            finalLabel.setDisabled(!finalEditable);
+            finalBtn.setDisabled(!finalEditable);
+
+
+            // Set Text Colors
+            let entryColor = Font.CR_WHITE;
+            let weightColor = weightEditable ? Font.CR_TAN : Font.CR_BROWN;
+            let chanceColor = chanceEditable ? Font.CR_SAPPHIRE : Font.CR_TEAL;
+            let persistColor = persistEditable ? Font.CR_OLIVE : Font.CR_DARKGREEN;
+            let finalColor = finalEditable ? Font.CR_RED : Font.CR_DARKRED;
+
+            entryLabel.setTextColor(entryColor);
+
+            weightLabel.setTextColor(weightColor);
+            weightInput.setTextColor(weightColor);
+            weightPercentLabel.setTextColor(weightColor);
+
+            if (chanceLabel) chanceLabel.setTextColor(chanceColor);
+            if (chanceInput) chanceInput.setTextColor(chanceColor);
+            if (chancePercentLabel) chancePercentLabel.setTextColor(chanceColor);
+
+            persistLabel.setTextColor(persistColor);
+            persistBtn.setTextColor(persistColor);
+
+            finalLabel.setTextColor(finalColor);
+            finalBtn.setTextColor(finalColor);
+        } else {
+
+            // Disable Elements
+            entryLabel.setDisabled(true);
+
+            weightLabel.setDisabled(true);
+            weightInput.setDisabled(true);
+            weightPercentLabel.setDisabled(true);
+
+            if (chanceLabel) chanceInput.setDisabled(true);
+            if (chanceInput) chanceInput.setDisabled(true);
+            if (chancePercentLabel) chancePercentLabel.setDisabled(true);
+
+            persistLabel.setDisabled(true);
+            persistBtn.setDisabled(true);
+
+            finalLabel.setDisabled(true);
+            finalBtn.setDisabled(true);
+
+            // Set Text Colors
+            let disabledColor = Font.CR_DARKGRAY;
+
+            entryLabel.setTextColor(disabledColor);
+            weightLabel.setTextColor(disabledColor);
+            weightInput.setTextColor(disabledColor);
+            weightPercentLabel.setTextColor(disabledColor);
+
+            if (chanceLabel) chanceInput.setTextColor(disabledColor);
+            if (chanceInput) chanceInput.setTextColor(disabledColor);
+            if (chancePercentLabel) chancePercentLabel.setTextColor(disabledColor);
+
+            persistLabel.setTextColor(disabledColor);
+            persistBtn.setTextColor(disabledColor);
+
+            finalLabel.setTextColor(disabledColor);
+            finalBtn.setTextColor(disabledColor);
+        }
+    }
+
+    void setEntryFinal(bool value) {
+        HDCore.log('HDCoreLib.SpawnTableMenu', LOGGING_DEBUG, "Setting '"..entry.getName().."' to "..(value ? "" : "Non-").."Final");
+
+        let cvarProvider = HDCoreCVarProvider(entry._final);
+        if (cvarProvider && cvarProvider._cvar) cvarProvider._cvar.setBool(value);
+
+        finalBtn.setText(value ? "Y" : "N");
+    }
+
+    void setEntryPersists(bool value) {
+        HDCore.log('HDCoreLib.SpawnTableMenu', LOGGING_DEBUG, "Setting '"..entry.getName().."' to "..(value ? "" : "Non-").."Persistent");
+
+        let cvarProvider = HDCoreCVarProvider(entry._persistent);
+        if (cvarProvider && cvarProvider._cvar) cvarProvider._cvar.setBool(value);
+
+        persistBtn.setText(value ? "Y" : "N");
+    }
+
+    void setEntryWeight(double value) {
+        HDCore.log('HDCoreLib.SpawnTableMenu', LOGGING_DEBUG, "Setting '"..entry.getName().."' weight to "..value);
+
+        let cvarProvider = HDCoreCVarProvider(entry._weight);
+        if (cvarProvider && cvarProvider._cvar) cvarProvider._cvar.setFloat(value);
+    }
+
+    void updateTableWeight() {
+        weightPercentLabel.setText(buildWeightPercentLabelText());
+
+        // TODO: shift proceeding elements in case sizes changed
+    }
+
+    override void drawer() {
+        super.drawer();
+
+        // Draw Debug Boxes
+        HDCoreSpawnTableMenu.drawDebugBox(self);
+        HDCoreSpawnTableMenu.drawDebugBox(enableBtn);
+        HDCoreSpawnTableMenu.drawDebugBox(entryLabel);
+        HDCoreSpawnTableMenu.drawDebugBox(weightLabel);
+        HDCoreSpawnTableMenu.drawDebugBox(weightInput);
+        HDCoreSpawnTableMenu.drawDebugBox(weightPercentLabel);
+        HDCoreSpawnTableMenu.drawDebugBox(chanceInput);
+        HDCoreSpawnTableMenu.drawDebugBox(chancePercentLabel);
+        HDCoreSpawnTableMenu.drawDebugBox(persistLabel);
+        HDCoreSpawnTableMenu.drawDebugBox(persistBtn);
+        HDCoreSpawnTableMenu.drawDebugBox(finalLabel);
+        HDCoreSpawnTableMenu.drawDebugBox(finalBtn);
+    }
+}
+
+class HDCoreSpawnTableEntryHandler : HDZFHandler {
+
+    HDCoreSpawnTableMenu menu;
+    HDCoreSpawnTableEntryFrame frame;
+
+    HDCoreSpawnTable table;
+    HDCoreSpawnTableEntry entry;
+	
+    override void textInputChanged(HDZFTextInput caller, Name command) {
+        switch (command) {
+            case 'setEntryWeight':
+                frame.setEntryWeight(caller.getText().toDouble());
+                break;
+            default:
+                HDCore.log('HDCoreLib.SpawnTableMenu', LOGGING_DEBUG, "Unknown textInputChanged Command: '"..command.."'");
+                break;
+        }
+    }
+
+    override void toggleButtonChanged(HDZFToggleButton caller, Name command, bool on) {
+        switch (command) {
+            case 'setEntryEnabled':
+                frame.setEntryEnabled(on);
+                break;
+            case 'setEntryPersists':
+                frame.setEntryPersists(on);
+                break;
+            default:
+                HDCore.log('HDCoreLib.SpawnTableMenu', LOGGING_DEBUG, "Unknown toggleButtonChanged Command: '"..command.."'");
+                break;
+        }
+    }
+}

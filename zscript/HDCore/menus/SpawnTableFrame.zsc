@@ -1,0 +1,197 @@
+
+
+class HDCoreSpawnTableFrame : HDZFListFrame {
+    HDCoreSpawnTableMenu menu;
+
+    HDCoreSpawnTableHandler handler;
+
+    HDCoreSpawnTable table;
+
+    bool weightChanged;
+    double totalWeight;
+    
+    HDZFLabel tableLabel;
+    HDZFScrollContainer scrollContainer;
+    HDZFListFrame entryListFrame;
+    Array<HDCoreSpawnTableEntryFrame> entryFrames;
+
+
+    static HDCoreSpawnTableFrame create(
+        Vector2 pos,
+        Vector2 size,
+        double padding,
+        HDCoreSpawnTableMenu menu,
+        HDCoreSpawnTable table
+    ) {
+        let ret = new('HDCoreSpawnTableFrame');
+
+        ret.setBox(pos, size);
+        ret.setPadding(padding);
+        ret.alpha = 1.0;
+
+        ret.menu = menu;
+        ret.table = table;
+
+        Array<HDCoreWeightedRandomTableEntry> entries;
+
+        table.getEntries(entries, HDCoreSpawnTableEntry.shouldGetEntry);
+
+        ret.totalWeight = HDCoreWeightedRandomTable.getTotalWeight(entries);
+            
+        ret.entryFrames.clear();
+
+        // Initialize Event Handler
+        ret.handler = new('HDCoreSpawnTableHandler');
+        ret.handler.menu = menu;
+        ret.handler.table = table;
+        
+        // Add all of the entries in the current table to the screen
+        ret.buildTableLabel((0, 0), (size.x, menu.font.getHeight() * 4.0), table, ret);
+        ret.buildEntryListFrame((0, ret.tableLabel.getHeight() + menu.spacing), size - (0, ret.tableLabel.getHeight() + menu.spacing), table, ret);
+
+        return ret;
+    }
+
+    void buildTableLabel(Vector2 pos, Vector2 size, HDCoreSpawnTable table, HDZFFrame parent) {
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Building Table Label pos="..pos..", size="..size..", table="..table.toString()..", parent="..parent);
+
+        if (tableLabel) {
+            tableLabel.unpack();
+            tableLabel.destroy();
+        }
+
+        let tableLabelText = buildTableLabelText();
+        tableLabel = HDZFLabel.create(
+            pos, size,
+            text: tableLabelText,
+            textScale: 1.5,
+            lineSpacing: menu.spacing
+        );
+        tableLabel.pack(parent);
+
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Table Label pos="..tableLabel.getPos()..", size="..tableLabel.getSize());
+    }
+
+    private string buildTableLabelText() {
+        return (table.isReplace() ? "Replacement" : "Spawning").." Table for '"..table.getSpawnName().."'\n\c[Cream]Total weight: "..String.format("%.2f%", totalWeight);
+    }
+
+    void buildEntryListFrame(Vector2 pos, Vector2 size, HDCoreSpawnTable table, HDZFFrame parent) {
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Building Entry List Frame pos="..pos..", size="..size..", table="..table.toString()..", parent="..parent);
+
+        if (entryListFrame) {
+            entryListFrame.unpack();
+            entryListFrame.destroy();
+        }
+
+        if (scrollContainer) {
+            scrollContainer.unpack();
+            scrollContainer.destroy();
+        }
+
+        entryListFrame = HDZFListFrame.create((0, 0), size, menu.spacing);
+        
+        // TODO: Future Requirement Questions:
+        //  [X] Disabled (toggled off) entries should be darkened
+        //  [X] Non-editable enable/disable should hide toggleBtn?
+        //  [ ] If any are set to a negative weight, all other entries beyond the first negative will be disabled/darkened
+        //    [ ] Their weight/chance calculations should be ignored, as well.
+        //  [?] Show non-editable chance of 256+?
+        //  [X] Chance Percentage not showing?
+        buildEntryFrames(pos, (size.x, menu.font.getHeight() + (menu.spacing * 2)), table, entryListFrame);
+
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Entry List Frame pos="..entryListFrame.getPos()..", size="..entryListFrame.getSize());
+
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Building Scroll Container pos="..(0, pos.y)..", size="..(size + (8, 0))..", scrollArea="..(8, size.y));
+
+        scrollContainer = HDZFScrollContainer.create(
+            (0, pos.y), size,
+            24.0, entryListFrame.getHeight() + (menu.spacing * 2), 15.0,
+            HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundNormal.png', (7,7), (14,14), true, true),
+            HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundHover.png', (7,7), (14,14), true, true),
+            HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackgroundClick.png', (7,7), (14,14), true, true),
+            HDZFBoxTextures.createTexturePixels('graphics/menus/CommonBackground.png', (7,7), (14,14), true, true),
+            entryListFrame,
+            contentBarGap: menu.spacing
+        );
+        scrollContainer.pack(parent);
+
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Scroll Container pos="..scrollContainer.getPos()..", size="..scrollContainer.getSize()..", scrollArea="..scrollContainer.getScrollArea().getSize());
+    }
+
+    void buildEntryFrames(Vector2 pos, Vector2 size, HDCoreSpawnTable table, HDZFFrame parent) {
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Building Entry Frames pos="..pos..", size="..size..", table="..table.toString()..", parent="..parent);
+
+        // Clear out previous frames
+        if (entryFrames.size()) {
+            forEach (frame : entryFrames) {
+                frame.unpack();
+                frame.destroy();
+            }
+            entryFrames.clear();
+        }
+
+        Array<HDCoreWeightedRandomTableEntry> entries;
+
+        table.getEntries(entries, HDCoreSpawnTableEntry.shouldGetEntry);
+
+        // Build new frames
+        let totalHeight = 0;
+        forEach (entry : entries) {
+
+            if (entry.isEnabled() || !!HDCoreCVarProvider(entry._enabled)) {
+
+                HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Building Entry Frame pos="..pos..", size="..size..", entry="..entry.toString()..", parent="..parent);
+
+                let entryFrame = HDCoreSpawnTableEntryFrame.create(pos, size, menu, self, table, HDCoreSpawnTableEntry(entry));
+    
+                totalHeight += entryFrame.getHeight() + menu.spacing; // FIXME: should be adding parent ListFrame's padding
+    
+                entryFrame.pack(parent);
+                entryFrames.push(entryFrame);
+    
+                HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Entry Frame pos="..entryFrame.getPos()..", size="..entryFrame.getSize());
+            }
+        }
+
+        parent.setHeight(max(1, totalHeight));
+
+        HDCore.log('HDCoreLib.SpawnTableFrame', LOGGING_TRACE, "Entry Frames Parent Height="..parent.getHeight());
+    }
+
+    override void ticker () {
+        super.ticker();
+
+        Array<HDCoreWeightedRandomTableEntry> entries;
+
+        table.getEntries(entries, HDCoreSpawnTableEntry.shouldGetEntry);
+
+        let totalTableWeight = HDCoreWeightedRandomTable.getTotalWeight(entries);
+
+        if (totalWeight != totalTableWeight) {
+            totalWeight = totalTableWeight;
+
+            tableLabel.setText(buildTableLabelText());
+            forEach (entryFrame : entryFrames) entryFrame.updateTableWeight();
+        }
+    }
+
+    override void drawer() {
+        super.drawer();
+
+        // Draw Debug Boxes
+        HDCoreSpawnTableMenu.drawDebugBox(self);
+        HDCoreSpawnTableMenu.drawDebugBox(tableLabel);
+        HDCoreSpawnTableMenu.drawDebugBox(scrollContainer);
+        HDCoreSpawnTableMenu.drawDebugBox(entryListFrame);
+    }
+}
+
+class HDCoreSpawnTableHandler : HDZFHandler {
+
+    HDCoreSpawnTableMenu menu;
+    
+    HDCoreSpawnTable table;
+
+    // TODO: Implement Handler Methods
+}

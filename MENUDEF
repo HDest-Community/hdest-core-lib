@@ -16,6 +16,11 @@ OptionMenu "HDCoreLibMenu" {
 	StaticText ""
 	StaticText ""
 
+    StaticText "$HDC_COMMANDS"
+    Submenu "$HDC_SPAWNING_MENU", "HDCoreSpawnTableMenu"
+	StaticText ""
+	StaticText ""
+
 	SafeCommand "$HDC_RESETALLOPTIONS", "hdc_reset_cvars"
 }
 

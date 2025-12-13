@@ -57,6 +57,12 @@ version "4.14"
 #include "zscript/HDCore/ui/DrawBar.zsc"
 #include "zscript/HDCore/ui/DrawPrefabs.zsc"
 
+// Custom Menus
+#include "zscript/HDCore/menus/SpawnTableEntryFrame.zsc"
+#include "zscript/HDCore/menus/SpawnTableFrame.zsc"
+#include "zscript/HDCore/menus/SpawnTableCategoryFrame.zsc"
+#include "zscript/HDCore/menus/SpawnTableMenu.zsc"
+
 // Event Handlers
 #include "zscript/HDCore/events/AmmoBoxSpawnPoolHandler.zsc"
 #include "zscript/HDCore/events/AmmoUsageHandler.zsc"
