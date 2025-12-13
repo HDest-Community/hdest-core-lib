@@ -69,14 +69,25 @@ class HDCoreSectorSpawnerHandler : EventHandler {
             if (s.damageAmount > 0) hurtfloorSectors.Push(s);
 
             // Divide all 65536 units of light level into 7 evenly spaced "regions" for spawning purposes
-                 if (s.lightLevel > 56174) brightestSectors.Push(s); // 56175..65536 =  9362 units
-            else if (s.lightLevel > 46812) brighterSectors.Push(s);  // 46813..56174 =  9362 units
-            else if (s.lightLevel > 37450) brightSectors.Push(s);    // 37451..46812 =  9362 units
-            else if (s.lightLevel > 28086) {}                        // 28087..37450 =  9364 units
-            else if (s.lightLevel > 18724) darkSectors.Push(s);      // 18725..28086 =  9362 units
-            else if (s.lightLevel >  9362) darkerSectors.Push(s);    //  9363..18724 =  9362 units
-            else if (s.lightLevel >     0) darkestSectors.Push(s);   //     0..9362  =  9362 units
-                                                                     //              = 65536 units
+            //      if (s.lightLevel > 56174) brightestSectors.Push(s); // 56175..65536 =  9362 units
+            // else if (s.lightLevel > 46812) brighterSectors.Push(s);  // 46813..56174 =  9362 units
+            // else if (s.lightLevel > 37450) brightSectors.Push(s);    // 37451..46812 =  9362 units
+            // else if (s.lightLevel > 28086) {}                        // 28087..37450 =  9364 units
+            // else if (s.lightLevel > 18724) darkSectors.Push(s);      // 18725..28086 =  9362 units
+            // else if (s.lightLevel >  9362) darkerSectors.Push(s);    //  9363..18724 =  9362 units
+            // else if (s.lightLevel >     0) darkestSectors.Push(s);   //     0..9362  =  9362 units
+            //                                                          //              = 65536 units
+            
+            // TODO: Enhance to detect if/when levels use the remaining 65280 units of light level
+            // Divide all 256 units of light level into 7 evenly spaced "regions" for spawning purposes
+                 if (s.lightLevel > 220) brightestSectors.Push(s); // 221..256 =  36 units
+            else if (s.lightLevel > 184) brighterSectors.Push(s);  // 185..220 =  36 units
+            else if (s.lightLevel > 148) brightSectors.Push(s);    // 149..184 =  36 units
+            else if (s.lightLevel > 108) {}                        // 109..148 =  40 units
+            else if (s.lightLevel >  72) darkSectors.Push(s);      //  73..108 =  36 units
+            else if (s.lightLevel >  36) darkerSectors.Push(s);    //  37..72  =  36 units
+            else if (s.lightLevel >   0) darkestSectors.Push(s);   //   0..35  =  36 units
+                                                                   //          = 256 units
         }
     }
 
