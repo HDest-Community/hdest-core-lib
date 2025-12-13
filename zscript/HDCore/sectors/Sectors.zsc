@@ -39,7 +39,7 @@ extend class HDCore {
      * @returns {double} 
      */
     static clearscope double getSectorHeight(Sector s) {
-        return abs(s.ceilingplane.ZAtPoint(s.centerspot) - s.floorplane.ZAtPoint(s.centerspot));
+        return abs(s.centerCeiling() - s.centerFloor());
     }
 
     /**
