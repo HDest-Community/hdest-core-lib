@@ -335,7 +335,7 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
             if (HDCore.CheckClassExists(value) && value != a.getClassName() && value != 'NullSpawner') {
                 HDCore.Log('HDCoreLib.SpawnHandler', LOGGING_DEBUG, a.getClassName().." + "..value);
     
-                Actor.Spawn(value, a.pos, entry.isFinal() ? NO_REPLACE : ALLOW_REPLACE);
+                HDCore.SpawnStuff(value, a.pos, allowReplace: !entry.isFinal());
 
                 // TODO: sendNetworkEvent to force play scope
                 let key = entry.getName()..'.spawn.success';
