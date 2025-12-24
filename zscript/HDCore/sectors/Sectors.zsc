@@ -81,6 +81,6 @@ extend class HDCore {
      * @returns {double} 
      */
     static clearscope Vector3 getSectorCenter(Sector s) {
-        return (s.centerspot.x, s.centerspot.y, HDGMGlobalMaths.LerpDouble(s.floorplane.ZAtPoint(s.centerspot), s.ceilingplane.ZAtPoint(s.centerspot), 0.5));
+        return (s.centerspot.x, s.centerspot.y, HDGMGlobalMaths.LerpDouble(s.centerFloor(), s.centerCeiling(), 0.5));
     }
 }
