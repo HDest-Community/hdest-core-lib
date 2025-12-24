@@ -298,7 +298,7 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
                 HDCore.Log('HDCoreLib.SpawnHandler', LOGGING_DEBUG, e.replacee.getClassName().." -> "..replacement);
     
                 e.replacement = replacement;
-                e.isFinal = e.isFinal || entry.isFinal() || replacement == 'NullSpawner';
+                e.isFinal |= entry.isFinal() || replacement == 'NullSpawner';
 
                 // TODO: sendNetworkEvent to force play scope
                 let key = entry.getName()..'.replace.success';
