@@ -16,6 +16,9 @@ extend class HDCore {
         
         // If we aren't spawning at least one thing, quit.
         if (count <= 0) return null;
+
+        // If the thing trying to be spawned doesn't exist, quit.
+        if (!HDCore.CheckClassExists(cls)) return null;
         
         // If the position to spawn isn't in the level, quit.
         if (!Level.IsPointInLevel(pos)) return null;
