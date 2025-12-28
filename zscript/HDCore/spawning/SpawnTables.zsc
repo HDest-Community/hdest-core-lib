@@ -131,7 +131,7 @@ class HDCoreSpawnTableSingleEntry : HDCoreSpawnTableEntry {
     /**
      * Creates an entry for a given thing by name and its chances of spawning within the table.
      * @param {name} name The className of the thing that might spawn.
-     * @param {bool{ [enabled=true] if true, the new entry will be included in the table
+     * @param {bool} [enabled=true] if true, the new entry will be included in the table
      * @param {double} [weight=1.0] The relative weight/bias of the thing in the table.
      * @param {bool} [persists=false] If true, the newly created entry will be marked as persistent.
      * @param {int}  [chance=256] chance out of 256 that the thing being spawned will actually spawn.
