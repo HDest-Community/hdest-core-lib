@@ -85,23 +85,24 @@ extend class HDCore {
         Level.SpawnParticle(params);
     }
 
-    static play void emitFlashlightParticles(Actor caller, Color color = 0xFFFFFF, int outerAngle = 1, int innerAngle = 1, double alpha = 1.0) {
+    static play void emitFlashlightParticles(DynamicLight beam, double alpha = 1.0) {
 
-		// Grab closest playerpawn distance.
+        // Grab closest playerpawn distance.
 		let dist = int.MAX;
-		for (int i = 0; i < MAXPLAYERS; i++) if (PlayerInGame[i]) dist = min(dist, caller.Distance3D(Players[i].mo));
+		for (int i = 0; i < MAXPLAYERS; i++) if (PlayerInGame[i]) dist = min(dist, beam.Distance3D(Players[i].mo));
 
-        // If laser's caller is too far away and out of sight, quit.
-		if (dist > (HDCONST_ONEMETRE * 256) && caller.A_CheckSight("null")) return;
+        // If flashlight beam is too far away and out of sight, quit.
+		if (dist > (HDCONST_ONEMETRE * 256) && beam.A_CheckSight("null")) return;
 
         FLineTraceData flTrace;
-        caller.LineTrace(caller.angle, 512, caller.pitch, TRF_THRUACTORS, data: flTrace);
+        beam.lineTrace(beam.angle, 512, beam.pitch, TRF_THRUACTORS, data: flTrace);
 
-        // New angular vector of particle spawn
+        // Angular vector of particle spawn
         vector3 pVec = (
-            cos(caller.pitch) * cos(caller.angle),
-            cos(caller.pitch) * sin(caller.angle),
-            sin(-caller.pitch));
+            cos(beam.pitch) * cos(beam.angle),
+            cos(beam.pitch) * sin(beam.angle),
+            sin(-beam.pitch)
+        );
 
         // Create Particle Params
         FSpawnParticleParams params;
@@ -111,18 +112,20 @@ extend class HDCore {
         params.sizeStep = 0;
         params.fadeStep = -1;
         params.texture = TexMan.CheckForTexture("glstuff/glpart.png");
+        params.color1 = Color(beam.args[DynamicLight.LIGHT_RED], beam.args[DynamicLight.LIGHT_GREEN], beam.args[DynamicLight.LIGHT_BLUE]);
 
+        alpha *= (beam.args[DynamicLight.LIGHT_INTENSITY] / 256);
         for (let f = 1.0; f < min(flTrace.distance, 64); f += f / 4) {
-            params.color1 = color;
-            params.pos = caller.pos + (pVec * f);
+
+            // Outer Beam Particles
+            params.pos = beam.pos + (pVec * f);
             params.startAlpha = (alpha * 0.75) / f;
-            params.size = (sin(outerAngle) * f) * 6;
+            params.size = (sin(beam.spotOuterAngle) * f) * 6;
             Level.SpawnParticle(params);
 
-            // tighter "beam" particle as well
-            params.color1 = color;
+            // Inner Beam Particles
             params.startAlpha = alpha / f;
-            params.size = (sin(innerAngle * 0.5) * f) * 8;
+            params.size = (sin(beam.spotInnerAngle * 0.5) * f) * 8;
             Level.SpawnParticle(params);
         }
     }
