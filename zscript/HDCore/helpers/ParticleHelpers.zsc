@@ -1,0 +1,129 @@
+extend class HDCore {
+    
+    static play void emitLaserParticles(Actor caller, Color color = 0xFF0000, double alpha = 1.0) {
+
+        // Grab closest playerpawn distance.
+        let dist = int.MAX;
+        for (int i = 0; i < MAXPLAYERS; i++) if (PlayerInGame[i]) dist = min(dist, caller.Distance3D(Players[i].mo));
+
+        // If laser's caller is too far away and out of sight, quit.
+        if (dist > (HDCONST_ONEMETRE * 256) && caller.A_CheckSight("null")) return;
+
+        // Adjust alpha if wearing NVGs, otherwise if completely transparent, don't spawn particles
+        if (Players[ConsolePlayer].mo.checkLocalView()) {
+
+            let nvg = PortableLiteAmp(Players[ConsolePlayer].mo.FindInventory("PortableLiteAmp"));
+
+            if (nvg && nvg.worn && nvg.amplitude > 0) {
+                alpha = 1.0;
+            } else if (!alpha) {
+                return;
+            }
+        }
+
+        // Create Particle Params
+        FSpawnParticleParams params;
+        params.style = STYLE_Add;
+        params.color1 = color;
+        params.lifetime = 1;
+        params.sizeStep = 0;
+        params.fadeStep = -1;
+        params.flags = SPF_FULLBRIGHT|SPF_REPLACE;
+        params.texture = TexMan.CheckForTexture("glstuff/glpart.png");
+
+        // Trace path data for laser particle beam
+        FLineTraceData laserTrace;
+        caller.LineTrace(caller.angle, 16384, caller.pitch, offsetforward: 8, data: laserTrace);
+        if (laserTrace.distance < 1) caller.LineTrace(caller.angle, 16384, caller.pitch, flags: TRF_THRUACTORS, offsetforward: 8, data: laserTrace);
+
+        // precalculate position and velocity vectors only once
+        // hopefully moving these out of the loop improves performance
+        // Angular vector of particle spawn
+        let pVec = (
+            cos(caller.pitch) * cos(caller.angle),
+            cos(caller.pitch) * sin(caller.angle),
+            sin(-caller.pitch)
+        );
+
+        // Make laser particles larger for players wearing NVGs, and IR lasers visible
+        double sizeFactor = (caller is 'HDPlayerPawn') ? 0.5 : 1.0;
+
+        let incr = 0.1;
+        for (let f = 0.0; f <= laserTrace.distance; f += incr) {
+            params.pos = caller.pos + (pVec * f);
+            params.size = sizeFactor * frandom[hdcrand](0.75, 1.25);
+
+            // Increase density at ends
+            incr = clamp(sin((f / laserTrace.distance) * 180) * (laserTrace.distance * 0.0075), 0.1, 1000) * frandom[hdcrand](0.1, 2);
+
+            // Calculate simulated atmospheric density (pseudo-perlin?)
+            // https://www.desmos.com/calculator/ihnnq7pdjt
+            params.startAlpha = alpha * clamp(
+                (
+                    (sin(params.pos.x) + sin(params.pos.y) + sin(params.pos.z)) +
+                    (sin(params.pos.x * 10) + sin(params.pos.y * 10) + sin(params.pos.z * 10)) +
+                    (sin(params.pos.x * 0.5) + sin(params.pos.y * 0.1) + sin(params.pos.z * 0.5)) +
+                    sin(f + caller.getAge())
+                ) + max(1 - incr, 0),
+                0, 1
+            );
+
+            Level.SpawnParticle(params);
+        }
+
+        // Spawn larger particles at end of laser
+        params.size = 1;
+        params.startAlpha = 1 * alpha;
+        Level.SpawnParticle(params);
+
+        params.size *= 4;
+        params.startAlpha = 0.25 * alpha;
+        Level.SpawnParticle(params);
+
+        params.size *= 4;
+        params.startAlpha = 0.125 * alpha;
+        Level.SpawnParticle(params);
+    }
+
+    static play void emitFlashlightParticles(Actor caller, Color color = 0xFFFFFF, int outerAngle = 1, int innerAngle = 1, double alpha = 1.0) {
+
+		// Grab closest playerpawn distance.
+		let dist = int.MAX;
+		for (int i = 0; i < MAXPLAYERS; i++) if (PlayerInGame[i]) dist = min(dist, caller.Distance3D(Players[i].mo));
+
+        // If laser's caller is too far away and out of sight, quit.
+		if (dist > (HDCONST_ONEMETRE * 256) && caller.A_CheckSight("null")) return;
+
+        FLineTraceData flTrace;
+        caller.LineTrace(caller.angle, 512, caller.pitch, TRF_THRUACTORS, data: flTrace);
+
+        // New angular vector of particle spawn
+        vector3 pVec = (
+            cos(caller.pitch) * cos(caller.angle),
+            cos(caller.pitch) * sin(caller.angle),
+            sin(-caller.pitch));
+
+        // Create Particle Params
+        FSpawnParticleParams params;
+        params.style = Style_Add;
+        params.flags = SPF_FULLBRIGHT;
+        params.lifetime = 1;
+        params.sizeStep = 0;
+        params.fadeStep = -1;
+        params.texture = TexMan.CheckForTexture("glstuff/glpart.png");
+
+        for (let f = 1.0; f < min(flTrace.distance, 64); f += f / 4) {
+            params.color1 = color;
+            params.pos = caller.pos + (pVec * f);
+            params.startAlpha = (alpha * 0.75) / f;
+            params.size = (sin(outerAngle) * f) * 6;
+            Level.SpawnParticle(params);
+
+            // tighter "beam" particle as well
+            params.color1 = color;
+            params.startAlpha = alpha / f;
+            params.size = (sin(innerAngle * 0.5) * f) * 8;
+            Level.SpawnParticle(params);
+        }
+    }
+}
