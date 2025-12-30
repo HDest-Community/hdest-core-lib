@@ -7,4 +7,20 @@ extend class HDCore {
 
         return total;
     }
+
+    static clearscope bool anyPlayersInSector(Sector s) {
+        for (let i = 0; i < MAXPLAYERS; i++) if (playerInGame[i] && players[i].mo && players[i].mo.curSector == s) return true;
+
+        return false;
+    }
+
+    static clearscope bool allPlayersInSector(Sector s) {
+        for (let i = 0; i < MAXPLAYERS; i++) if (playerInGame[i] && players[i].mo && players[i].mo.curSector != s) return false;
+
+        return true;
+    }
+
+    static clearscope bool isVoodooDoll(HDPlayerPawn p) {
+        return p && p.player && p.player.mo != p;
+    }
 }
