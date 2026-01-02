@@ -1,10 +1,14 @@
 extend class HDCore {
-    
+
+    /**
+     * Emits a line of particles from the caller's position, with the given color.
+     * Originally used in Ugly as Sin for its Laser-Light Module
+     */
     static play void emitLaserParticles(Actor caller, Color color = 0xFF0000, double alpha = 1.0) {
 
         // Grab closest playerpawn distance.
         let dist = int.MAX;
-        for (int i = 0; i < MAXPLAYERS; i++) if (PlayerInGame[i]) dist = min(dist, caller.Distance3D(Players[i].mo));
+        for (int i = 0; i < MAXPLAYERS; i++) if (PlayerInGame[i]) dist = min(dist, caller.distance3D(Players[i].mo));
 
         // If laser's caller is too far away and out of sight, quit.
         if (dist > (HDCONST_ONEMETRE * 256) && caller.A_CheckSight("null")) return;
@@ -12,7 +16,7 @@ extend class HDCore {
         // Adjust alpha if wearing NVGs, otherwise if completely transparent, don't spawn particles
         if (Players[ConsolePlayer].mo.checkLocalView()) {
 
-            let nvg = PortableLiteAmp(Players[ConsolePlayer].mo.FindInventory("PortableLiteAmp"));
+            let nvg = PortableLiteAmp(Players[ConsolePlayer].mo.findInventory("PortableLiteAmp"));
 
             if (nvg && nvg.worn && nvg.amplitude > 0) {
                 alpha = 1.0;
@@ -29,12 +33,12 @@ extend class HDCore {
         params.sizeStep = 0;
         params.fadeStep = -1;
         params.flags = SPF_FULLBRIGHT|SPF_REPLACE;
-        params.texture = TexMan.CheckForTexture("glstuff/glpart.png");
+        params.texture = TexMan.checkForTexture("glstuff/glpart.png");
 
         // Trace path data for laser particle beam
         FLineTraceData laserTrace;
-        caller.LineTrace(caller.angle, 16384, caller.pitch, offsetforward: 8, data: laserTrace);
-        if (laserTrace.distance < 1) caller.LineTrace(caller.angle, 16384, caller.pitch, flags: TRF_THRUACTORS, offsetforward: 8, data: laserTrace);
+        caller.lineTrace(caller.angle, 16384, caller.pitch, offsetforward: 8, data: laserTrace);
+        if (laserTrace.distance < 1) caller.lineTrace(caller.angle, 16384, caller.pitch, flags: TRF_THRUACTORS, offsetforward: 8, data: laserTrace);
 
         // precalculate position and velocity vectors only once
         // hopefully moving these out of the loop improves performance
@@ -68,28 +72,35 @@ extend class HDCore {
                 0, 1
             );
 
-            Level.SpawnParticle(params);
+            Level.spawnParticle(params);
         }
 
         // Spawn larger particles at end of laser
         params.size = 1;
         params.startAlpha = 1 * alpha;
-        Level.SpawnParticle(params);
+        Level.spawnParticle(params);
 
         params.size *= 4;
         params.startAlpha = 0.25 * alpha;
-        Level.SpawnParticle(params);
+        Level.spawnParticle(params);
 
         params.size *= 4;
         params.startAlpha = 0.125 * alpha;
-        Level.SpawnParticle(params);
+        Level.spawnParticle(params);
     }
 
+    /**
+     * Emits a cone of particles from the given DynamicLight's position.
+     * Originally used in Ugly as Sin for its Laser-Light Module
+     */
     static play void emitFlashlightParticles(DynamicLight beam, double alpha = 1.0) {
+
+        // If we're going to end up spawning invisible particles, quit.
+        if (alpha <= 0.0 || beam.args[DynamicLight.LIGHT_INTENSITY] <= 0) return;
 
         // Grab closest playerpawn distance.
 		let dist = int.MAX;
-		for (int i = 0; i < MAXPLAYERS; i++) if (PlayerInGame[i]) dist = min(dist, beam.Distance3D(Players[i].mo));
+		for (int i = 0; i < MAXPLAYERS; i++) if (PlayerInGame[i]) dist = min(dist, beam.distance3D(Players[i].mo));
 
         // If flashlight beam is too far away and out of sight, quit.
 		if (dist > (HDCONST_ONEMETRE * 256) && beam.A_CheckSight("null")) return;
@@ -111,22 +122,23 @@ extend class HDCore {
         params.lifetime = 1;
         params.sizeStep = 0;
         params.fadeStep = -1;
-        params.texture = TexMan.CheckForTexture("glstuff/glpart.png");
+        params.texture = TexMan.checkForTexture("glstuff/glpart.png");
         params.color1 = Color(beam.args[DynamicLight.LIGHT_RED], beam.args[DynamicLight.LIGHT_GREEN], beam.args[DynamicLight.LIGHT_BLUE]);
 
-        alpha *= (beam.args[DynamicLight.LIGHT_INTENSITY] / 256);
-        for (let f = 1.0; f < min(flTrace.distance, 64); f += f / 4) {
+        alpha *= (beam.args[DynamicLight.LIGHT_INTENSITY] / 256.0);
+        let maxDist = min(flTrace.distance, 64);
+        for (let f = 1.0; f < maxDist; f += f / 4) {
 
             // Outer Beam Particles
             params.pos = beam.pos + (pVec * f);
             params.startAlpha = (alpha * 0.75) / f;
             params.size = (sin(beam.spotOuterAngle) * f) * 6;
-            Level.SpawnParticle(params);
+            Level.spawnParticle(params);
 
             // Inner Beam Particles
             params.startAlpha = alpha / f;
             params.size = (sin(beam.spotInnerAngle * 0.5) * f) * 8;
-            Level.SpawnParticle(params);
+            Level.spawnParticle(params);
         }
     }
 }
