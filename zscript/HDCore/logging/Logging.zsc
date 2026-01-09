@@ -68,12 +68,17 @@ extend class HDCore {
         return level > LOGGING_OFF && level <= CVar.GetCVar('hdc_logging_level').GetInt();
     }
 
+    static clearscope string GetLogTimestamp() {
+        return String.Format("%s:%02d", Level.TimeFormatted(), Level.time % 35);
+    }
+
     static clearscope string FormatLogMessage(name ns, int level, string message) {
+        string timestamp = "[ "..GetLogTimestamp().." ] ";
         string namespace = ns != '' // (ns != null && ns != '')
             ? ("[ "..String.format(ns).." ] ")
             : "";
 
-        return GetLogColor(level)..GetLogPrefix(level).."\c-"..namespace..message;
+        return GetLogColor(level)..GetLogPrefix(level).."\c-"..timestamp..namespace..message;
     }
 
     static clearscope string GetLogPrefix(int level) {
