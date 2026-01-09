@@ -32,7 +32,7 @@ extend class HDCore {
         params.lifetime = 1;
         params.sizeStep = 0;
         params.fadeStep = -1;
-        params.flags = SPF_FULLBRIGHT|SPF_REPLACE;
+        params.flags = SPF_FULLBRIGHT|SPF_REPLACE|SPF_NOTIMEFREEZE;
         params.texture = TexMan.checkForTexture("glstuff/glpart.png");
 
         // Trace path data for laser particle beam
@@ -118,7 +118,7 @@ extend class HDCore {
         // Create Particle Params
         FSpawnParticleParams params;
         params.style = Style_Add;
-        params.flags = SPF_FULLBRIGHT;
+        params.flags = SPF_FULLBRIGHT|SPF_REPLACE|SPF_NOTIMEFREEZE;
         params.lifetime = 1;
         params.sizeStep = 0;
         params.fadeStep = -1;
