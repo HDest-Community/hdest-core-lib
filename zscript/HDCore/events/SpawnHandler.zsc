@@ -285,7 +285,7 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
     bool tryReplaceThing(ReplaceEvent e, HDCoreSpawnTable table) {
         
         Dictionary params = Dictionary.create();
-        params.insert("persistentOnly", (Level.mapTime > 1).."");
+        params.insert("persistentOnly", !HDCore.isPreSpawn().."");
 
         let entry = HDCoreSpawnTableEntry(table.getRandomEntry(HDCoreSpawnTableEntry.shouldGetEntry, params));
 
@@ -323,7 +323,7 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
     bool tryCreateThing(Actor a, HDCoreSpawnTable table) {
         
         Dictionary params = Dictionary.create();
-        params.insert("persistentOnly", (Level.mapTime > 1).."");
+        params.insert("persistentOnly", !HDCore.isPreSpawn().."");
 
         let entry = HDCoreSpawnTableEntry(table.getRandomEntry(HDCoreSpawnTableEntry.shouldGetEntry, params));
 

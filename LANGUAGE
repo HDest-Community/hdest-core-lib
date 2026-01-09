@@ -1,27 +1,29 @@
 [en default]
 
 // Logging Prefixes
-HDC_LOG_PREFIX_ERROR = "[ ‼ ] ";
-HDC_LOG_PREFIX_WARN  = "[ ! ] ";
-HDC_LOG_PREFIX_INFO  = "[ i ] ";
-HDC_LOG_PREFIX_DEBUG = "[ ? ] ";
-HDC_LOG_PREFIX_TRACE = "[ > ] ";
-HDC_LOG_PREFIX_LOG   = "[ ✔ ] ";
+HDC_LOG_PREFIX_ERROR   = "[ ‼ ] ";
+HDC_LOG_PREFIX_WARN    = "[ ! ] ";
+HDC_LOG_PREFIX_INFO    = "[ i ] ";
+HDC_LOG_PREFIX_DEBUG   = "[ ? ] ";
+HDC_LOG_PREFIX_TRACE   = "[ > ] ";
+HDC_LOG_PREFIX_LOG     = "[ ✔ ] ";
 
 // Logging Colors
-HDC_LOG_COLOR_ERROR  = "\c[red]";
-HDC_LOG_COLOR_WARN   = "\c[gold]";
-HDC_LOG_COLOR_INFO   = "\c[ice]";
-HDC_LOG_COLOR_DEBUG  = "\c[teal]";
-HDC_LOG_COLOR_TRACE  = "\c[darkgray]";
-HDC_LOG_COLOR_LOG    = "\c-";
+HDC_LOG_COLOR_ERROR    = "\c[red]";
+HDC_LOG_COLOR_WARN     = "\c[gold]";
+HDC_LOG_COLOR_INFO     = "\c[ice]";
+HDC_LOG_COLOR_DEBUG    = "\c[teal]";
+HDC_LOG_COLOR_TRACE    = "\c[darkgray]";
+HDC_LOG_COLOR_LOG      = "\c-";
 
 // Menu Labels
-HDC_MENU             = "\c[gold][ WIP ]\c- \c[olive]Ⓗ\c- HDCoreLib Options";
-HDC_LOGGING_LEVEL    = "Logging Level";
-HDC_RANDOM_MODE      = "Random Mode";
-HDC_USER_SEED        = "User-Defined Seed";
-HDC_FEATURES         = "Feature Toggles";
-HDC_SECTOR_SPAWNERS  = "Sector-based Spawners";
-HDC_STAT_TRACKERS    = "Statistic Trackers";
-HDC_RESETALLOPTIONS  = "Reset all options for HDCoreLib";
+HDC_MENU               = "\c[gold][ WIP ]\c- \c[olive]Ⓗ\c- HDCoreLib Options";
+HDC_LOGGING_LEVEL      = "Logging Level";
+HDC_RANDOM_MODE        = "Random Mode";
+HDC_USER_SEED          = "User-Defined Seed";
+HDC_PRESPAWN_THRESHOLD = "Map Pre-Spawn Tic Limit";
+HDC_FEATURES           = "Feature Toggles";
+HDC_SECTOR_SPAWNERS    = "Sector-based Spawners";
+HDC_STAT_TRACKERS      = "Statistic Trackers";
+HDC_SPAWNING_MENU      = "Spawn Handler Tables";
+HDC_RESETALLOPTIONS    = "Reset all options for HDCoreLib";

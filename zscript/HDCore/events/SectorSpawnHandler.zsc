@@ -30,26 +30,31 @@ class HDCoreSectorSpawnerHandler : EventHandler {
 
         // Collect all of the secret sectors in the level.
         BuildSectors();
+    }
 
-        // For each outdoor sector, spawn dummy actors.
-        foreach (s : outdoorSectors) SpawnDummySpawners(s, 'OutdoorSectorSpawner');
+    override void WorldTick() {
 
-        // For each hurtfloor sector, spawn dummy actors.
-        foreach (s : hurtfloorSectors) SpawnDummySpawners(s, 'HurtfloorSectorSpawner');
+        if (HDCore.isPreSpawn() && hdc_sector_spawners >= 0) {
 
-        // For each secret sector, spawn dummy actors.
-        foreach (s : secretSectors) SpawnDummySpawners(s, 'SecretSectorSpawner');
-
-        // For each sector, spawn dummy actors based on light level in sector.
-        foreach (s : brightestSectors) SpawnDummySpawners(s, 'BrightestSectorSpawner');
-        foreach (s : brighterSectors) SpawnDummySpawners(s, 'BrighterSectorSpawner');
-        foreach (s : brightSectors) SpawnDummySpawners(s, 'BrightSectorSpawner');
-        foreach (s : darkSectors) SpawnDummySpawners(s, 'DarkSectorSpawner');
-        foreach (s : darkerSectors) SpawnDummySpawners(s, 'DarkerSectorSpawner');
-        foreach (s : darkestSectors) SpawnDummySpawners(s, 'DarkestSectorSpawner');
-
-        // Clean up after ourselves.
-        Destroy();
+            // For each outdoor sector, spawn dummy actors.
+            HandleSectorSpawning(outdoorSectors, 'OutdoorSectorSpawner');
+    
+            // For each hurtfloor sector, spawn dummy actors.
+            HandleSectorSpawning(hurtfloorSectors, 'HurtfloorSectorSpawner');
+    
+            // For each secret sector, spawn dummy actors.
+            HandleSectorSpawning(secretSectors, 'SecretSectorSpawner');
+    
+            // For each sector, spawn dummy actors based on light level in sector.
+            HandleSectorSpawning(brightestSectors, 'BrightestSectorSpawner');
+            HandleSectorSpawning(brighterSectors, 'BrighterSectorSpawner');
+            HandleSectorSpawning(brightSectors, 'BrightSectorSpawner');
+            HandleSectorSpawning(darkSectors, 'DarkSectorSpawner');
+            HandleSectorSpawning(darkerSectors, 'DarkerSectorSpawner');
+            HandleSectorSpawning(darkestSectors, 'DarkestSectorSpawner');
+        } else if (!bDESTROYED) {
+            destroy();
+        }
     }
 
     private void BuildSectors() {
@@ -91,13 +96,19 @@ class HDCoreSectorSpawnerHandler : EventHandler {
         }
     }
 
+    private void HandleSectorSpawning(Array<Sector> sectors, name spawnerName) {
+        let max = sectors.size();
+        let incr = max(hdc_prespawn_threshold, 1);
+        for (let i = Level.mapTime; i < max; i += incr) SpawnDummySpawners(sectors[i], spawnerName);
+    }
+
     private void SpawnDummySpawners(Sector s, name spawnerName) {
 
-        // If Sector-based Spawners are disabled, quit.
-        if (hdc_sector_spawners < 0) return;
+        double area = HDCore.GetSectorArea(s);
+        double radius = HDCore.GetSectorRadius(s);
 
-        double area, circum, radius, avgSize;
-        [area, circum, radius, avgSize] = HDCore.GetSectorSize(s);
+        // If the sector is small enough to result in 0 possible spawns, quit.
+        if ((area / HDCONST_ONEMETRE) < 256) return;
 
         // Somewhere between 0 and 1/256th the sector size in square meters should be good for a sector
         // TODO: Allow reduction rate to be configurable
@@ -116,9 +127,14 @@ class HDCoreSectorSpawnerHandler : EventHandler {
             // and we didn't find a replacement actor for the dummy spawner, skip.
             if (!hdc_sector_spawners && (spawnerCls == replacement || replacement == 'NullSpawner')) continue;
 
+            let replacementDefaults = getDefaultByType(replacement);
+
+            // If the thing replacing the dummy spawner shouldn't be in the air, set the pos to the floor.
+            if (!(replacementDefaults.bNOGRAVITY || replacementDefaults.bFLOAT || replacementDefaults.bMISSILE || replacementDefaults.bSEEKERMISSILE)) pos.z = s.centerFloor();
+
             if (Level.PointInSector(xy) == s && HDCore.SpawnStuff(replacement.getClassName(), pos)) count++;
         }
 
-        HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_DEBUG, "Spawned "..count.." out of "..max.." dummy actors.\n\t\tSector @"..s.centerspot.." area/circum/radius/avg is "..area.."/"..circum.."/"..radius.."/"..avgSize..".");
+        HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_DEBUG, "Spawned "..count.." out of "..max.." dummy actors.\n\t\tSector @"..s.centerspot.." area/radius is "..area.."/"..radius..".");
     }
 }

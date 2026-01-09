@@ -10,6 +10,10 @@ OptionMenu "HDCoreLibMenu" {
 	StaticText ""
 	StaticText ""
 
+	Slider "$HDC_PRESPAWN_THRESHOLD", "hdc_prespawn_threshold", 1, 1050, 1, 0
+	StaticText ""
+	StaticText ""
+
     StaticText "$HDC_FEATURES"
 	Option "$HDC_SECTOR_SPAWNERS", "hdc_sector_spawners", "OnOffAuto"
 	Option "$HDC_STAT_TRACKERS", "hdc_stat_trackers", "OnOff"

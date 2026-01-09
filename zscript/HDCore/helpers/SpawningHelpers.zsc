@@ -1,6 +1,14 @@
 extend class HDCore {
 
     /**
+     * Helper method to check if current level is still in "pre-spawn"
+     *   wherein the number of tics has not crossed the configured threshold.
+     */
+    static clearscope bool isPreSpawn() {
+        return Level.mapTime < hdc_prespawn_threshold;
+    }
+
+    /**
      * Helper method to spawn stuff
      *   with included logic for handling positions outside of the level,
      *   removing things spawned stuck, giving the spawned thing a bit of random velocity, etc.
@@ -12,7 +20,7 @@ extend class HDCore {
      * @param {allowInvalidPos} allowInvalidPos When false, will check if the spawned actor is stuck and remove if it is.  Defaults to false.
      * @returns {Actor} the most recently successfully spawned Actor, otherwise null.
      */
-    static play Actor SpawnStuff(name cls, vector3 pos, int count = 1, bool randomVel = true, bool allowReplace = true, bool allowInvalidPos = false) {
+    static play Actor spawnStuff(name cls, vector3 pos, int count = 1, bool randomVel = true, bool allowReplace = true, bool allowInvalidPos = false) {
         
         // If we aren't spawning at least one thing, quit.
         if (count <= 0) return null;

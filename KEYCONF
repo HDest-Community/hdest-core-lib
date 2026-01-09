@@ -1,1 +1,1 @@
-alias hdc_reset_cvars "resetcvar hdc_logging_level; resetcvar hdc_random_mode; resetcvar hdc_user_seed; resetcvar hdc_sector_spawners;"
+alias hdc_reset_cvars "resetcvar hdc_logging_level; resetcvar hdc_random_mode; resetcvar hdc_user_seed; resetcvar hdc_sector_spawners; resetcvar hdc_stat_trackers; resetcvar hdc_prespawn_threshold;"
