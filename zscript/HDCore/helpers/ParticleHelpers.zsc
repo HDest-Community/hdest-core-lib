@@ -93,10 +93,10 @@ extend class HDCore {
      * Emits a cone of particles from the given DynamicLight's position.
      * Originally used in Ugly as Sin for its Laser-Light Module
      */
-    static play void emitFlashlightParticles(DynamicLight beam, double alpha = 1.0) {
+    static play void emitFlashlightParticles(DynamicLight beam, int quality = 3, double startOffset = 1.0, double scale = 1.0, double alpha = 1.0) {
 
         // If we're going to end up spawning invisible particles, quit.
-        if (alpha <= 0.0 || beam.args[DynamicLight.LIGHT_INTENSITY] <= 0) return;
+        if (quality <= 0 || scale <= 0.0 || alpha <= 0.0 || beam.args[DynamicLight.LIGHT_INTENSITY] <= 0) return;
 
         // Grab closest playerpawn distance.
 		let dist = int.MAX;
@@ -126,19 +126,23 @@ extend class HDCore {
         params.color1 = Color(beam.args[DynamicLight.LIGHT_RED], beam.args[DynamicLight.LIGHT_GREEN], beam.args[DynamicLight.LIGHT_BLUE]);
 
         alpha *= (beam.args[DynamicLight.LIGHT_INTENSITY] / 256.0);
-        let maxDist = min(flTrace.distance, 64);
-        for (let f = 1.0; f < maxDist; f += f / 4) {
+        let maxDist = min(flTrace.distance, beam.args[DynamicLight.LIGHT_INTENSITY]);
+        for (let f = startOffset; f < maxDist; f *= 1.25) {
 
             // Outer Beam Particles
-            params.pos = beam.pos + (pVec * f);
-            params.startAlpha = (alpha * 0.75) / f;
-            params.size = (sin(beam.spotOuterAngle) * f) * 6;
-            Level.spawnParticle(params);
+            if (quality&1) {
+                params.pos = beam.pos + (pVec * f);
+                params.startAlpha = (alpha * 0.75) / f;
+                params.size = scale * (sin(beam.spotOuterAngle) * f) * 6;
+                if (params.startAlpha && params.size) Level.spawnParticle(params);
+            }
 
             // Inner Beam Particles
-            params.startAlpha = alpha / f;
-            params.size = (sin(beam.spotInnerAngle * 0.5) * f) * 8;
-            Level.spawnParticle(params);
+            if (quality&2) {
+                params.startAlpha = alpha / f;
+                params.size = scale * (sin(beam.spotInnerAngle * 0.5) * f) * 8;
+                if (params.startAlpha && params.size) Level.spawnParticle(params);
+            }
         }
     }
 }
