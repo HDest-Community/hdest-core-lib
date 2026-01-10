@@ -141,7 +141,7 @@ extend class HDCore {
             // Inner Beam Particles
             if (quality&2) {
                 params.startAlpha = alpha / f;
-                params.size = scale * (sin(beam.spotInnerAngle * 0.5) * f) * 8;
+                params.size = scale * (sin(max(1, beam.spotInnerAngle) * 0.5) * f) * 8;
                 if (params.startAlpha && params.size) Level.spawnParticle(params);
             }
         }
