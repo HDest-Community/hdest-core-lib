@@ -103,7 +103,7 @@ extend class HDCore {
 		for (int i = 0; i < MAXPLAYERS; i++) if (PlayerInGame[i]) dist = min(dist, beam.distance3D(Players[i].mo));
 
         // If flashlight beam is too far away and out of sight, quit.
-		if (dist > (HDCONST_ONEMETRE * 256) && beam.A_CheckSight("null")) return;
+		if (dist > (HDCONST_ONEMETRE * 256.0) && beam.A_CheckSight("null")) return;
 
         FLineTraceData flTrace;
         beam.lineTrace(beam.angle, 512, beam.pitch, TRF_THRUACTORS, data: flTrace);
