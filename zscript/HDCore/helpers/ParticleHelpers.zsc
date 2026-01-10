@@ -129,9 +129,10 @@ extend class HDCore {
         let maxDist = min(flTrace.distance, beam.args[DynamicLight.LIGHT_INTENSITY]);
         for (let f = startOffset; f < maxDist; f *= 1.25) {
 
+            params.pos = beam.pos + (pVec * f);
+            
             // Outer Beam Particles
             if (quality&1) {
-                params.pos = beam.pos + (pVec * f);
                 params.startAlpha = (alpha * 0.75) / f;
                 params.size = scale * (sin(beam.spotOuterAngle) * f) * 6;
                 if (params.startAlpha && params.size) Level.spawnParticle(params);
