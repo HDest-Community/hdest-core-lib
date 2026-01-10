@@ -106,7 +106,7 @@ extend class HDCore {
 		if (dist > (HDCONST_ONEMETRE * 256.0) && beam.A_CheckSight("null")) return;
 
         FLineTraceData flTrace;
-        beam.lineTrace(beam.angle, 512, beam.pitch, TRF_THRUACTORS, data: flTrace);
+        beam.lineTrace(beam.angle, beam.args[DynamicLight.LIGHT_INTENSITY], beam.pitch, TRF_THRUACTORS, data: flTrace);
 
         // Angular vector of particle spawn
         vector3 pVec = (
