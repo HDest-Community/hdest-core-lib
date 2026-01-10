@@ -6,13 +6,13 @@ extend class HDCore {
      * @param {v} v Current Velocity
      * @param {k} k Spring Coefficient
      * @param {d} d Damping Coefficient
-	 * @See https://gist.github.com/caligari87/39d1cec3aad776860b4148cc3c659f70
+     * @See https://gist.github.com/caligari87/39d1cec3aad776860b4148cc3c659f70
      */
-	static double DampedSpring(double p, double r, double v, double k, double d) {
+    static double DampedSpringDouble(double p, double r, double v, double k, double d) {
         return -(d * v) - (k * (p - r));
     }
 
-	static vector3 DampedVec3Spring(vector3 p, vector3 r, vector3 v, double k, double d) {
+    static vector3 DampedSpringVec3D(Vector3 p, Vector3 r, Vector3 v, double k, double d) {
         return -(d * v) - (k * (p - r));
     }
 }
