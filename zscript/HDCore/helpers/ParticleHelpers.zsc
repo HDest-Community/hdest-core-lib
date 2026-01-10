@@ -126,7 +126,7 @@ extend class HDCore {
         params.color1 = Color(beam.args[DynamicLight.LIGHT_RED], beam.args[DynamicLight.LIGHT_GREEN], beam.args[DynamicLight.LIGHT_BLUE]);
 
         alpha *= (beam.args[DynamicLight.LIGHT_INTENSITY] / 256.0);
-        let maxDist = min(flTrace.distance, beam.args[DynamicLight.LIGHT_INTENSITY]);
+        let maxDist = min(flTrace.distance, beam.args[DynamicLight.LIGHT_INTENSITY] / 2.0);
         for (let f = startOffset; f < maxDist; f *= 1.25) {
 
             params.pos = beam.pos + (pVec * f);
