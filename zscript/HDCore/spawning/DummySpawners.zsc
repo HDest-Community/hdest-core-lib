@@ -6,6 +6,12 @@ class DummySpawner : Actor abstract {
         -SHOOTABLE;
     }
 
+    override void beginPlay() {}
+
+    override void postBeginPlay() {}
+
+    override void tick() {}
+
     states {
         spawn:
             TNT1 A 0;
