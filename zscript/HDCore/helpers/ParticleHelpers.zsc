@@ -4,7 +4,10 @@ extend class HDCore {
      * Emits a line of particles from the caller's position, with the given color.
      * Originally used in Ugly as Sin for its Laser-Light Module
      */
-    static play void emitLaserParticles(Actor caller, Color color = 0xFF0000, double alpha = 1.0) {
+    static play void emitLaserParticles(Actor caller, Color color = 0xFF0000, Vector3 offset = (0, 0, 0), double scale = 1.0, double alpha = 1.0) {
+
+        // If we're going to end up spawning invisible particles, quit.
+        if (scale <= 0.0) return;
 
         // Grab closest playerpawn distance.
         let dist = int.MAX;
@@ -53,9 +56,9 @@ extend class HDCore {
         double sizeFactor = (caller is 'HDPlayerPawn') ? 0.5 : 1.0;
 
         let incr = 0.1;
-        for (let f = 0.0; f <= laserTrace.distance; f += incr) {
-            params.pos = caller.pos + (pVec * f);
-            params.size = sizeFactor * frandom[hdcrand](0.75, 1.25);
+        for (let f = 0.0; f < laserTrace.distance; f += incr) {
+            params.pos = caller.pos + offset + (pVec * f);
+            params.size = scale * sizeFactor * frandom[hdcrand](0.75, 1.25);
 
             // Increase density at ends
             incr = clamp(sin((f / laserTrace.distance) * 180) * (laserTrace.distance * 0.0075), 0.1, 1000) * frandom[hdcrand](0.1, 2);
@@ -93,7 +96,7 @@ extend class HDCore {
      * Emits a cone of particles from the given DynamicLight's position.
      * Originally used in Ugly as Sin for its Laser-Light Module
      */
-    static play void emitFlashlightParticles(DynamicLight beam, int quality = 3, double startOffset = 1.0, double scale = 1.0, double alpha = 1.0) {
+    static play void emitFlashlightParticles(DynamicLight beam, int quality = 3, double startOffset = 1.0, double offsetFactor = 1.25, double scale = 1.0, double alpha = 1.0) {
 
         // If we're going to end up spawning invisible particles, quit.
         if (quality <= 0 || scale <= 0.0 || alpha <= 0.0 || beam.args[DynamicLight.LIGHT_INTENSITY] <= 0) return;
@@ -127,7 +130,7 @@ extend class HDCore {
 
         alpha *= (beam.args[DynamicLight.LIGHT_INTENSITY] / 256.0);
         let maxDist = min(flTrace.distance, beam.args[DynamicLight.LIGHT_INTENSITY] / 2.0);
-        for (let f = startOffset; f < maxDist; f *= 1.25) {
+        for (let f = max(Double.EPSILON, startOffset); f < maxDist; f *= offsetFactor) {
 
             params.pos = beam.pos + (pVec * f);
             
