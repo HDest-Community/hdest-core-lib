@@ -1,16 +1,23 @@
+class HDCoreSectorSpawnData {
+    name spawnName;
+    Vector3 pos;
+
+    static HDCoreSectorSpawnData create(name spawnName, Vector3 pos) {
+        let data = HDCoreSectorSpawnData(new('HDCoreSectorSpawnData'));
+
+        if (data) {
+            data.spawnName = spawnName;
+            data.pos = pos;
+        }
+
+        return data;
+    }
+}
+
 class HDCoreSectorSpawnerHandler : EventHandler {
+
+    Array<HDCoreSectorSpawnData> spawnPositions;
     
-    Array<Sector> hurtfloorSectors;
-    Array<Sector> outdoorSectors;
-    Array<Sector> secretSectors;
-
-    Array<Sector> brightestSectors;
-    Array<Sector> brighterSectors;
-    Array<Sector> brightSectors;
-    Array<Sector> darkSectors;
-    Array<Sector> darkerSectors;
-    Array<Sector> darkestSectors;
-
     override void OnRegister() {
         // Spawn Dummy Actors after everything else
         SetOrder(666);
@@ -28,113 +35,117 @@ class HDCoreSectorSpawnerHandler : EventHandler {
         // If we're re-opening the level, quit.
         if (e.IsReopen) return;
 
-        // Collect all of the secret sectors in the level.
-        BuildSectors();
+        // Collect all of the positions to spawn in the level.
+        BuildSpawnPositions();
     }
 
     override void WorldTick() {
 
         if (HDCore.isPreSpawn() && hdc_sector_spawners >= 0) {
-
-            // For each outdoor sector, spawn dummy actors.
-            HandleSectorSpawning(outdoorSectors, 'OutdoorSectorSpawner');
-    
-            // For each hurtfloor sector, spawn dummy actors.
-            HandleSectorSpawning(hurtfloorSectors, 'HurtfloorSectorSpawner');
-    
-            // For each secret sector, spawn dummy actors.
-            HandleSectorSpawning(secretSectors, 'SecretSectorSpawner');
-    
-            // For each sector, spawn dummy actors based on light level in sector.
-            HandleSectorSpawning(brightestSectors, 'BrightestSectorSpawner');
-            HandleSectorSpawning(brighterSectors, 'BrighterSectorSpawner');
-            HandleSectorSpawning(brightSectors, 'BrightSectorSpawner');
-            HandleSectorSpawning(darkSectors, 'DarkSectorSpawner');
-            HandleSectorSpawning(darkerSectors, 'DarkerSectorSpawner');
-            HandleSectorSpawning(darkestSectors, 'DarkestSectorSpawner');
+            HandleSectorSpawning();
         } else if (!bDESTROYED) {
             destroy();
         }
     }
 
-    private void BuildSectors() {
-        hurtfloorSectors.clear();
-        outdoorSectors.clear();
-        secretSectors.clear();
-        brightestSectors.clear();
-        brighterSectors.clear();
-        brightSectors.clear();
-        darkSectors.clear();
-        darkerSectors.clear();
-        darkestSectors.clear();
+    private void BuildSpawnPositions() {
+        spawnPositions.clear();
 
-        foreach (s : Level.sectors) {
-            if (s.IsSecret()) secretSectors.Push(s);
-            if (s.GetTexture(1) == skyflatnum) outdoorSectors.Push(s);
-            if (s.damageAmount > 0) hurtfloorSectors.Push(s);
+        let minX = Int.MAX;
+        let minY = Int.MAX;
+        let maxX = Int.MIN;
+        let maxY = Int.MIN;
 
-            // Divide all 65536 units of light level into 7 evenly spaced "regions" for spawning purposes
-            //      if (s.lightLevel > 56174) brightestSectors.Push(s); // 56175..65536 =  9362 units
-            // else if (s.lightLevel > 46812) brighterSectors.Push(s);  // 46813..56174 =  9362 units
-            // else if (s.lightLevel > 37450) brightSectors.Push(s);    // 37451..46812 =  9362 units
-            // else if (s.lightLevel > 28086) {}                        // 28087..37450 =  9364 units
-            // else if (s.lightLevel > 18724) darkSectors.Push(s);      // 18725..28086 =  9362 units
-            // else if (s.lightLevel >  9362) darkerSectors.Push(s);    //  9363..18724 =  9362 units
-            // else if (s.lightLevel >     0) darkestSectors.Push(s);   //     0..9362  =  9362 units
-            //                                                          //              = 65536 units
+        forEach(s : Level.sectors) forEach (l : s.lines) {
+            if (l.v1.p.x < minX) minX = l.v1.p.x;
+            if (l.v1.p.x > maxX) maxX = l.v1.p.x;
+
+            if (l.v1.p.y < minY) minY = l.v1.p.y;
+            if (l.v1.p.y > maxY) maxY = l.v1.p.y;
+
+            if (l.v2.p.x < minX) minX = l.v2.p.x;
+            if (l.v2.p.x > maxX) maxX = l.v2.p.x;
+
+            if (l.v2.p.y < minY) minY = l.v2.p.y;
+            if (l.v2.p.y > maxY) maxY = l.v2.p.y;
+        }
+
+        HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_DEBUG, "Sampling map area from "..(minX, minY).." to "..(maxX, maxY).."...");
+        
+        let incr = HDCONST_ONEMETRE * hdc_sector_spawner_sampleRate;
+        for (let x = minX; x < maxX; x+= incr) for (let y = minY; y < maxY; y += incr) {
+            let xy = (x, y);
             
-            // TODO: Enhance to detect if/when levels use the remaining 65280 units of light level
-            // Divide all 256 units of light level into 7 evenly spaced "regions" for spawning purposes
-                 if (s.lightLevel > 220) brightestSectors.Push(s); // 221..256 =  36 units
-            else if (s.lightLevel > 184) brighterSectors.Push(s);  // 185..220 =  36 units
-            else if (s.lightLevel > 148) brightSectors.Push(s);    // 149..184 =  36 units
-            else if (s.lightLevel > 108) {}                        // 109..148 =  40 units
-            else if (s.lightLevel >  72) darkSectors.Push(s);      //  73..108 =  36 units
-            else if (s.lightLevel >  36) darkerSectors.Push(s);    //  37..72  =  36 units
-            else if (s.lightLevel >   0) darkestSectors.Push(s);   //   0..35  =  36 units
-                                                                   //          = 256 units
+            let s = Level.PointInSector(xy);
+            if (s) {
+
+                // If the sector has 0 height or the floor is the skyflat, skip.
+                if (!HDCore.getSectorHeight(s) || s.GetTexture(0) == skyflatnum) continue;
+
+                let pos = (x, y, s.centerFloor());
+
+                // Determine dummy spawner(s), add to list.
+                if (s.IsSecret()) addSpawnPos('SecretSectorSpawner', pos);
+
+                if (s.GetTexture(1) == skyflatnum) addSpawnPos('OutdoorSectorSpawner', pos); 
+                else                               addSpawnPos('IndoorSectorSpawner', pos);
+                
+                if (s.damageAmount > 0) addSpawnPos('HurtfloorSectorSpawner', pos);
+
+                // Divide all 65536 units of light level into 7 evenly spaced "regions" for spawning purposes
+                //      if (s.lightLevel > 56174) brightestSectors.Push(s); // 56175..65536 =  9362 units
+                // else if (s.lightLevel > 46812) brighterSectors.Push(s);  // 46813..56174 =  9362 units
+                // else if (s.lightLevel > 37450) brightSectors.Push(s);    // 37451..46812 =  9362 units
+                // else if (s.lightLevel > 28086) {}                        // 28087..37450 =  9364 units
+                // else if (s.lightLevel > 18724) darkSectors.Push(s);      // 18725..28086 =  9362 units
+                // else if (s.lightLevel >  9362) darkerSectors.Push(s);    //  9363..18724 =  9362 units
+                // else if (s.lightLevel >     0) darkestSectors.Push(s);   //     0..9362  =  9362 units
+                //                                                          //              = 65536 units
+                
+                // TODO: Enhance to detect if/when levels use the remaining 65280 units of light level
+                // Divide all 256 units of light level into 7 evenly spaced "regions" for spawning purposes
+                     if (s.lightLevel > 220) addSpawnPos('BrightestSectorSpawner', pos); // 221..256 =  36 units
+                else if (s.lightLevel > 184) addSpawnPos('BrighterSectorSpawner', pos);  // 185..220 =  36 units
+                else if (s.lightLevel > 148) addSpawnPos('BrightSectorSpawner', pos);    // 149..184 =  36 units
+                else if (s.lightLevel > 108) {}                                          // 109..148 =  40 units
+                else if (s.lightLevel >  72) addSpawnPos('DarkSectorSpawner', pos);      //  73..108 =  36 units
+                else if (s.lightLevel >  36) addSpawnPos('DarkerSectorSpawner', pos);    //  37..72  =  36 units
+                else if (s.lightLevel >   0) addSpawnPos('DarkestSectorSpawner', pos);   //   0..35  =  36 units
+                                                                                         //          = 256 units
+            }
         }
+
+        HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_DEBUG, "Sampled "..spawnPositions.size().."x Spawn Positions");
     }
 
-    private void HandleSectorSpawning(Array<Sector> sectors, name spawnerName) {
-        let max = sectors.size();
+    private void addSpawnPos(name spawnName, Vector3 pos) {
+        spawnPositions.push(HDCoreSectorSpawnData.create(spawnName, pos));
+    }
+
+    private void HandleSectorSpawning() {
+        let max = spawnPositions.size();
         let incr = max(hdc_prespawn_threshold, 1);
-        for (let i = Level.mapTime; i < max; i += incr) SpawnDummySpawners(sectors[i], spawnerName);
+        for (let i = Level.mapTime; i < max; i += incr) SpawnDummySpawners(spawnPositions[i]);
     }
 
-    private void SpawnDummySpawners(Sector s, name spawnerName) {
+    private void SpawnDummySpawners(HDCoreSectorSpawnData data) {
 
-        double area = HDCore.GetSectorArea(s);
-        double radius = HDCore.GetSectorRadius(s);
+        Class<Actor> spawnerCls = data.spawnName;
+        Class<Actor> replacement = Actor.getReplacement(data.spawnName);
 
-        // If the sector is small enough to result in 0 possible spawns, quit.
-        if ((area / HDCONST_ONEMETRE) < 256) return;
+        // If Sector-based Spawners are conditionally enabled,
+        // and we didn't find a replacement actor for the dummy spawner, quit.
+        if (!hdc_sector_spawners && (spawnerCls == replacement || replacement == 'NullSpawner')) return;
 
-        // Somewhere between 0 and 1/256th the sector size in square meters should be good for a sector
-        // TODO: Allow reduction rate to be configurable
-        int max = int(HDCore.getRandomInt(0, area, hdc_random_mode) / HDCONST_ONEMETRE) >> 8;
-        int count = 0;
-        for (let i = 0; i < max; i++) {
-            let angle = HDCore.getRandomInt(1, 360, hdc_random_mode);
-            let dist  = HDCore.getRandomDouble(0, radius, hdc_random_mode);
-            let xy    = s.centerspot + (dist * cos(angle), dist * sin(angle));
-            let pos   = (xy.x, xy.y, HDCore.getRandomDouble(s.centerFloor(), s.centerCeiling(), hdc_random_mode));
+        // Get the default properties of the thing to spawn
+        let replacementDefaults = getDefaultByType(replacement);
 
-            Class<Actor> spawnerCls = spawnerName;
-            Class<Actor> replacement = Actor.getReplacement(spawnerName);
+        // If the sector isn't tall enough, quit.
+        if (!HDCore.getSectorHeight(Level.pointInSector(data.pos.xy)) < replacementDefaults.height) return;
 
-            // If Sector-based Spawners are conditionally enabled,
-            // and we didn't find a replacement actor for the dummy spawner, skip.
-            if (!hdc_sector_spawners && (spawnerCls == replacement || replacement == 'NullSpawner')) continue;
+        // If the thing failed to spawn, quit.
+        if (!HDCore.SpawnStuff(replacement.getClassName(), data.pos)) return;
 
-            let replacementDefaults = getDefaultByType(replacement);
-
-            // If the thing replacing the dummy spawner shouldn't be in the air, set the pos to the floor.
-            if (!(replacementDefaults.bNOGRAVITY || replacementDefaults.bFLOAT || replacementDefaults.bMISSILE || replacementDefaults.bSEEKERMISSILE)) pos.z = s.centerFloor();
-
-            if (Level.PointInSector(xy) == s && HDCore.SpawnStuff(replacement.getClassName(), pos)) count++;
-        }
-
-        HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_DEBUG, "Spawned "..count.." out of "..max.." dummy actors.\n\t\tSector @"..s.centerspot.." area/radius is "..area.."/"..radius..".");
+        HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_DEBUG, "Spawned '"..replacement.getClassName().."' @ "..data.pos);
     }
 }

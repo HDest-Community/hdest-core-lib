@@ -11,6 +11,7 @@ OptionMenu "HDCoreLibMenu" {
 	StaticText ""
 
 	Slider "$HDC_PRESPAWN_THRESHOLD", "hdc_prespawn_threshold", 1, 1050, 1, 0
+	Slider "$HDC_SECTOR_SPAWNER_SAMPLE_RATE", "hdc_sector_spawner_sampleRate", 0.5, 10, 0.1, 1
 	StaticText ""
 	StaticText ""
 
