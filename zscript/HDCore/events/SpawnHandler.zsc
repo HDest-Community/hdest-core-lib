@@ -369,7 +369,7 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
         let defaults = getDefaultByType(e.replacement);
         if (!defaults) return;
 
-        // If we're on MAP07 and the replacement is flagged as a Mancubus, return that class.
+        // If we're on the relevant boss maps and the replacement is flagged appropriately, return that class.
         name mapName = Level.MapName;
         switch (mapName) {
             case 'E1M8':
@@ -380,6 +380,9 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
                 break;
             case 'E3M8':
                 if (defaults.bE3M8BOSS) e.replacee = 'SpiderMastermind';
+                break;
+            case 'E4M6':
+                if (defaults.bE4M6BOSS) e.replacee = 'Cyberdemon';
                 break;
             case 'E4M8':
                 if (defaults.bE4M8BOSS) e.replacee = 'SpiderMastermind';
