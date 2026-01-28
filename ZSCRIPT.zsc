@@ -8,10 +8,11 @@ version "4.14"
 #include "zscript/libs/HDAceCoreLib/include.zsc"
 
 // Base Classes
-#include "zscript/HDCore/data/providers/base/DataProvider.zsc"
-#include "zscript/HDCore/data/providers/base/FunctionProvider.zsc"
-#include "zscript/HDCore/events/base/BaseEventHandler.zsc"
-#include "zscript/HDCore/events/base/BaseStaticEventHandler.zsc"
+#include "zscript/HDCore/base/data/providers/DataProvider.zsc"
+#include "zscript/HDCore/base/data/providers/FunctionProvider.zsc"
+#include "zscript/HDCore/base/events/BaseEventHandler.zsc"
+#include "zscript/HDCore/base/events/BaseStaticEventHandler.zsc"
+#include "zscript/HDCore/base/weapons/BaseMeleeWeapon.zsc"
 
 // Data Providers
 #include "zscript/HDCore/data/providers/StaticProvider.zsc"
