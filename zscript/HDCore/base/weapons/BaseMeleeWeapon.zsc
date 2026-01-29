@@ -165,9 +165,9 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         Spawn("Telefog", pos);
     }
 
-    virtual protected void doWeaponPuff(double dist) {
+    virtual protected void doWeaponPuff(int aOff, double dist, int pOff) {
         owner.lineAttack(
-            owner.angle, dist, owner.pitch,
+            owner.angle + aOff, dist, owner.pitch + pOff,
             0,
             "none",
             getWeaponPuff(),
@@ -249,7 +249,7 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
 
 
         // actual puff effect if the shot connects
-        if (shouldDoWeaponPuff(flags)) doWeaponPuff(range);
+        if (shouldDoWeaponPuff(flags)) doWeaponPuff(angleOff, range, pitchOff);
 
         // Determine camera swing momentum bonus
         double ptch = hdp ? deltaAngle(hdp.lastpitch, hdp.pitch) * getWeaponSwingVertBonus() : 0.0;
