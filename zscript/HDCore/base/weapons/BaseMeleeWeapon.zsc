@@ -22,9 +22,9 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         +FORCEPAIN
         -NOINTERACTION
 
-		+FORCEXYBILLBOARD
-		+ROLLSPRITE
-		+ROLLCENTER
+        +FORCEXYBILLBOARD
+        +ROLLSPRITE
+        +ROLLCENTER
     }
     
     override bool AddSpareWeapon(Actor newOwner) {
@@ -53,23 +53,23 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         if (walldamagemeter > 0) sb.drawwepnum(wallDamageMeter, 100, posy: -9);
     }
 
-	action void A_Lunge(double dist, int fatigueLimit = HDCONST_SPRINTFATIGUE, int stunLimit = 0, double strengthLimit = 0.9, int fatigueIncr = 1, StateLabel abortState = "nope") {
-		HDPlayerPawn hdp = HDPlayerPawn(self);
-		if (hdp) {
-			if (
+    action void A_Lunge(double dist, int fatigueLimit = HDCONST_SPRINTFATIGUE, int stunLimit = 0, double strengthLimit = 0.9, int fatigueIncr = 1, StateLabel abortState = "nope") {
+        HDPlayerPawn hdp = HDPlayerPawn(self);
+        if (hdp) {
+            if (
                 hdp.fatigue >= fatigueLimit
                 || hdp.stunned > stunLimit
                 || hdp.strength < strengthLimit
                 || (!player.onGround && checkmove(pos.xy - (cos(angle), sin(angle)) * 4))
             ) {
-				setWeaponState(abortState);
-				return;
-			}
+                setWeaponState(abortState);
+                return;
+            }
             
             hdp.fatigue += fatigueIncr;
-			A_Recoil(-abs(dist));
-		}
-	}
+            A_Recoil(-abs(dist));
+        }
+    }
 
     action void A_MeleeWeaponAttack(int dmg = -1, name dmgType = 'None', double aOff = 0.0, int range = -1, double pOff = 0.0, int flags = 0) {
         if (dmg < 0) dmg = invoker.getWeaponDamage();
