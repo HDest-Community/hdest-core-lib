@@ -1,17 +1,29 @@
 enum BaseMeleeWepNums {
+
+    // Checks whether hitting a textureless pit wall teleports you at the top
     HDCMW_BREAK_FOURTH_WALL = 1,
+
+    // Checks whether hitting an actor in the head deals extra damage/effects
     HDCMW_DO_HEADSHOT       = 2,
+
+    // Checks whether to spawn a puff where the hit connects
     HDCMW_DO_PUFF           = 4,
+
+    // Checks whether to deal sector damage or not
     HDCMW_DO_WALLBUST       = 8,
+
+    // Checks whether to deal extra damage to window panes
     HDCMW_DO_WINDOWBUST     = 16,
+
+    // Checks whether to alter the hit actor's facing angle/pitch
     HDCMW_RECOIL_ATTACKEE   = 32,
+
+    // Checks whether hitting actors will apply buffs
     HDCMW_ZERK_BUFF         = 64
 }
 
 class HDCoreBaseMeleeWeapon : HDFist abstract {
     
-    int wallDamageMeter;
-
     default {
         -Inventory.UNTOSSABLE
         -Weapon.CHEATNOTWEAPON
@@ -50,7 +62,6 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
     override void DrawHUDStuff(HDStatusBar sb,HDWeapon hdw,HDPlayerPawn hpl){
         let ww = HDCoreBaseMeleeWeapon(hdw);
         if (ww.targethealth) sb.drawwepnum(ww.targethealth, ww.targetSpawnHealth);
-        if (walldamagemeter > 0) sb.drawwepnum(wallDamageMeter, 100, posy: -9);
     }
 
     action void A_Lunge(double dist, int fatigueLimit = HDCONST_SPRINTFATIGUE, int stunLimit = 0, double strengthLimit = 0.9, int fatigueIncr = 1, StateLabel abortState = "nope") {
@@ -60,7 +71,7 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
                 hdp.fatigue >= fatigueLimit
                 || hdp.stunned > stunLimit
                 || hdp.strength < strengthLimit
-                || (!player.onGround && checkmove(pos.xy - (cos(angle), sin(angle)) * 4))
+                || !(player.onGround && checkMove(pos.xy - angleToVector(angle, abs(dist)), PCM_DROPOFF|PCM_NOACTORS))
             ) {
                 setWeaponState(abortState);
                 return;
@@ -134,12 +145,16 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         return 1.0;
     }
 
+    virtual protected double getWeaponSwingDominantBonus() {
+        return 1.6;
+    }
+
     virtual protected double getWeaponSwingDamageBonus(double deltaAngle, double deltaPitch) {
         let iy = max(abs(deltaAngle), abs(deltaPitch));
 
         // stronger hook from dominant hand
         // TODO: allow passing in flags for left-hand vs right-hand instead of checking id Doom
-        if (getWeaponDominantSwing(deltaAngle, getWeaponLeftHanded())) iy *= 1.6;
+        if (getWeaponDominantSwing(deltaAngle, getWeaponLeftHanded())) iy *= getWeaponSwingDominantBonus();
 
         return abs(iy);
     }
@@ -152,17 +167,25 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         return (strength > 1.5) ? "BulletPuffMedium" : "BulletPuffSmall";
     }
 
+    virtual protected double getWeaponWallBustWidth(double dmg) {
+        return dmg * 1.1;
+    }
+
+    virtual protected double getWeaponWallBustDepth(double dmg) {
+        return dmg * 0.4;
+    }
+
     virtual protected void doFourthWallEscape() {
 
         // TODO: Localize
-        A_Log("PIT DETECTED. FOURTH WALL ALREADY BROKEN. INITIAING EMERGENCY TRANSFER.", true);
+        owner.A_Log("PIT DETECTED. FOURTH WALL ALREADY BROKEN. INITIAING EMERGENCY TRANSFER.", true);
 
-        Spawn("Telefog", pos);
+        Spawn("Telefog", owner.pos);
 
-        setz(ceilingZ - height - 5);
-        A_ChangeVelocity(2, 0, 2, CVF_RELATIVE);
+        owner.setZ(owner.ceilingZ - owner.height - 5);
+        owner.A_ChangeVelocity(2, 0, 2, CVF_RELATIVE);
 
-        Spawn("Telefog", pos);
+        Spawn("Telefog", owner.pos);
     }
 
     virtual protected void doWeaponPuff(int aOff, double dist, int pOff) {
@@ -178,14 +201,18 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
 
     virtual protected void doWeaponAttack(Actor attackee, int dmg, name dmgType) {
         attackee.damageMobj(owner, owner, dmg, dmgType);
+
+        targetHealth      = max(0, attackee.health);
+        targetSpawnHealth = attackee.spawnHealth();
+        targetTimer       = 0;
     
-            if (HDCore.shouldLog('HDCore.BaseMeleeWeapon', LOGGING_DEBUG)) {
-                name attackeeName = attackee.player
-                    ? attackee.player.getUserName()..""
-                    : attackee.getClassName().."";
-    
-                HDCore.log('HDCore.BaseMeleeWeapon', LOGGING_DEBUG, "Hit "..attackeeName.." for "..dmg.." damage!");
-            }
+        if (HDCore.shouldLog('HDCore.BaseMeleeWeapon', LOGGING_DEBUG)) {
+            name attackeeName = attackee.player
+                ? attackee.player.getUserName()..""
+                : attackee.getClassName().."";
+
+            HDCore.log('HDCore.BaseMeleeWeapon', LOGGING_DEBUG, "Hit "..attackeeName.." for "..dmg.." damage!");
+        }
     }
 
     virtual protected void doHeadShot(Actor attackee, int dmg) {
@@ -204,20 +231,25 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
 
     virtual protected void doWallBust(double dist, double dmg) {
 
-        bool didIt;
-        double didWhat;
+        bool busted;
+        double damageLeft;
 
-        [didIt, didWhat] = DoorDestroyer.destroyDoor(
+        [busted, damageLeft] = DoorDestroyer.destroyDoor(
             owner,
-            dmg * 1.1,
-            dmg * 0.4,
+            getWeaponWallBustWidth(dmg),
+            getWeaponWallBustDepth(dmg),
             dist,
             getWeaponAttackHeight()
         );
 
-        wallDamageMeter = !(didIt || !didWhat)
-            ? int(clamp(1 - didWhat, 0, 1) * 100)
+        targetHealth = !(busted || !damageLeft)
+            ? int(clamp(1 - damageLeft, 0, 1) * 100)
             : 0;
+        targetSpawnHealth = 100;
+
+        if (HDCore.shouldLog('HDCore.BaseMeleeWeapon', LOGGING_DEBUG)) {
+            HDCore.log('HDCore.BaseMeleeWeapon', LOGGING_DEBUG, "Hit wall for "..dmg.." damage. "..(busted ? "BUSTED!" : (targetHealth ? targetHealth.."% left." : "UNBUSTABLE!")));
+        }
     }
 
     virtual protected void doWindowBust(FLineTraceData atkLine, double dmg) {
@@ -228,13 +260,29 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         attackee.A_StartSound("misc/bulletflesh", CHAN_BODY);
     }
 
+    virtual protected void doZerkBuff(Actor attackee, bool wasAlive, bool isAlive) {
+        if (wasAlive && !isAlive) {
+            A_StartSound("weapons/zerkding2", CHAN_WEAPON, CHANF_OVERLAP|CHANF_LOCAL);
+            givebody(10);
+
+            // TODO: Localize
+            let hdp = HDPlayerPawn(owner);
+            if (hdp) {
+                hdp.fatigue -= hdp.fatigue >> 2;
+                hdp.usegametip("\cfK I L L !");
+            }
+        } else {
+            A_StartSound("weapons/zerkding", CHAN_WEAPON, CHANF_OVERLAP|CHANF_LOCAL);
+        }
+    }
+
     protected void meleeWeaponAttack(double dmg, name dmgType = 'melee', int angleOff = 0, double range = 48.0, int pitchOff = 0, int flags = 0) {
 
         let hdp = HDPlayerPawn(owner);
         if (hdp) range *= hdp.heightMult;
 
-        // Reset Wall Damage for new attack
-        wallDamageMeter = 0;
+        // Reset HUD Counters for new attack
+        targetHealth = 0;
 
         FLineTraceData atkLine;
         if (!owner.linetrace(
@@ -257,55 +305,60 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         
         // Run Damage Modifications
         dmg = calculateAttackDamage(dmg, atkLine, pyaw, ptch, flags);
-        
-        Actor attackee = atkLine.hitActor;
-        if (attackee) {
 
-            // other effects
-            if (shouldDoHitRecoil(atkLine, attackee, flags)) doWeaponHitRecoil(attackee, pyaw, ptch);
-            
-            // headshot lol
-            // TODO: Refactor into instance method?
-            if (shouldDoHeadShot(atkLine, flags)) doHeadShot(attackee, dmg);
-    
-            bool attackeeWasAlive = !HDMath.IsDead(attackee);
-    
-            // hit sound
-            if (shouldDoAttackSound(attackee, dmg)) doAttackSound(attackee);
-    
-            // Deal Damage
-            doWeaponAttack(attackee, dmg, dmgType);
-    
-            targetHealth      = max(0, attackee.health);
-            targetSpawnHealth = attackee.spawnHealth();
-            targetTimer       = 0;
+        switch (atkLine.hitType) {
+            case TRACE_HitFloor:
+                HDCore.log('HDCore.BaseMeleeWeapon', LOGGING_DEBUG, "Melee Attack Hit Floor.");
 
-            if (shouldDoZerkBuff(attackee, flags)) {
-                if (attackeeWasAlive && HDMath.IsDead(attackee)) {
-                    A_StartSound("weapons/zerkding2", CHAN_WEAPON, CHANF_OVERLAP|CHANF_LOCAL);
-                    givebody(10);
+                HDF.Give(owner, "WallChunkAmmo", 1);
 
-                    // TODO: Localize
-                    if (hdp) {
-                        hdp.fatigue -= hdp.fatigue >> 2;
-                        hdp.usegametip("\cfK I L L !");
-                    }
-                } else {
-                    A_StartSound("weapons/zerkding", CHAN_WEAPON, CHANF_OVERLAP|CHANF_LOCAL);
-                }
-            }
-        } else {
+                if (shouldDoWallBust(flags)) doWallBust(range, dmg);
 
-            // Attack missed an Actor,
-            // reset tracked health & check for sector damage
-            targetHealth = 0;
+                break;
+            case TRACE_HitCeiling:
+                HDCore.log('HDCore.BaseMeleeWeapon', LOGGING_DEBUG, "Melee Attack Hit Ceiling.");
 
-            HDF.Give(owner, "WallChunkAmmo", 1);
+                HDF.Give(owner, "WallChunkAmmo", 1);
 
-            if (atkLine.hitLine) {
+                if (shouldDoWallBust(flags)) doWallBust(range, dmg);
+
+                break;
+            case TRACE_HitWall:
+                HDCore.log('HDCore.BaseMeleeWeapon', LOGGING_DEBUG, "Melee Attack Hit Wall.");
+
+                HDF.Give(owner, "WallChunkAmmo", 1);
+
                 if (shouldDoWallBust(flags)) doWallBust(range, dmg);
                 if (shouldDoWindowBust(flags)) doWindowBust(atkLine, dmg);
-            }
+
+                break;
+            case TRACE_HitActor:
+                HDCore.log('HDCore.BaseMeleeWeapon', LOGGING_DEBUG, "Melee Attack Hit '"..atkLine.hitActor.getClassName().."'");
+
+                // other effects
+                if (shouldDoHitRecoil(atkLine, flags)) doWeaponHitRecoil(atkLine.hitActor, pyaw, ptch);
+                
+                // headshot lol
+                if (shouldDoHeadShot(atkLine, flags)) doHeadShot(atkLine.hitActor, dmg);
+        
+                bool wasAlive = !HDMath.IsDead(atkLine.hitActor);
+        
+                // hit sound
+                if (shouldDoAttackSound(atkLine, dmg)) doAttackSound(atkLine.hitActor);
+        
+                // Deal Damage
+                doWeaponAttack(atkLine.hitActor, dmg, dmgType);
+
+                // Perform Berserk Buffs
+                if (shouldDoZerkBuff(atkLine, flags)) doZerkBuff(atkLine.hitActor, wasAlive, !HDMath.IsDead(atkLine.hitActor));
+
+                break;
+            case TRACE_CrossingPortal:
+            case TRACE_HasHitSky:
+            case TRACE_HitNone:
+            default:
+                HDCore.log('HDCore.BaseMeleeWeapon', LOGGING_DEBUG, "Melee Attack Missed!");
+                break;
         }
     }
 
@@ -335,35 +388,37 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         return dmg;
     }
 
-    virtual protected bool shouldDoAttackSound(Actor attackee, int dmg) {
-        return dmg * 2 > attackee.health;
+    virtual protected bool shouldDoAttackSound(FLineTraceData atkLine, int dmg) {
+        return atkLine.hitType == TRACE_HitActor
+            && dmg * 2 > atkLine.hitActor.health;
     }
 
     virtual protected bool shouldDoFourthWallEscape(FLineTraceData atkLine, int flags) {
         return flags&HDCMW_BREAK_FOURTH_WALL
-            && !!atkLine.hitLine
+            && atkLine.hitType == TRACE_HitWall
             && atkLine.linePart != 1
             && !atkLine.hitLine.sideDef[atkLine.lineSide].getTexture(atkLine.linePart);
     }
 
     virtual protected bool shouldDoHeadShot(FLineTraceData atkLine, int flags) {
         return flags&HDCMW_DO_HEADSHOT
-            && atkLine.hitActor
+            && atkLine.hitType == TRACE_HitActor
             && !atkLine.hitActor.bNOPAIN
             && atkLine.hitActor.health > 0
             && !(HDMobBase(atkLine.hitActor) && HDMobBase(atkLine.hitActor).bHEADLESS)
             && atkLine.hitLocation.z > (atkLine.hitActor.pos.z + atkLine.hitActor.height * 0.75);
     }
 
-    virtual protected bool shouldDoHitRecoil(FLineTraceData atkLine, Actor attackee, int flags) {
+    virtual protected bool shouldDoHitRecoil(FLineTraceData atkLine, int flags) {
         return flags&HDCMW_RECOIL_ATTACKEE
+            && atkLine.hitType == TRACE_HitActor
             && owner
-            && !attackee.bDONTTHRUST
+            && !atkLine.hitActor.bDONTTHRUST
             && (
-                attackee.mass < 200
+                atkLine.hitActor.mass < 2 * owner.mass
                 || (
-                    attackee.radius * 2 < attackee.height
-                    && atkLine.hitLocation.z > (attackee.pos.z + attackee.height * 0.6)
+                    atkLine.hitActor.radius * 2 < atkLine.hitActor.height
+                    && atkLine.hitLocation.z > (atkLine.hitActor.pos.z + atkLine.hitActor.height * 0.6)
                 )
             );
     }
@@ -380,10 +435,11 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         return flags&HDCMW_DO_WINDOWBUST;
     }
 
-    virtual protected bool shouldDoZerkBuff(Actor attackee, int flags) {
+    virtual protected bool shouldDoZerkBuff(FLineTraceData atkLine, int flags) {
         return flags&HDCMW_ZERK_BUFF
             && zerk
-            && (attackee.bISMONSTER || !!attackee.player);
+            && atkLine.hitType == TRACE_HitActor
+            && (atkLine.hitActor.bISMONSTER || atkLine.hitActor.player);
     }
 
     states {}
