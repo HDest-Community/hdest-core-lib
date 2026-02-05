@@ -19,24 +19,71 @@ enum BaseMeleeWepNums {
     HDCMW_RECOIL_ATTACKEE   = 32,
 
     // Checks whether hitting actors will apply buffs
-    HDCMW_ZERK_BUFF         = 64
+    HDCMW_ZERK_BUFF         = 64,
+
+    // SWING MODE VALUES
+    // ----------------
+    HDCMW_ATTACK_THRUST     = 0,
+    HDCMW_ATTACK_LEFT       = 1,
+    HDCMW_ATTACK_RIGHT      = 2,
+    HDCMW_ATTACK_UP         = 3,
+    HDCMW_ATTACK_DOWN       = 4
 }
 
 class HDCoreBaseMeleeWeapon : HDFist abstract {
-    
+
+    // Default Attack Angle/Pitch Offsets
+    double angleOffset; property aOff: angleOffset;
+    double pitchOffset; property pOff: pitchOffset;
+
+    // Default Puff Actor Class Name
+    // name puffType; property puff: puffType;
+
+    // Default Swing Momentum Multipliers
+    double swingHorzMult; property swingHMult: swingHorzMult;
+    double swingVertMult; property swingVMult: swingVertMult;
+
+    // Default "Dominant Hand Swing" Damage Bonus
+    double swingDmgBonus; property swingDmgMult: swingDmgBonus;
+
+    // Default Corpse Damage Bonus
+    double corpseDmgBonus; property corpseDmgMult: corpseDmgBonus;
+
+    // Default Attack Flags
+    int attackFlags; property attackFlags: attackFlags;
+
+    protected int _swingMode;
+
     default {
+
+        // Override Fist Vanilla Flags
+        -NOINTERACTION
         -Inventory.UNTOSSABLE
         -Weapon.CHEATNOTWEAPON
 
+        // Override Fist HDest Flags
         -HDWeapon.DONTDISARM
         +HDWeapon.FITSINBACKPACK
 
+        // Default Flags
         +FORCEPAIN
-        -NOINTERACTION
 
         +FORCEXYBILLBOARD
         +ROLLSPRITE
         +ROLLCENTER
+
+        // Default Properties
+        damage                              0;
+        damageType                          'melee';
+        meleeRange                          48.0;
+        HDCoreBaseMeleeWeapon.aOff          0.0;
+        HDCoreBaseMeleeWeapon.pOff          0.0;
+        HDCoreBaseMeleeWeapon.swingHMult    1.0;
+        HDCoreBaseMeleeWeapon.swingVMult    1.0;
+        HDCoreBaseMeleeWeapon.swingDmgMult  1.6;
+        HDCoreBaseMeleeWeapon.corpseDmgMult 1.0;
+        HDCoreBaseMeleeWeapon.attackFlags   HDCMW_DO_HEADSHOT|HDCMW_DO_PUFF|HDCMW_DO_WALLBUST|HDCMW_DO_WINDOWBUST|HDCMW_RECOIL_ATTACKEE|HDCMW_ZERK_BUFF;
+        // HDCoreBaseMeleeWeapon.puff    '';
     }
     
     override bool AddSpareWeapon(Actor newOwner) {
@@ -59,9 +106,22 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         }
     }
 
-    override void DrawHUDStuff(HDStatusBar sb,HDWeapon hdw,HDPlayerPawn hpl){
+    override void DrawHUDStuff(HDStatusBar sb, HDWeapon hdw, HDPlayerPawn hpl){
         let ww = HDCoreBaseMeleeWeapon(hdw);
         if (ww.targethealth) sb.drawwepnum(ww.targethealth, ww.targetSpawnHealth);
+
+        if (hd_debug) {
+            sb.drawString(sb.pNewSmallFont,
+                String.format("Angle: %.2f", hpl.player.cmd.yaw / 360.0),
+                (0, -24),
+                sb.DI_SCREEN_CENTER_BOTTOM|sb.DI_TEXT_ALIGN_CENTER
+            );
+            sb.drawString(sb.pNewSmallFont,
+                String.format("Pitch: %.2f", hpl.player.cmd.pitch / 360.0),
+                (0, -48),
+                sb.DI_SCREEN_CENTER_BOTTOM|sb.DI_TEXT_ALIGN_CENTER
+            );
+        }
     }
 
     action void A_Lunge(double dist, int fatigueLimit = HDCONST_SPRINTFATIGUE, int stunLimit = 0, double strengthLimit = 0.9, int fatigueIncr = 1, StateLabel abortState = "nope") {
@@ -82,19 +142,20 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         }
     }
 
-    action void A_MeleeWeaponAttack(int dmg = -1, name dmgType = 'None', double aOff = 0.0, int range = -1, double pOff = 0.0, int flags = 0) {
+    action void A_MeleeWeaponAttack(int swingMode = HDCMW_ATTACK_DOWN, int dmg = -1, name dmgType = 'None', double aOff = 0.0, int range = -1, double pOff = 0.0, name puffType = 'None', int flags = 0) {
         if (dmg < 0) dmg = invoker.getWeaponDamage();
         if (dmgType == 'None') dmgType = invoker.getWeaponDamageType();
         if (!aOff) aOff = invoker.getWeaponAttackAngleOffset();
         if (range < 0) range = invoker.getWeaponRange();
         if (!pOff) pOff = invoker.getWeaponAttackPitchOffset();
+        if (puffType == 'None') puffType = invoker.getWeaponPuff();
         if (!flags) flags = invoker.getWeaponAttackFlags();
 
-        invoker.meleeWeaponAttack(dmg, dmgType, aOff, range, pOff, flags);
+        invoker.meleeWeaponAttack(swingMode, dmg, dmgType, aOff, range, pOff, puffType, flags);
     }
 
     virtual protected double getWeaponAttackFlags() {
-        return HDCMW_DO_HEADSHOT|HDCMW_DO_PUFF|HDCMW_DO_WALLBUST|HDCMW_DO_WINDOWBUST|HDCMW_RECOIL_ATTACKEE|HDCMW_ZERK_BUFF;
+        return attackFlags;
     }
 
     virtual protected double getWeaponAttackHeight() {
@@ -102,23 +163,23 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
     }
 
     virtual protected double getWeaponDamage() {
-        return 0.0;
+        return damage;
     }
 
     virtual protected name getWeaponDamageType() {
-        return 'melee';
+        return damageType;
     }
 
     virtual protected double getWeaponAttackAngleOffset() {
-        return 0.0;
+        return angleOffset;
     }
 
     virtual protected double getWeaponRange() {
-        return 48.0;
+        return meleeRange;
     }
 
     virtual protected double getWeaponAttackPitchOffset() {
-        return 0.0;
+        return pitchOffset;
     }
 
     virtual protected double getWeaponHeadShotDamageBonus() {
@@ -133,20 +194,33 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         return HDMath.PlayingId();
     }
 
-    virtual protected bool getWeaponDominantSwing(double rotation, bool leftHanded) {
-        return leftHanded ? rotation < 0 : rotation > 0;
+    virtual protected bool getWeaponDominantSwing(double deltaAngle, double deltaPitch) {
+        switch (_swingMode) {
+            case HDCMW_ATTACK_LEFT:
+                return getWeaponLeftHanded() && deltaAngle > 0 && abs(deltaAngle) > abs(deltaPitch);
+            case HDCMW_ATTACK_RIGHT:
+                return !getWeaponLeftHanded() && deltaAngle < 0 && abs(deltaAngle) > abs(deltaPitch);
+            case HDCMW_ATTACK_UP:
+                return deltaPitch > 0 && abs(deltaPitch) > abs(deltaAngle);
+            case HDCMW_ATTACK_DOWN:
+                return deltaPitch < 0 && abs(deltaPitch) > abs(deltaAngle);
+            case HDCMW_ATTACK_THRUST:
+                return !(deltaAngle || deltaPitch);
+            default:
+                return false;
+        }
     }
 
     virtual protected double getWeaponSwingHorzBonus() {
-        return 1.0;
+        return swingHorzMult;
     }
 
     virtual protected double getWeaponSwingVertBonus() {
-        return 1.0;
+        return swingVertMult;
     }
 
     virtual protected double getWeaponSwingDominantBonus() {
-        return 1.6;
+        return swingDmgBonus;
     }
 
     virtual protected double getWeaponSwingDamageBonus(double deltaAngle, double deltaPitch) {
@@ -154,13 +228,13 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
 
         // stronger hook from dominant hand
         // TODO: allow passing in flags for left-hand vs right-hand instead of checking id Doom
-        if (getWeaponDominantSwing(deltaAngle, getWeaponLeftHanded())) iy *= getWeaponSwingDominantBonus();
+        if (getWeaponDominantSwing(deltaAngle, deltaPitch)) iy *= getWeaponSwingDominantBonus();
 
         return abs(iy);
     }
 
     virtual protected double getWeaponCorpseDamageBonus() {
-        return 1.0;
+        return corpseDmgBonus;
     }
 
     virtual protected string getWeaponPuff() {
@@ -188,12 +262,12 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         Spawn("Telefog", owner.pos);
     }
 
-    virtual protected void doWeaponPuff(int aOff, double dist, int pOff) {
+    virtual protected void doWeaponPuff(name puffType, int aOff, double dist, int pOff) {
         owner.lineAttack(
             owner.angle + aOff, dist, owner.pitch + pOff,
             0,
             "none",
-            getWeaponPuff(),
+            puffType,
             flags: LAF_NORANDOMPUFFZ|LAF_OVERRIDEZ,
             offsetz: getWeaponAttackHeight()
         );
@@ -226,7 +300,7 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
 
     virtual protected void doWeaponHitRecoil(Actor attackee, double deltaAngle, double deltaPitch) {
         if (abs(deltaAngle) > 0.5) attackee.A_SetAngle(clamp(normalize180(attackee.angle - deltaAngle * 100), -50, 50), SPF_INTERPOLATE);
-        if (abs(deltaPitch) > (0.5 * 65535 / 360)) attackee.A_SetPitch(clamp((attackee.angle + deltaPitch * 100) % 90, -30, 30), SPF_INTERPOLATE);
+        if (abs(deltaPitch) > 0.5) attackee.A_SetPitch(clamp((attackee.angle + deltaPitch * 100) % 90, -30, 30), SPF_INTERPOLATE);
     }
 
     virtual protected void doWallBust(double dist, double dmg) {
@@ -276,7 +350,9 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         }
     }
 
-    protected void meleeWeaponAttack(double dmg, name dmgType = 'melee', int angleOff = 0, double range = 48.0, int pitchOff = 0, int flags = 0) {
+    protected void meleeWeaponAttack(int swingMode, double dmg, name dmgType = 'melee', int angleOff = 0, double range = 48.0, int pitchOff = 0, name puffType = 'None', int flags = 0) {
+
+        _swingMode = swingMode;
 
         let hdp = HDPlayerPawn(owner);
         if (hdp) range *= hdp.heightMult;
@@ -297,14 +373,14 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
 
 
         // actual puff effect if the shot connects
-        if (shouldDoWeaponPuff(flags)) doWeaponPuff(angleOff, range, pitchOff);
+        if (shouldDoWeaponPuff(flags)) doWeaponPuff(puffType, angleOff, range, pitchOff);
 
         // Determine camera swing momentum bonus
-        double ptch = hdp ? deltaAngle(hdp.lastpitch, hdp.pitch) * getWeaponSwingVertBonus() : 0.0;
-        double pyaw = hdp ? deltaAngle(hdp.lastangle, hdp.angle) * getWeaponSwingHorzBonus() : 0.0;
+        double dAngle = (hdp && hdp.player) ? ((hdp.player.cmd.yaw   / 360.0) * getWeaponSwingHorzBonus()) : 0.0;
+        double dPitch = (hdp && hdp.player) ? ((hdp.player.cmd.pitch / 360.0) * getWeaponSwingVertBonus()) : 0.0;
         
         // Run Damage Modifications
-        dmg = calculateAttackDamage(dmg, atkLine, pyaw, ptch, flags);
+        dmg = calculateAttackDamage(dmg, atkLine, dAngle, dPitch, flags);
 
         switch (atkLine.hitType) {
             case TRACE_HitFloor:
@@ -336,7 +412,7 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
                 HDCore.log('HDCore.BaseMeleeWeapon', LOGGING_DEBUG, "Melee Attack Hit '"..atkLine.hitActor.getClassName().."'");
 
                 // other effects
-                if (shouldDoHitRecoil(atkLine, flags)) doWeaponHitRecoil(atkLine.hitActor, pyaw, ptch);
+                if (shouldDoHitRecoil(atkLine, flags)) doWeaponHitRecoil(atkLine.hitActor, dAngle, dPitch);
                 
                 // headshot lol
                 if (shouldDoHeadShot(atkLine, flags)) doHeadShot(atkLine.hitActor, dmg);
