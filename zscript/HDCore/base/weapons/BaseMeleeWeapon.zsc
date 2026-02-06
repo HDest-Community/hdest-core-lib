@@ -23,11 +23,11 @@ enum BaseMeleeWepNums {
 
     // SWING MODE VALUES
     // ----------------
-    HDCMW_ATTACK_THRUST     = 0,
-    HDCMW_ATTACK_LEFT       = 1,
-    HDCMW_ATTACK_RIGHT      = 2,
-    HDCMW_ATTACK_UP         = 3,
-    HDCMW_ATTACK_DOWN       = 4
+    HDCMW_ATTACK_THRUST     = 1,
+    HDCMW_ATTACK_LEFT       = 2,
+    HDCMW_ATTACK_RIGHT      = 3,
+    HDCMW_ATTACK_UP         = 4,
+    HDCMW_ATTACK_DOWN       = 5
 }
 
 class HDCoreBaseMeleeWeapon : HDFist abstract {
