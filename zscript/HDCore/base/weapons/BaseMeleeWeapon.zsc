@@ -197,15 +197,15 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
     virtual protected bool getWeaponDominantSwing(double deltaAngle, double deltaPitch) {
         switch (_swingMode) {
             case HDCMW_ATTACK_LEFT:
-                return getWeaponLeftHanded() && deltaAngle > 0 && abs(deltaAngle) > abs(deltaPitch);
+                return deltaAngle > 0 && abs(deltaAngle) > abs(deltaPitch);
             case HDCMW_ATTACK_RIGHT:
-                return !getWeaponLeftHanded() && deltaAngle < 0 && abs(deltaAngle) > abs(deltaPitch);
+                return deltaAngle < 0 && abs(deltaAngle) > abs(deltaPitch);
             case HDCMW_ATTACK_UP:
                 return deltaPitch > 0 && abs(deltaPitch) > abs(deltaAngle);
             case HDCMW_ATTACK_DOWN:
                 return deltaPitch < 0 && abs(deltaPitch) > abs(deltaAngle);
             case HDCMW_ATTACK_THRUST:
-                return !(deltaAngle || deltaPitch);
+                return abs(deltaAngle + deltaPitch) * 0.5 < 5;
             default:
                 return false;
         }
