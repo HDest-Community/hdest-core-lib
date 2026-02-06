@@ -291,9 +291,9 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
 
     virtual protected void doHeadShot(Actor attackee, int dmg) {
         HDCore.log('HDCore.BaseMeleeWeapon', LOGGING_DEBUG, "HEAD SHOT");
-        
+
         HDMobBase.forcePain(attackee);
-        
+
         let hdmp = HDMobBase(attackee);
         if (hdmp) hdmp.stunned += getWeaponHeadShotStun(dmg);
     }
@@ -385,57 +385,74 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         switch (atkLine.hitType) {
             case TRACE_HitFloor:
                 HDCore.log('HDCore.BaseMeleeWeapon', LOGGING_DEBUG, "Melee Attack Hit Floor.");
-
-                HDF.Give(owner, "WallChunkAmmo", 1);
-
-                if (shouldDoWallBust(flags)) doWallBust(range, dmg);
-
+                onHitFloor(atkLine, dmg, dmgType, dAngle, range, dPitch, flags);
                 break;
             case TRACE_HitCeiling:
                 HDCore.log('HDCore.BaseMeleeWeapon', LOGGING_DEBUG, "Melee Attack Hit Ceiling.");
-
-                HDF.Give(owner, "WallChunkAmmo", 1);
-
-                if (shouldDoWallBust(flags)) doWallBust(range, dmg);
-
+                onHitCeiling(atkLine, dmg, dmgType, dAngle, range, dPitch, flags);
                 break;
             case TRACE_HitWall:
                 HDCore.log('HDCore.BaseMeleeWeapon', LOGGING_DEBUG, "Melee Attack Hit Wall.");
-
-                HDF.Give(owner, "WallChunkAmmo", 1);
-
-                if (shouldDoWallBust(flags)) doWallBust(range, dmg);
-                if (shouldDoWindowBust(flags)) doWindowBust(atkLine, dmg);
-
+                onHitWall(atkLine, dmg, dmgType, dAngle, range, dPitch, flags);
                 break;
             case TRACE_HitActor:
                 HDCore.log('HDCore.BaseMeleeWeapon', LOGGING_DEBUG, "Melee Attack Hit '"..atkLine.hitActor.getClassName().."'");
-
-                // other effects
-                if (shouldDoHitRecoil(atkLine, flags)) doWeaponHitRecoil(atkLine.hitActor, dAngle, dPitch);
-                
-                // headshot lol
-                if (shouldDoHeadShot(atkLine, flags)) doHeadShot(atkLine.hitActor, dmg);
-        
-                bool wasAlive = !HDMath.IsDead(atkLine.hitActor);
-        
-                // hit sound
-                if (shouldDoAttackSound(atkLine, dmg)) doAttackSound(atkLine.hitActor);
-        
-                // Deal Damage
-                doWeaponAttack(atkLine.hitActor, dmg, dmgType);
-
-                // Perform Berserk Buffs
-                if (shouldDoZerkBuff(atkLine, flags)) doZerkBuff(atkLine.hitActor, wasAlive, !HDMath.IsDead(atkLine.hitActor));
-
+                onHitActor(atkLine, dmg, dmgType, dAngle, range, dPitch, flags);
                 break;
             case TRACE_CrossingPortal:
             case TRACE_HasHitSky:
             case TRACE_HitNone:
             default:
                 HDCore.log('HDCore.BaseMeleeWeapon', LOGGING_DEBUG, "Melee Attack Missed!");
+                onHitNothing(atkLine, dmg, dmgType, dAngle, range, dPitch, flags);
                 break;
         }
+    }
+
+    virtual protected void onHitFloor(FLineTraceData atkLine, double dmg, name dmgType, double deltaAngle, double range, double deltaPitch, int flags) {
+
+        HDF.Give(owner, "WallChunkAmmo", 1);
+
+        if (shouldDoWallBust(flags)) doWallBust(range, dmg);
+    }
+
+    virtual protected void onHitCeiling(FLineTraceData atkLine, double dmg, name dmgType, double deltaAngle, double range, double deltaPitch, int flags) {
+
+        HDF.Give(owner, "WallChunkAmmo", 1);
+
+        if (shouldDoWallBust(flags)) doWallBust(range, dmg);
+    }
+
+    virtual protected void onHitWall(FLineTraceData atkLine, double dmg, name dmgType, double deltaAngle, double range, double deltaPitch, int flags) {
+
+        HDF.Give(owner, "WallChunkAmmo", 1);
+
+        if (shouldDoWallBust(flags)) doWallBust(range, dmg);
+        if (shouldDoWindowBust(flags)) doWindowBust(atkLine, dmg);
+    }
+
+    virtual protected void onHitActor(FLineTraceData atkLine, double dmg, name dmgType, double deltaAngle, double range, double deltaPitch, int flags) {
+
+        // other effects
+        if (shouldDoHitRecoil(atkLine, flags)) doWeaponHitRecoil(atkLine.hitActor, deltaAngle, deltaPitch);
+        
+        // headshot lol
+        if (shouldDoHeadShot(atkLine, flags)) doHeadShot(atkLine.hitActor, dmg);
+
+        bool wasAlive = !HDMath.IsDead(atkLine.hitActor);
+
+        // hit sound
+        if (shouldDoAttackSound(atkLine, dmg)) doAttackSound(atkLine.hitActor);
+
+        // Deal Damage
+        doWeaponAttack(atkLine.hitActor, dmg, dmgType);
+
+        // Perform Berserk Buffs
+        if (shouldDoZerkBuff(atkLine, flags)) doZerkBuff(atkLine.hitActor, wasAlive, !HDMath.IsDead(atkLine.hitActor));
+    }
+
+    virtual protected void onHitNothing(FLineTraceData atkLine, double dmg, name dmgType, double deltaAngle, double range, double deltaPitch, int flags) {
+        // no-op
     }
 
     virtual protected double calculateAttackDamage(double dmg, FLineTraceData atkLine, double deltaAngle, double deltaPitch, int flags) {
