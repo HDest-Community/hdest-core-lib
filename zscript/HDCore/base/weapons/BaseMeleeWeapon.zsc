@@ -124,7 +124,7 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         }
     }
 
-    action void A_Lunge(double dist, int fatigueLimit = HDCONST_SPRINTFATIGUE, int stunLimit = 0, double strengthLimit = 0.9, int fatigueIncr = 1, StateLabel abortState = "nope") {
+    action void A_Lunge(double dist, int fatigueLimit = HDCONST_SPRINTFATIGUE, int stunLimit = 0, double strengthLimit = 0.0, int fatigueIncr = 1, StateLabel abortState = "nope") {
         HDPlayerPawn hdp = HDPlayerPawn(self);
         if (hdp) {
             if (
