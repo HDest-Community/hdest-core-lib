@@ -126,11 +126,17 @@ extend class HDCore {
         params.sizeStep = 0;
         params.fadeStep = -1;
         params.texture = TexMan.checkForTexture("glstuff/glpart.png");
-        params.color1 = Color(beam.args[DynamicLight.LIGHT_RED], beam.args[DynamicLight.LIGHT_GREEN], beam.args[DynamicLight.LIGHT_BLUE]);
+        params.color1 = 0xFFFFFF;
 
         alpha *= (beam.args[DynamicLight.LIGHT_INTENSITY] / 256.0);
         let maxDist = min(flTrace.distance, beam.args[DynamicLight.LIGHT_INTENSITY] / 2.0);
         for (let f = max(Double.EPSILON, startOffset); f < maxDist; f *= offsetFactor) {
+
+            int rDiff = 255 - max(1, ((255 - beam.args[DynamicLight.LIGHT_RED]) * (f / maxDist)));
+            int gDiff = 255 - max(1,((255 - beam.args[DynamicLight.LIGHT_GREEN]) * (f / maxDist)));
+            int bDiff = 255 - max(1, ((255 - beam.args[DynamicLight.LIGHT_BLUE]) * (f / maxDist)));
+
+            params.color1 = Color(rDiff, gDiff, bDiff);
 
             params.pos = beam.pos + (pVec * f);
             
