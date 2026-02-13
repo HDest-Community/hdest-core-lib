@@ -1,0 +1,69 @@
+extend class HDCore {
+
+    /**
+     * Returns a new Color instance whose RGB values match the Planck's Law calculations for Color Temperature.
+     * @See https://www.desmos.com/calculator/nv4sjgiqjb
+     * @See https://codepen.io/blaketarter/pen/EjxRMX
+     */
+    static clearscope Color plancksLaw(int K) {
+        double x, y, z;
+        
+        [x, y, z] = tToXyy(K);
+        [x, y, z] = xyYToXyz(x, y, z);
+        [x, y, z] = xyzToRgb(x, y, z);
+
+        let color = Color(int(round(x * 255)), int(round(y * 255)), int(round(z * 255)));
+        HDCore.log('HDCoreLib', LOGGING_DEBUG, "plancksLaw("..K..") => "..color);
+
+        return color;
+    }
+
+    static clearscope double,double,double tToXyy(int K) {
+        double x = 0.0, y = 0.0;
+
+        // approximation of CIE xyY (http://www.wikiwand.com/en/CIE_1931_color_space) using https://en.wikipedia.org/wiki/Planckian_locus 
+        if (K >= 1667 && K <= 4000) {
+            x = (-0.2661239 * ((10 ** 9) / (K ** 3))) - (-0.2343580 * ((10 ** 6) / (K ** 2))) + (0.8776956 * ((10 ** 3) / K)) + 0.179910;
+        } else if (K >= 4000 && K <= 25000) {
+            x = (-3.0258469 * ((10 ** 9) / (K ** 3))) + (2.1070379 * ((10 ** 6) / (K ** 2))) + (0.2226347 * ((10 ** 3) / K)) + 0.240390;
+        }
+
+        if (K >= 1667 && K <= 2222) {
+            y = (-1.1063814 * (x ** 3)) - (1.34811020 * (x ** 2)) + (2.18555832 * x) - 0.20219683;
+        } else if (K >= 2222 && K <= 4000) {
+            y = (-0.9549476 * (x ** 3)) - (1.37418593 * (x ** 2)) + (2.09137015 * x) - 0.16748867;
+        } else if (K >= 4000 && K <= 25000) {
+            y = (3.0817580 * (x ** 3)) - (5.87338670 * (x ** 2)) + (3.75112997 * x) - 0.37001483;
+        }
+
+        HDCore.log('HDCoreLib', LOGGING_DEBUG, "tToXyy("..K..") => "..x..", "..y..", "..1.0);
+        
+        return x, y, 1.0;
+    }
+
+    // xyY Color space to XYZ, prepping for conversion to linear RGB
+    static clearscope double,double,double xyYToXyz(double x, double y, double l) {
+
+        let xx = ((y == 0) ? 0 : (x * l) / y);
+        let yy = l;
+        let zz = ((y == 0) ? 0 : ((1 - x - y) * l) / y);
+        
+        HDCore.log('HDCoreLib', LOGGING_DEBUG, "xyYToXyz("..x..", "..y..", "..l..") => "..xx..", "..yy..", "..zz);
+
+        // X and Z tristimulus values calculated using https://en.wikipedia.org/wiki/CIE_1931_color_space?oldformat=true#CIE_xy_chromaticity_diagram_and_the_CIE_xyY_color_space
+        return xx, yy, zz;
+    }
+
+    //XYZ color space to linear RGB, finally a format I recognize
+    static clearscope double,double,double xyzToRgb(double x, double y, double z) {
+
+        // using matrix from https://www.cs.rit.edu/~ncs/color/t_convert.html#RGB%20to%20XYZ%20&%20XYZ%20to%20RGB
+        let r = clamp((3.2406 * x) + (-1.5372 * y) + (-0.4986 * z), 0.0, 1.0);
+        let g = clamp((-0.9689 * x) + (1.8758 * y) + (0.0415 * z), 0.0, 1.0);
+        let b = clamp((0.0557 * x) + (-0.2040 * y) + (1.0570 * z), 0.0, 1.0);
+        
+        HDCore.log('HDCoreLib', LOGGING_DEBUG, "xyzToRgb("..x..", "..y..", "..z..") => "..r..", "..g..", "..b);
+        
+        return r, g, b;
+    }
+}
