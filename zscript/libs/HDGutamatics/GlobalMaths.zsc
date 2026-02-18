@@ -18,12 +18,12 @@ class HDGMGlobalMaths {
 	
 	/// Remaps a value in a range to another range.
 	static double remapRange(double value, double range1L, double range1H, double range2L, double range2H) {
-		return range2L + (value - range1L) * (range2H - range1H) / (range1H - range1L);
+		return range2L + (value - range1L) * ((range2H - range2L) / (range1H - range1L));
 	}
 	
 	/// Remaps a value in a range to another range.
 	static int remapRangeInt(int value, int range1L, int range1H, int range2L, int range2H) {
-		return int(range2L + (value - range1L) * (range2H - range1H) / double(range1H - range1L));
+		return int(range2L + (value - range1L) * ((range2H - range2L) / double(range1H - range1L)));
 	}
 
 	/// Returns if two values are close enough to be considered equal.
