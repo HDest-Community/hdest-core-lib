@@ -178,6 +178,76 @@ class HDCoreFunctionProvider_Modulus : HDCoreFunctionProvider {
     }
 }
 
+class HDCoreFunctionProvider_Exponent : HDCoreFunctionProvider {
+
+    override string getStringValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringValue() => \"\"");
+        return "";
+    }
+
+    override name getNameValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getNameValue() => ''");
+        return '';
+    }
+
+    override int getIntValue() {
+        let a = getIntParam("valueA");
+        let b = getIntParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => "..a.." ** "..b.." => "..(a ** b));
+
+        return a ** b;
+    }
+
+    override double getDoubleValue() {
+        let a = getDoubleParam("valueA");
+        let b = getDoubleParam("valueB");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => "..a.." ** "..b.." => "..(a ** b));
+
+        return a ** b;
+    }
+
+    override bool getBoolValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolValue() => 0");
+        return false;
+    }
+}
+
+class HDCoreFunctionProvider_SquareRoot : HDCoreFunctionProvider {
+
+    override string getStringValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getStringValue() => \"\"");
+        return "";
+    }
+
+    override name getNameValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getNameValue() => ''");
+        return '';
+    }
+
+    override int getIntValue() {
+        let a = getIntParam("value");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getIntValue() => sqrt("..a..") => "..sqrt(a));
+
+        return sqrt(a);
+    }
+
+    override double getDoubleValue() {
+        let a = getDoubleParam("value");
+
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getDoubleValue() => sqrt("..a..") => "..sqrt(a));
+
+        return sqrt(a);
+    }
+
+    override bool getBoolValue() {
+        HDCore.log("HDCoreLib."..GetClassName(), LOGGING_TRACE, "getBoolValue() => 0");
+        return false;
+    }
+}
+
 class HDCoreFunctionProvider_Min : HDCoreFunctionProvider {
 
     override string getStringValue() {
