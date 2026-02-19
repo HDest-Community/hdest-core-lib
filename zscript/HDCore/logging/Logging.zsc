@@ -69,7 +69,7 @@ extend class HDCore {
     }
 
     static clearscope string GetLogTimestamp() {
-        return String.Format("%s:%02d", Level.TimeFormatted(), Level.time % 35);
+        return String.Format("%s.%02d", Level.TimeFormatted(), Level.time % TICRATE);
     }
 
     static clearscope string FormatLogMessage(name ns, int level, string message) {
@@ -91,7 +91,7 @@ extend class HDCore {
         else if (level <= LOGGING_TRACE) str = str.."TRACE";
         else                             str = str.."LOG";
 
-        return /* SystemTime.Format("%F %X", SystemTime.Now()).. */StringTable.Localize(str);
+        return StringTable.Localize(str);
     }
 
     static clearscope string GetLogColor(int level) {
