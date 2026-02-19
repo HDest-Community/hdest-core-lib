@@ -14,6 +14,11 @@ class HDCoreSectorSpawnData {
     }
 }
 
+class HDCorePosition {
+    double x;
+    double y;
+}
+
 class HDCoreSectorSpawnerHandler : EventHandler {
 
     Array<HDCoreSectorSpawnData> spawnPositions;
@@ -36,19 +41,23 @@ class HDCoreSectorSpawnerHandler : EventHandler {
         if (e.IsReopen) return;
 
         // Collect all of the positions to spawn in the level.
-        BuildSpawnPositions();
+        // buildSpawnPositionsGrid();
+        buildSpawnPositionsPoisson();
     }
 
     override void WorldTick() {
 
         if (HDCore.isPreSpawn() && hdc_sector_spawners >= 0) {
-            HandleSectorSpawning();
+            handleSectorSpawning();
         } else if (!bDESTROYED) {
             destroy();
         }
     }
 
-    private void BuildSpawnPositions() {
+    /**
+     * Samples XY positions across map based on simple Axis-Aligned coordinates
+     */
+    private void buildSpawnPositionsGrid() {
         spawnPositions.clear();
 
         let minX = Int.MAX;
@@ -73,79 +82,191 @@ class HDCoreSectorSpawnerHandler : EventHandler {
         HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_DEBUG, "Sampling map area from "..(minX, minY).." to "..(maxX, maxY).."...");
         
         let incr = HDCONST_ONEMETRE * hdc_sector_spawner_sampleRate;
-        for (let x = minX; x < maxX; x+= incr) for (let y = minY; y < maxY; y += incr) {
-            let xy = (x, y);
-            
-            let s = Level.PointInSector(xy);
-            if (s) {
-
-                // If the sector has 0 height or the floor is the skyflat, skip.
-                if (!HDCore.getSectorHeight(s) || s.GetTexture(0) == skyflatnum) continue;
-
-                let pos = (x, y, s.centerFloor());
-
-                // Determine dummy spawner(s), add to list.
-                if (s.IsSecret()) addSpawnPos('SecretSectorSpawner', pos);
-
-                if (s.GetTexture(1) == skyflatnum) addSpawnPos('OutdoorSectorSpawner', pos); 
-                else                               addSpawnPos('IndoorSectorSpawner', pos);
-                
-                if (s.damageAmount > 0) addSpawnPos('HurtfloorSectorSpawner', pos);
-
-                // Divide all 65536 units of light level into 7 evenly spaced "regions" for spawning purposes
-                //      if (s.lightLevel > 56174) brightestSectors.Push(s); // 56175..65536 =  9362 units
-                // else if (s.lightLevel > 46812) brighterSectors.Push(s);  // 46813..56174 =  9362 units
-                // else if (s.lightLevel > 37450) brightSectors.Push(s);    // 37451..46812 =  9362 units
-                // else if (s.lightLevel > 28086) {}                        // 28087..37450 =  9364 units
-                // else if (s.lightLevel > 18724) darkSectors.Push(s);      // 18725..28086 =  9362 units
-                // else if (s.lightLevel >  9362) darkerSectors.Push(s);    //  9363..18724 =  9362 units
-                // else if (s.lightLevel >     0) darkestSectors.Push(s);   //     0..9362  =  9362 units
-                //                                                          //              = 65536 units
-                
-                // TODO: Enhance to detect if/when levels use the remaining 65280 units of light level
-                // Divide all 256 units of light level into 7 evenly spaced "regions" for spawning purposes
-                     if (s.lightLevel > 220) addSpawnPos('BrightestSectorSpawner', pos); // 221..256 =  36 units
-                else if (s.lightLevel > 184) addSpawnPos('BrighterSectorSpawner', pos);  // 185..220 =  36 units
-                else if (s.lightLevel > 148) addSpawnPos('BrightSectorSpawner', pos);    // 149..184 =  36 units
-                else if (s.lightLevel > 108) {}                                          // 109..148 =  40 units
-                else if (s.lightLevel >  72) addSpawnPos('DarkSectorSpawner', pos);      //  73..108 =  36 units
-                else if (s.lightLevel >  36) addSpawnPos('DarkerSectorSpawner', pos);    //  37..72  =  36 units
-                else if (s.lightLevel >   0) addSpawnPos('DarkestSectorSpawner', pos);   //   0..35  =  36 units
-                                                                                         //          = 256 units
-            }
-        }
+        for (let x = minX; x < maxX; x+= incr) for (let y = minY; y < maxY; y += incr) samplePoint((x, y));
 
         HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_DEBUG, "Sampled "..spawnPositions.size().."x Spawn Positions");
     }
 
+    /**
+     * Samples XY positions across map based on Poisson-Disc Sampling Algorithm
+     * @See https://www.jasondavies.com/poisson-disc/
+     */
+    private void buildSpawnPositionsPoisson() {
+        spawnPositions.clear();
+
+        let minX = Int.MAX;
+        let minY = Int.MAX;
+        let maxX = Int.MIN;
+        let maxY = Int.MIN;
+
+        forEach(s : Level.sectors) forEach (l : s.lines) {
+            if (l.v1.p.x < minX) minX = l.v1.p.x;
+            if (l.v1.p.x > maxX) maxX = l.v1.p.x;
+
+            if (l.v1.p.y < minY) minY = l.v1.p.y;
+            if (l.v1.p.y > maxY) maxY = l.v1.p.y;
+
+            if (l.v2.p.x < minX) minX = l.v2.p.x;
+            if (l.v2.p.x > maxX) maxX = l.v2.p.x;
+
+            if (l.v2.p.y < minY) minY = l.v2.p.y;
+            if (l.v2.p.y > maxY) maxY = l.v2.p.y;
+        }
+
+        HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_DEBUG, "Sampling map area from "..(minX, minY).." to "..(maxX, maxY).."...");
+
+        let radius = HDCONST_ONEMETRE * hdc_sector_spawner_sampleRate;
+
+        let width = maxX - minX;
+        let height = maxY - minY;
+        let k = 100;
+
+        let inner = radius * radius;
+        let outer = 3 * inner;
+        let cellSize = radius * M_SQRT1_2;
+        int gridWidth = ceil(width / cellSize);
+        int gridHeight = ceil(height / cellSize);
+
+        HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_TRACE, "radius="..radius..", width="..width..", height="..height..", inner="..inner..", outer="..outer..", cellSize="..cellSize..", gridWidth="..gridWidth..", gridHeight="..gridHeight);
+
+        Array<HDCorePosition> grid;
+        grid.reserve(gridWidth * gridHeight);
+
+        HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_TRACE, "Grid Length: "..(gridWidth * gridHeight));
+
+        Array<HDCorePosition> queue;
+
+        let center = HDCorePosition(new('HDCorePosition'));
+        queue.push(center);
+        grid[0] = center;
+
+        do {
+            int i = random[hdcrand](0, queue.size() - 1);
+            let p = queue[i];
+
+            HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_TRACE, "i="..i..", p=("..p.x..", "..p.y..")");
+
+            let j = 0;
+            for (; j < k; j++) {
+                let a = frandom[hdcrand](1.0, 360.0);
+                let r = sqrt((frandom[hdcrand](0.0, 1.0) * outer) + inner);
+
+                let q = HDCorePosition(new('HDCorePosition'));
+                q.x = p.x + (r * cos(a));
+                q.y = p.y + (r * sin(a));
+
+                HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_TRACE, "a="..a..", r="..r..", q=("..q.x..", "..q.y..")");
+
+                int xIdx = HDGMGlobalMaths.remapRangeInt(q.x, minX, maxX, 0, gridWidth);
+                int yIdx = HDGMGlobalMaths.remapRangeInt(q.y, minY, maxY, 0, gridHeight);
+                if (
+                    (minX <= q.x && q.x <= maxX && minY <= q.y && q.y <= maxY)
+                    && !isNear(q, grid, xIdx, yIdx, gridWidth, gridHeight, inner)
+                ) {
+
+                    queue.push(q);
+                    grid[(gridWidth * yIdx) + xIdx] = q;
+
+                    break;
+                }
+            }
+
+            if (j == k) queue.delete(i);
+
+        } while (queue.size());
+
+        forEach (gridPos : grid) if (gridPos) samplePoint((gridPos.x, gridPos.y));
+
+        HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_DEBUG, "Sampled "..spawnPositions.size().."x Spawn Positions");
+    }
+
+    private bool isNear(HDCorePosition p, Array<HDCorePosition> grid, int x, int y, double gridWidth, double gridHeight, double inner) {
+        let x0 = max(x - 2, 0);
+        let y0 = max(y - 2, 0);
+        let x1 = min(x + 3, gridWidth);
+        let y1 = min(y + 3, gridHeight);
+
+        for (let i = y0; i < y1; i++) {
+            let o = i * gridWidth;
+            for (let j = x0; j < x1; j++) {
+                let g = grid[o + x];
+                if (g && ((g.x, g.y) - (p.x, p.y)).length() < inner) return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void samplePoint(Vector2 xy) {
+        let s = Level.PointInSector(xy);
+        if (s) {
+
+            // If the sector has 0 height or the floor is the skyflat, skip.
+            if (!HDCore.getSectorHeight(s) || s.GetTexture(0) == skyflatnum) return;
+
+            let pos = (xy.x, xy.y, s.centerFloor());
+
+            // Determine dummy spawner(s), add to list.
+            if (s.IsSecret()) addSpawnPos('SecretSectorSpawner', pos);
+
+            if (s.GetTexture(1) == skyflatnum) addSpawnPos('OutdoorSectorSpawner', pos); 
+            else                               addSpawnPos('IndoorSectorSpawner', pos);
+            
+            if (s.damageAmount > 0) addSpawnPos('HurtfloorSectorSpawner', pos);
+
+            // Divide all 65536 units of light level into 7 evenly spaced "regions" for spawning purposes
+            //      if (s.lightLevel > 56174) brightestSectors.Push(s); // 56175..65536 =  9362 units
+            // else if (s.lightLevel > 46812) brighterSectors.Push(s);  // 46813..56174 =  9362 units
+            // else if (s.lightLevel > 37450) brightSectors.Push(s);    // 37451..46812 =  9362 units
+            // else if (s.lightLevel > 28086) {}                        // 28087..37450 =  9364 units
+            // else if (s.lightLevel > 18724) darkSectors.Push(s);      // 18725..28086 =  9362 units
+            // else if (s.lightLevel >  9362) darkerSectors.Push(s);    //  9363..18724 =  9362 units
+            // else if (s.lightLevel >     0) darkestSectors.Push(s);   //     0..9362  =  9362 units
+            //                                                          //              = 65536 units
+            
+            // TODO: Enhance to detect if/when levels use the remaining 65280 units of light level
+            // Divide all 256 units of light level into 7 evenly spaced "regions" for spawning purposes
+                 if (s.lightLevel > 220) addSpawnPos('BrightestSectorSpawner', pos); // 221..256 =  36 units
+            else if (s.lightLevel > 184) addSpawnPos('BrighterSectorSpawner', pos);  // 185..220 =  36 units
+            else if (s.lightLevel > 148) addSpawnPos('BrightSectorSpawner', pos);    // 149..184 =  36 units
+            else if (s.lightLevel > 108) {}                                          // 109..148 =  40 units
+            else if (s.lightLevel >  72) addSpawnPos('DarkSectorSpawner', pos);      //  73..108 =  36 units
+            else if (s.lightLevel >  36) addSpawnPos('DarkerSectorSpawner', pos);    //  37..72  =  36 units
+            else if (s.lightLevel >   0) addSpawnPos('DarkestSectorSpawner', pos);   //   0..35  =  36 units
+                                                                                     //          = 256 units
+        }
+    }
+
     private void addSpawnPos(name spawnName, Vector3 pos) {
+        HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_TRACE, "Adding Sector Spawner Position for '"..spawnName.."' @ "..pos);
         spawnPositions.push(HDCoreSectorSpawnData.create(spawnName, pos));
     }
 
-    private void HandleSectorSpawning() {
+    private void handleSectorSpawning() {
         let max = spawnPositions.size();
         let incr = max(hdc_prespawn_threshold, 1);
-        for (let i = Level.mapTime; i < max; i += incr) SpawnDummySpawners(spawnPositions[i]);
+        for (let i = Level.mapTime; i < max; i += incr) spawnDummySpawners(spawnPositions[i]);
     }
-
-    private void SpawnDummySpawners(HDCoreSectorSpawnData data) {
+    
+    private void spawnDummySpawners(HDCoreSectorSpawnData data) {
+        HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_TRACE, "Attempting to spawn '"..data.spawnName.."' @ "..data.pos.."..."); 
 
         Class<Actor> spawnerCls = data.spawnName;
         Class<Actor> replacement = Actor.getReplacement(data.spawnName);
 
         // If Sector-based Spawners are conditionally enabled,
         // and we didn't find a replacement actor for the dummy spawner, quit.
-        if (!hdc_sector_spawners && (spawnerCls == replacement || replacement == 'NullSpawner')) return;
+        if (!hdc_sector_spawners && (spawnerCls == replacement || replacement == 'NullSpawner')) { HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_TRACE, "Invalid Spawner Class, skipping."); return; }
 
         // Get the default properties of the thing to spawn
         let replacementDefaults = getDefaultByType(replacement);
 
         // If the sector isn't tall enough, quit.
-        if (!HDCore.getSectorHeight(Level.pointInSector(data.pos.xy)) < replacementDefaults.height) return;
+        if (HDCore.getSectorHeight(Level.pointInSector(data.pos.xy)) < replacementDefaults.height) { HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_TRACE, "Sector too short, skipping."); return; }
 
         // If the thing failed to spawn, quit.
-        if (!HDCore.SpawnStuff(replacement.getClassName(), data.pos)) return;
+        if (!HDCore.SpawnStuff(replacement.getClassName(), data.pos)) { HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_TRACE, "Failed to spawn, skipping."); return; }
 
-        HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_DEBUG, "Spawned '"..replacement.getClassName().."' @ "..data.pos);
+        HDCore.Log('HDCoreLib.SectorSpawnHandler', LOGGING_TRACE, "Spawned '"..replacement.getClassName().."' @ "..data.pos);
     }
 }
