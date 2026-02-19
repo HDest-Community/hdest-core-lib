@@ -60,6 +60,8 @@ extend class AceCore
 
 	static clearscope string, int, Color GetBatteryColor(int charge)
 	{
+		HDCore.log('AceCoreLib', LOGGING_WARN, "AceCore.GetBatteryColor() is deprecated, contact developer to update!");
+
 		if (charge > 13)
 		{
 			return "CELLA0", Font.CR_GREEN, Color(255, 0, 255, 0);
