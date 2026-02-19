@@ -1,6 +1,6 @@
 extend class HDCore {
 
-    static clearscope int getBatteryColor(int charge) {
+    static clearscope int getBatteryFontColor(int charge) {
         if (charge > 13) return Font.CR_GREEN;
         if (charge > 6)  return Font.CR_YELLOW;
         if (charge > 0)  return Font.CR_RED;
