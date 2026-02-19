@@ -1,0 +1,10 @@
+extend class HDCore {
+
+    static clearscope string getBatteryIcon(int charge) {
+        if (charge > 13) return "CELLA0";
+        if (charge > 6)  return "CELLB0";
+        if (charge > 0)  return "CELLC0";
+
+        return "CELLD0";
+    }
+}

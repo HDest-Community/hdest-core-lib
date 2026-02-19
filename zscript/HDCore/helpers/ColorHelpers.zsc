@@ -1,10 +1,21 @@
 extend class HDCore {
 
     /**
-     * Returns a new Color instance whose RGB values match the Planck's Law calculations for Color Temperature.
-     * @See https://www.desmos.com/calculator/nv4sjgiqjb
-     * @See https://codepen.io/blaketarter/pen/EjxRMX
-     */
+    * Gets the Color of the given charge value for a battery
+    */
+    static clearscope Color getBatteryColor(int charge) {
+        if (charge > 13) return Color(255,   0, 255, 0);
+        if (charge > 6)  return Color(255, 255, 255, 0);
+        if (charge > 0)  return Color(255, 255,   0, 0);
+
+        return Color(255, 64, 64, 64);
+    }
+
+    /**
+    * Returns a new Color instance whose RGB values match the Planck's Law calculations for Color Temperature.
+    * @See https://www.desmos.com/calculator/nv4sjgiqjb
+    * @See https://codepen.io/blaketarter/pen/EjxRMX
+    */
     static clearscope Color plancksLaw(int K) {
         double x, y, z;
         

@@ -52,4 +52,8 @@ extend class HDCore {
 
         return amt;
     }
+
+    static clearscope string, int, Color cetBatteryState(int charge) {
+        return HDCore.getBatteryIcon(charge), HDCore.getBatteryFontColor(charge), HDCore.getBatteryColor(charge);
+    }
 }
