@@ -268,10 +268,10 @@ These commands modify the existence and contents of various weighted random spaw
 
 ## Credits
 
-- [Gutamatics Library](./zscript/libs/HDGutamatics/LICENSE.md): Gutawer
-- [ZForms Library](./zscript/libs/HDZForms/LICENSE.md): Gutawer, Phantombeta
-- [ZJSON Library](https://github.com/RicardoLuis0/ZJSON): RicardoLuis0
 - CameraContext: ArgV-Minus-One
 - [Damped Spring](https://gist.github.com/caligari87/39d1cec3aad776860b4148cc3c659f70): Caligari
+- [Gutamatics Library](./zscript/libs/HDGutamatics/LICENSE.md): Gutawer
 - [LibToolTipMenu](./zscript/libs/HDlibtooltipmenu/COPYING.md): ToxicFrog
 - Spawn Handler: FDA, Swampyrad, TedTheDragon
+- [ZForms Library](./zscript/libs/HDZForms/LICENSE.md): Gutawer, Phantombeta
+- [ZJSON Library](https://github.com/RicardoLuis0/ZJSON/blob/9a6be707c26ef14e276f09ff1ad6948ca44cb5e2/LICENSE): RicardoLuis0
