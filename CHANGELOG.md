@@ -44,4 +44,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]: https://github.com/HDest-Community/hdest-core-lib/compare/v1.0.0...HEAD
 
-[v1.0.0]: https://github.com/HDest-Community/hdest-core-lib/compare/155bcc980d7d3e3cc8b4588bc6d9bbd886a06a79...v1.0.0
+[v1.0.0]: https://github.com/HDest-Community/hdest-core-lib/releases/tag/v1.0.0
