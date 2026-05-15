@@ -6,12 +6,14 @@ class HDCoreGameStatsHandler : HDCoreEventHandler {
 
     Array<name> blacklist;
 
+    bool reopened;
+
     // TODO: Refactor to override init() entirely?  Add more BaseEventHandler lifecycle hooks?
     //   No reason to loop through all commands and do nothing with them
     override void beforeProcessCommands() {
         _stats = Dictionary.create();
 
-        if (!t) initThinker();
+        initThinker();
 
         blacklist.clear();
     }
@@ -73,7 +75,13 @@ class HDCoreGameStatsHandler : HDCoreEventHandler {
 
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "World Loaded...");
 
-        incrementLevelsStarted();
+        if (e.isReopen) {
+            reopened = true;
+
+            initThinker();
+        } else {
+            incrementLevelsStarted();
+        }
     }
 
     override void WorldTick() {
@@ -121,7 +129,9 @@ class HDCoreGameStatsHandler : HDCoreEventHandler {
 
         HDCore.log('HDCoreLib.GameStatsHandler', LOGGING_TRACE, "World Unloaded...");
 
-        incrementLevelsCompleted();
+        if (!reopened) {
+            incrementLevelsCompleted();
+        }
 
         saveStats();
     }
