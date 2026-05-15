@@ -11,10 +11,10 @@ extend class HDCore {
 
         // Grab closest playerpawn distance.
         let dist = int.MAX;
-        for (int i = 0; i < MAXPLAYERS; i++) if (PlayerInGame[i]) dist = min(dist, caller.distance3D(Players[i].mo));
+        for (int i = 0; i < MAXPLAYERS; i++) if (PlayerInGame[i]) dist = min(dist, caller.distance3DSquared(Players[i].mo));
 
         // If laser's caller is too far away and out of sight, quit.
-        if (dist > (HDCONST_ONEMETRE * 256) && caller.A_CheckSight("null")) return;
+        if (dist > (HDCONST_ONEMETRE * 256 ** 2) && caller.A_CheckSight("null")) return;
 
         // Adjust alpha if wearing NVGs, otherwise if completely transparent, don't spawn particles
         if (Players[ConsolePlayer].mo.checkLocalView()) {
@@ -102,11 +102,11 @@ extend class HDCore {
         if (quality <= 0 || scale <= 0.0 || alpha <= 0.0 || beam.args[DynamicLight.LIGHT_INTENSITY] <= 0) return;
 
         // Grab closest playerpawn distance.
-		let dist = int.MAX;
-		for (int i = 0; i < MAXPLAYERS; i++) if (PlayerInGame[i]) dist = min(dist, beam.distance3D(Players[i].mo));
+        let dist = int.MAX;
+        for (int i = 0; i < MAXPLAYERS; i++) if (PlayerInGame[i]) dist = min(dist, beam.distance3DSquared(Players[i].mo));
 
         // If flashlight beam is too far away and out of sight, quit.
-		if (dist > (HDCONST_ONEMETRE * 256.0) && beam.A_CheckSight("null")) return;
+        if (dist > (HDCONST_ONEMETRE * 256 ** 2) && beam.A_CheckSight("null")) return;
 
         FLineTraceData flTrace;
         beam.lineTrace(beam.angle, beam.args[DynamicLight.LIGHT_INTENSITY], beam.pitch, TRF_THRUACTORS, data: flTrace);
