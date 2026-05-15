@@ -1,0 +1,144 @@
+class HDCoreStorageItemListHandler : HDCoreEventHandler {
+
+    // List of Inventory Classes to add to Backpack Spawns
+    Array<name> whitelist;
+
+    // List of Inventory Classes to remove from Backpack Spawns
+    Array<name> blacklist;
+
+    override void beforeProcessCommands() {
+        whitelist.clear();
+        blacklist.clear();
+    }
+
+    override void processCommand(HDCoreCommand cmd) {
+        switch (cmd.command) {
+            case 'addBPSpawnPoolFilter':
+                HDCore.Log('HDCoreLib', LOGGING_WARN, "HDCINFO Command 'addBPSpawnPoolFilter' is deprecated, contact developer to update!");
+            case 'addStorageItemListFilter': {
+                // FIXME: Find a better command/logic to handle existing CVARs
+
+                let ammo = cmd.getNameParam("name");
+                Class<Inventory> invClass = ammo;
+
+                if (!invClass) break;
+
+                // If the filter entry is allowed, remove from blacklist,
+                // Otherwise add to blacklist.
+                let index = blacklist.find(invClass.getClassName());
+                if (cmd.getBoolParam("allowed")) {
+                    if (index < blacklist.size()) blacklist.delete(index);
+                } else {
+                    if (index >= blacklist.size()) blacklist.push(invClass.getClassName());
+                }
+
+                break;
+            }
+            case 'addBPSpawnPoolWhitelist':
+                HDCore.Log('HDCoreLib', LOGGING_WARN, "HDCINFO Command 'addBPSpawnPoolWhitelist' is deprecated, contact developer to update!");
+            case 'addStorageItemListWhitelist': {
+                let item = cmd.getNameParam("name");
+                Class<Inventory> invClass = item;
+
+                if (!invClass) break;
+
+                if (whitelist.find(invClass.getClassName()) >= whitelist.size()) whitelist.push(invClass.getClassName());
+
+                break;
+            }
+            case 'removeBPSpawnPoolWhitelist':
+                HDCore.Log('HDCoreLib', LOGGING_WARN, "HDCINFO Command 'removeBPSpawnPoolWhitelist' is deprecated, contact developer to update!");
+            case 'removeStorageItemListWhitelist': {
+                let item = cmd.getNameParam("name");
+                Class<Inventory> invClass = item;
+
+                if (!invClass) break;
+
+                let index = whitelist.find(invClass.getClassName());
+                if (index < whitelist.size()) whitelist.delete(index);
+
+                break;
+            }
+            case 'clearBPSpawnPoolWhitelist':
+                HDCore.Log('HDCoreLib', LOGGING_WARN, "HDCINFO Command 'clearBPSpawnPoolWhitelist' is deprecated, contact developer to update!");
+            case 'clearStorageItemListWhitelist': {
+                whitelist.clear();
+                break;
+            }
+            case 'addBPSpawnPoolBlacklist':
+                HDCore.Log('HDCoreLib', LOGGING_WARN, "HDCINFO Command 'addBPSpawnPoolBlacklist' is deprecated, contact developer to update!");
+            case 'addStorageItemListBlacklist': {
+                let item = cmd.getNameParam("name");
+                Class<Inventory> invClass = item;
+
+                if (!invClass) break;
+
+                if (blacklist.find(invClass.getClassName()) >= blacklist.size()) blacklist.push(invClass.getClassName());
+
+                break;
+            }
+            case 'removeBPSpawnPoolBlacklist':
+                HDCore.Log('HDCoreLib', LOGGING_WARN, "HDCINFO Command 'removeBPSpawnPoolBlacklist' is deprecated, contact developer to update!");
+            case 'removeStorageItemListBlacklist': {
+                let item = cmd.getNameParam("name");
+                Class<Inventory> invClass = item;
+
+                if (!invClass) break;
+
+                let index = blacklist.find(invClass.getClassName());
+                if (index < blacklist.size()) blacklist.delete(index);
+
+                break;
+            }
+            case 'clearBPSpawnPoolBlacklist':
+                HDCore.Log('HDCoreLib', LOGGING_WARN, "HDCINFO Command 'clearBPSpawnPoolBlacklist' is deprecated, contact developer to update!");
+            case 'clearStorageItemListBlacklist': {
+                blacklist.clear();
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    override void afterProcessCommands() {
+        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
+
+            let msg = "StorageItemList Whitelist:\n";
+
+            forEach(wl : whitelist) msg = msg.." * "..wl.."\n";
+
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
+
+            msg = "StorageItemList Blacklist:\n";
+
+            forEach(bl : blacklist) msg = msg.." * "..bl.."\n";
+
+            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
+        }
+    }
+}
+
+class HDCoreStorageItemList : HDStorageItemList {
+
+    private transient HDCoreStorageItemListHandler _handler;
+
+    override bool CanAdd(Class<Inventory> itemCls) {
+        if (!_handler) _handler = HDCoreStorageItemListHandler(EventHandler.find('HDCoreStorageItemListHandler'));
+        name clsName = itemCls.getClassName();
+
+        HDCore.log('HDcoreLib', LOGGING_TRACE, "Checking if '"..clsName.."' is valid...");
+
+        // return (!_handler.whitelist.size() || _handler.whitelist.find(clsName) < _handler.whitelist.size())
+        //     && (!_handler.blacklist.size() || _handler.blacklist.find(clsName) >= _handler.blacklist.size());
+
+        return super.canAdd(itemCls)
+            && (
+                !_handler
+                || (
+                    (!_handler.whitelist.size() || HDCore.isAnyChildClass(itemCls, _handler.whitelist, true, true))
+                    && (!_handler.blacklist.size() || !HDCore.isAnyChildClass(itemCls, _handler.blacklist, true, true))
+                )
+            );
+    }
+}

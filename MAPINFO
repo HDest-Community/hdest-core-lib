@@ -2,7 +2,6 @@ GameInfo {
     AddEventHandlers = "HDCoreInfoReader",
         "HDCoreAmmoBoxSpawnPoolHandler",
         "HDCoreAmmoUsesHandler",
-        "HDCoreBPSpawnPoolHandler",
         "HDCoreDeathMatchStartSpawnerHandler",
         "HDCoreGameStatsHandler",
         "HDCoreLineTraceHandler",
@@ -10,5 +9,6 @@ GameInfo {
         "HDCoreRandomSeedHandler",
         "HDCoreSectorSpawnerHandler",
         "HDCoreSpawnHandler",
+        "HDCoreStorageItemListHandler",
         "AceCoreHandler"
 }
