@@ -129,16 +129,34 @@ class HDCoreStorageItemList : HDStorageItemList {
 
         HDCore.log('HDcoreLib', LOGGING_TRACE, "Checking if '"..clsName.."' is valid...");
 
-        // return (!_handler.whitelist.size() || _handler.whitelist.find(clsName) < _handler.whitelist.size())
-        //     && (!_handler.blacklist.size() || _handler.blacklist.find(clsName) >= _handler.blacklist.size());
-
+        // Items can go into Wild Backpacks if:
+        //   - HDest's own implementation allows it, AND
+        //       - The Event Handler Doesn't exist, OR
+        //           - The item is a child class of any of those in the whitelist, if any are defined, AND
+        //           - The item is a child class of none of those in the blacklist, if any are defined.
         return super.canAdd(itemCls)
             && (
                 !_handler
                 || (
-                    (!_handler.whitelist.size() || HDCore.isAnyChildClass(itemCls, _handler.whitelist, true, true))
-                    && (!_handler.blacklist.size() || !HDCore.isAnyChildClass(itemCls, _handler.blacklist, true, true))
+                    (!_handler.whitelist.size() || HDCore.isAnyChildClass(itemCls, _handler.whitelist))
+                    && (!_handler.blacklist.size() || !HDCore.isAnyChildClass(itemCls, _handler.blacklist))
                 )
             );
+    }
+}
+
+
+// Default Replacement for vanilla WildBackpacks
+class HDCoreWildBackpack : IdleDummy {
+
+    override void postBeginPlay() {
+        super.postBeginPlay();
+
+        let bp = HDBackpack(spawn("HDBackpack", pos, ALLOW_REPLACE));
+        bp.randomContents("HDCoreStorageItemList", HDCore.getRandomDouble(0.1, 0.7, hdc_random_mode), false);
+
+        HDF.TransferSpecials(self, bp);
+
+        destroy();
     }
 }

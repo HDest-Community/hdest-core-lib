@@ -440,7 +440,7 @@ addSpawnTableNestedEntry => { "tableName": "ArmorBonusReplaces", "name": "HDAB",
 
 // Backpack Spawns: Total Weight = 1, Total Persistent Weight = 1
 newSpawnTable => { "spawnName": "WildBackpack", "tableName": "BackpackReplaces" }
-addSpawnTableSingleEntry => { "tableName": "BackpackReplaces", "name": "WildBackpack", "weight": "1", "persists": "true" }
+addSpawnTableSingleEntry => { "tableName": "BackpackReplaces", "name": "HDCoreWildBackpack", "weight": "1", "persists": "true" }
 
 // Berserk Spawns: Total Weight = 10, Total Persistent Weight = 10
 newSpawnTable => { "spawnName": "PortableHealingItemBigger", "tableName": "BerserkReplaces" }
@@ -1096,32 +1096,32 @@ newAmmo => { "ammoName": "SevenMilAmmoRecast" }
 // - name = Name of the item to add
 // - allowed  = Used to determine if item should be added to spawn pool if true, otherwise remove it
 //
-// addBPSpawnPoolFilter => { "name": "HDInvulnerabilitySphere", "allowed": "false" }
+// addStorageItemListFilter => { "name": "HDInvulnerabilitySphere", "allowed": "false" }
 
 // Add a new item to the whitelist
 // - name = Name of the item to add
 //
-// addBPSpawnPoolWhitelist => { "name": "HDBlursphere" }
+// addStorageItemListWhitelist => { "name": "HDBlursphere" }
 
 // Remove an existing item from the whitelist
 // - name = Name of the item to remove
 //
-// removeBPSpawnPoolWhitelist => { "name": "HDMegaSphere" }
+// removeStorageItemListWhitelist => { "name": "HDMegaSphere" }
 
 // Remove all existing items from whitelist
 //
-// clearBPSpawnPoolWhitelist => {}
+// clearStorageItemListWhitelist => {}
 
 // Add a new item to the blacklist
 // - name = Name of the item to add
 //
-// addBPSpawnPoolBlacklist => { "name": "HDBlursphere" }
+// addStorageItemListBlacklist => { "name": "HDBlursphere" }
 
 // Remove an existing item from the blacklist
 // - name = Name of the item to remove
 //
-// removeBPSpawnPoolBlacklist => { "name": "HDMegaSphere" }
+// removeStorageItemListBlacklist => { "name": "HDMegaSphere" }
 
 // Remove all existing items from blacklist
 //
-// clearBPSpawnPoolBlacklist => {}
+// clearStorageItemListBlacklist => {}
