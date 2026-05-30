@@ -2,7 +2,7 @@ class HDVectorPrefab ui {
 
     Vector4 rects[32];
 
-    static HDVectorPrefab create(name prefabName, int rotation = 0) {
+    static HDVectorPrefab create(name prefabName, int rotation = DRAWPREFAB_WE) {
         let prefab = new('HDVectorPrefab');
 
         if (prefab) {
@@ -48,15 +48,16 @@ class HDVectorPrefab ui {
                     if (rect.z == 0 || rect.w == 0) continue;
 
                     switch (rotation) {
-                        case 1:
+                        case DRAWPREFAB_EW:
                             prefab.rects[i] = (-rect.y, rect.x, -rect.w, rect.z);
                             break;
-                        case 2:
+                        case DRAWPREFAB_SN:
                             prefab.rects[i] = (-rect.x, -rect.y, -rect.z, -rect.w);
                             break;
-                        case 3:
+                        case DRAWPREFAB_NS:
                             prefab.rects[i] = (rect.y, -rect.x, rect.w, -rect.z);
                             break;
+                        case DRAWPREFAB_WE:
                         default:
                             prefab.rects[i] = rect;
                             break;

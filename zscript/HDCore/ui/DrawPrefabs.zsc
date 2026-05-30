@@ -1,22 +1,40 @@
+    enum HDCoreVectorPrefabDirections {
+
+    // Axis bits
+    DRAWPREFAB_HORIZONTAL = 0,
+    DRAWPREFAB_VERTICAL = 2,
+
+    // Reverse Direction bit
+    DRAWPREFAB_FLIPPED = 1,
+
+    // Helper Constants
+    DRAWPREFAB_WE = DRAWPREFAB_HORIZONTAL,
+    DRAWPREFAB_EW = DRAWPREFAB_HORIZONTAL|DRAWPREFAB_FLIPPED,
+    DRAWPREFAB_SN = DRAWPREFAB_VERTICAL,
+    DRAWPREFAB_NS = DRAWPREFAB_VERTICAL|DRAWPREFAB_FLIPPED
+}
+
+
+
 extend class HDCore {
 
-    static ui void drawSpentShell(HDStatusBar sb, Color color, Vector2 pos, int rotation = 0, float scale = 1.0, int flags = 0) {
+    static ui void drawSpentShell(HDStatusBar sb, Color color, Vector2 pos, int rotation = DRAWPREFAB_WE, float scale = 1.0, int flags = 0) {
         HDVectorPrefab.create('spentShell', rotation).draw(sb, color, pos, scale, flags);
     }
 
-    static ui void drawSimpleShell(HDStatusBar sb, Color color, Vector2 pos, int rotation = 0, float scale = 1.0, int flags = 0) {
+    static ui void drawSimpleShell(HDStatusBar sb, Color color, Vector2 pos, int rotation = DRAWPREFAB_WE, float scale = 1.0, int flags = 0) {
         HDVectorPrefab.create('simpleShell', rotation).draw(sb, color, pos, scale, flags);
     }
 
-    static ui void drawFancyShell(HDStatusBar sb, Color color, Vector2 pos, int rotation = 0, float scale = 1.0, int flags = 0) {
+    static ui void drawFancyShell(HDStatusBar sb, Color color, Vector2 pos, int rotation = DRAWPREFAB_WE, float scale = 1.0, int flags = 0) {
         HDVectorPrefab.create('fancyShell', rotation).draw(sb, color, pos, scale, flags);
     }
 
-    static ui void drawFancySlug(HDStatusBar sb, Color color, Vector2 pos, int rotation = 0, float scale = 1.0, int flags = 0) {
+    static ui void drawFancySlug(HDStatusBar sb, Color color, Vector2 pos, int rotation = DRAWPREFAB_WE, float scale = 1.0, int flags = 0) {
         HDVectorPrefab.create('fancySlug', rotation).draw(sb, color, pos, scale, flags);
     }
 
-    static ui void drawRocquette(HDStatusBar sb, Color color, Vector2 pos, int rotation = 0, float scale = 1.0, int flags = 0) {
+    static ui void drawRocquette(HDStatusBar sb, Color color, Vector2 pos, int rotation = DRAWPREFAB_WE, float scale = 1.0, int flags = 0) {
         HDVectorPrefab.create('rocquette', rotation).draw(sb, color, pos, scale, flags);
     }
 }
