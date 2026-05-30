@@ -1,14 +1,14 @@
-class HDZJJsonElementOrError {}
+class HDZJsonElementOrError {}
 
-class HDZJJsonElement : HDZJJsonElementOrError abstract
+class HDZJsonElement : HDZJsonElementOrError abstract
 {
 	abstract string Serialize();
 	abstract string GetPrettyName();
 }
 
-class HDZJJsonNumber : HDZJJsonElement abstract
+class HDZJsonNumber : HDZJsonElement abstract
 {
-	abstract HDZJJsonNumber Negate();
+	abstract HDZJsonNumber Negate();
 	abstract double  asDouble();
 	abstract int asInt();
 	
@@ -18,17 +18,17 @@ class HDZJJsonNumber : HDZJJsonElement abstract
 	}
 }
 
-class HDZJJsonInt : HDZJJsonNumber
+class HDZJsonInt : HDZJsonNumber
 {
 	int i;
 	
-	static HDZJJsonInt make(int i = 0)
+	static HDZJsonInt make(int i = 0)
 	{
-		let elem = new("HDZJJsonInt");
+		let elem = new("HDZJsonInt");
 		elem.i = i;
 		return elem;
 	}
-	override HDZJJsonNumber Negate()
+	override HDZJsonNumber Negate()
 	{
 		i = -i;
 		return self;
@@ -49,17 +49,17 @@ class HDZJJsonInt : HDZJJsonNumber
 	}
 }
 
-class HDZJJsonDouble : HDZJJsonNumber
+class HDZJsonDouble : HDZJsonNumber
 {
 	double d;
 	
-	static HDZJJsonDouble Make(double d = 0)
+	static HDZJsonDouble Make(double d = 0)
 	{
-		HDZJJsonDouble elem = new("HDZJJsonDouble");
+		HDZJsonDouble elem = new("HDZJsonDouble");
 		elem.d = d;
 		return elem;
 	}
-	override HDZJJsonNumber Negate()
+	override HDZJsonNumber Negate()
 	{
 		d = -d;
 		return self;
@@ -80,13 +80,13 @@ class HDZJJsonDouble : HDZJJsonNumber
 	}
 }
 
-class HDZJJsonBool : HDZJJsonElement
+class HDZJsonBool : HDZJsonElement
 {
 	bool b;
 	
-	static HDZJJsonBool Make(bool b = false)
+	static HDZJsonBool Make(bool b = false)
 	{
-		HDZJJsonBool elem = new("HDZJJsonBool");
+		HDZJsonBool elem = new("HDZJsonBool");
 		elem.b = b;
 		return elem;
 	}
@@ -102,20 +102,20 @@ class HDZJJsonBool : HDZJJsonElement
 	}
 }
 
-class HDZJJsonString : HDZJJsonElement
+class HDZJsonString : HDZJsonElement
 {
 	string s;
 	
-	static HDZJJsonString make(string s = "")
+	static HDZJsonString make(string s = "")
 	{
-		HDZJJsonString elem = new("HDZJJsonString");
+		HDZJsonString elem = new("HDZJsonString");
 		elem.s=s;
 		return elem;
 	}
 	
 	override string Serialize()
 	{
-		return HDZJJSON.serialize_string(s);
+		return HDZJSON.serialize_string(s);
 	}
 	
 	override string GetPrettyName()
@@ -124,11 +124,11 @@ class HDZJJsonString : HDZJJsonElement
 	}
 }
 
-class HDZJJsonNull : HDZJJsonElement
+class HDZJsonNull : HDZJsonElement
 {
-	static HDZJJsonNull Make()
+	static HDZJsonNull Make()
 	{
-		return new("HDZJJsonNull");
+		return new("HDZJsonNull");
 	}
 	
 	override string Serialize()
@@ -142,13 +142,13 @@ class HDZJJsonNull : HDZJJsonElement
 	}
 }
 
-class HDZJJsonError : HDZJJsonElementOrError
+class HDZJsonError : HDZJsonElementOrError
 {
 	String what;
 	
-	static HDZJJsonError make(string s)
+	static HDZJsonError make(string s)
 	{
-		HDZJJsonError err = new("HDZJJsonError");
+		HDZJsonError err = new("HDZJsonError");
 		err.what = s;
 		return err;
 	}

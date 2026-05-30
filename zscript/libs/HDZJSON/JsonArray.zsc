@@ -1,23 +1,23 @@
-class HDZJJsonArray : HDZJJsonElement
+class HDZJsonArray : HDZJsonElement
 { // pretty much just a wrapper for a dynamic array
-	Array<HDZJJsonElement> arr;
+	Array<HDZJsonElement> arr;
 	
-	static HDZJJsonArray Make()
+	static HDZJsonArray Make()
 	{
-		return new("HDZJJsonArray");
+		return new("HDZJsonArray");
 	}
 	
-	HDZJJsonElement Get(uint index)
+	HDZJsonElement Get(uint index)
 	{
 		return arr[index];
 	}
 	
-	void Set(uint index,HDZJJsonElement obj)
+	void Set(uint index,HDZJsonElement obj)
 	{
 		arr[index]=obj;
 	}
 	
-	int Push(HDZJJsonElement obj)
+	int Push(HDZJsonElement obj)
 	{
 		return arr.Push(obj);
 	}
@@ -27,7 +27,7 @@ class HDZJJsonArray : HDZJJsonElement
 		return arr.Pop();
 	}
 	
-	void Insert(uint index, HDZJJsonElement obj)
+	void Insert(uint index, HDZJsonElement obj)
 	{
 		arr.Insert(index, obj);
 	}

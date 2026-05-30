@@ -1,31 +1,31 @@
 
-class HDZJJsonObjectKeys
+class HDZJsonObjectKeys
 {
 	Array<String> keys;
 }
 
 
-class HDZJJsonObject : HDZJJsonElement
+class HDZJsonObject : HDZJsonElement
 {
-	Map<String,HDZJJsonElement> data;
+	Map<String,HDZJsonElement> data;
 	
-	static HDZJJsonObject make()
+	static HDZJsonObject make()
 	{
-		return new("HDZJJsonObject");
+		return new("HDZJsonObject");
 	}
 	
-	HDZJJsonElement Get(String key)
+	HDZJsonElement Get(String key)
 	{
 		if(!data.CheckKey(key)) return null;
 		return data.Get(key);
 	}
 	
-	void Set(String key,HDZJJsonElement e)
+	void Set(String key,HDZJsonElement e)
 	{
 		data.Insert(key,e);
 	}
 	
-	bool Insert(String key, HDZJJsonElement e)
+	bool Insert(String key, HDZJsonElement e)
 	{ // only inserts if key doesn't exist, otherwise fails and returns false
 		if(data.CheckKey(key)) return false;
 		data.Insert(key,e);
@@ -42,16 +42,16 @@ class HDZJJsonObject : HDZJJsonElement
 	void GetKeysInto(out Array<String> keys)
 	{
 		keys.Clear();
-		MapIterator<String,HDZJJsonElement> it;
+		MapIterator<String,HDZJsonElement> it;
 		it.Init(data);
 		while(it.Next()){
 			keys.Push(it.GetKey());
 		}
 	}
     
-	HDZJJsonObjectKeys GetKeys()
+	HDZJsonObjectKeys GetKeys()
 	{
-		HDZJJsonObjectKeys keys = new("HDZJJsonObjectKeys");
+		HDZJsonObjectKeys keys = new("HDZJsonObjectKeys");
         GetKeysInto(keys.keys);
 		return keys;
 	}
@@ -82,14 +82,14 @@ class HDZJJsonObject : HDZJJsonElement
 		s.AppendCharacter("{");
 		bool first = true;
 		
-		MapIterator<String,HDZJJsonElement> it;
+		MapIterator<String,HDZJsonElement> it;
 		it.Init(data);
 		
 		while(it.Next()){
 			if(!first){
 				s.AppendCharacter(",");
 			}
-			s.AppendFormat("%s:%s", HDZJJSON.serialize_string(it.GetKey()), it.GetValue().serialize());
+			s.AppendFormat("%s:%s", HDZJSON.serialize_string(it.GetKey()), it.GetValue().serialize());
 			first = false;
 		}
 		

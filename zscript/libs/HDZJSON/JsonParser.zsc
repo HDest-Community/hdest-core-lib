@@ -1,5 +1,5 @@
 
-class HDZJJSON
+class HDZJSON
 {
 	const BACKSLASH = 0x5C;		// '\\'
 	
@@ -141,17 +141,17 @@ class HDZJJSON
 		}
 	}
 	
-	private static HDZJJsonElementOrError parseString(out string data, out uint i, uint len)
+	private static HDZJsonElementOrError parseString(out string data, out uint i, uint len)
 	{ // parse a string
-		if(i >= len) return HDZJJsonError.make("Expected String, got EOF");
+		if(i >= len) return HDZJsonError.make("Expected String, got EOF");
 		uint delim, next_i;
 		[delim, next_i] = data.getNextCodePoint(i);
 		if(delim != "'" && delim != "\"")
 		{
-			return HDZJJsonError.make("Expected  '\'' or '\"' (String), got "..data.mid(i,1));
+			return HDZJsonError.make("Expected  '\'' or '\"' (String), got "..data.mid(i,1));
 		}
 		i = next_i;
-		HDZJJsonString s = HDZJJsonString.make();
+		HDZJsonString s = HDZJsonString.make();
 		uint c, i3;
 		while(next_i < len)
 		{
@@ -166,7 +166,7 @@ class HDZJJSON
 			{
 				if(i3 >= len)
 				{
-					return HDZJJsonError.make("On String, expected Character, got EOF");
+					return HDZJsonError.make("On String, expected Character, got EOF");
 				}
 				s.s.appendFormat("%s", data.mid(i, next_i - i));
 				[c, next_i] = data.getNextCodePoint(i3);
@@ -175,7 +175,7 @@ class HDZJJSON
 			}
 			else if(c == "\n")
 			{
-				return HDZJJsonError.make("On String, expected Character, got EOL");
+				return HDZJsonError.make("On String, expected Character, got EOL");
 			}
 			else
 			{
@@ -184,20 +184,20 @@ class HDZJJSON
 		}
 		string delim_s;
 		delim_s.appendCharacter(delim);
-		return HDZJJsonError.make("On String, expected '"..delim_s.."', got EOF");
+		return HDZJsonError.make("On String, expected '"..delim_s.."', got EOF");
 	}
     
-	private static HDZJJsonElementOrError parseObject(out string data, out uint i, uint len, out uint line)
+	private static HDZJsonElementOrError parseObject(out string data, out uint i, uint len, out uint line)
 	{ // parse a json object, allows trailing commas
-		if(i >= len) return HDZJJsonError.make("Expected Object, got EOF");
+		if(i >= len) return HDZJsonError.make("Expected Object, got EOF");
 		uint c, next_i;
 		[c, next_i] = data.getNextCodePoint(i);
 		if(c != "{")
 		{
-			return HDZJJsonError.make("Expected '{' (Object), got '"..data.mid(i, 1).."'");
+			return HDZJsonError.make("Expected '{' (Object), got '"..data.mid(i, 1).."'");
 		}
 		i = next_i;
-		HDZJJsonObject obj = HDZJJsonObject.make();
+		HDZJsonObject obj = HDZJsonObject.make();
         string last_element;
         bool has_last_element = false;
 		while(i<len)
@@ -209,45 +209,45 @@ class HDZJJSON
 				return obj;
 			}
 			let key = parseString(data, i, len);
-			if(key is "HDZJJsonError")
+			if(key is "HDZJsonError")
 			{
                 if(has_last_element)
 				{
-                    return HDZJJsonError.make("After Object value '"..last_element.."', "..HDZJJsonError(key).what);
+                    return HDZJsonError.make("After Object value '"..last_element.."', "..HDZJsonError(key).what);
                 }
 				else
 				{
-                    return HDZJJsonError.make("On first Object value, "..HDZJJsonError(key).what);
+                    return HDZJsonError.make("On first Object value, "..HDZJsonError(key).what);
                 }
 			}
-            last_element = HDZJJsonString(key).s;
+            last_element = HDZJsonString(key).s;
             has_last_element = true;
 			skipWhitespace(data, i, len, line);
 			if(i >= len)
 			{
-				return HDZJJsonError.make("On Object value '"..last_element.."', expected ':', got EOF");
+				return HDZJsonError.make("On Object value '"..last_element.."', expected ':', got EOF");
 			}
 			[c, next_i] = data.getNextCodePoint(i);
 			if(c != ":")
 			{
-				return HDZJJsonError.make("On Object value '"..last_element.."', expected ':', got '"..data.mid(i, 1).."'");
+				return HDZJsonError.make("On Object value '"..last_element.."', expected ':', got '"..data.mid(i, 1).."'");
 			}
 			i = next_i;
 			skipWhitespace(data, i, len, line);
 			if(i >= len)
 			{
-				return HDZJJsonError.make("On Object value '"..last_element.."', expected element, got EOF");
+				return HDZJsonError.make("On Object value '"..last_element.."', expected element, got EOF");
 			}
 			let elem = parseElement(data, i, len, line);
-			if(elem is "HDZJJsonError")
+			if(elem is "HDZJsonError")
 			{
-				return HDZJJsonError.make("On Object value '"..last_element.."', "..HDZJJsonError(elem).what);
+				return HDZJsonError.make("On Object value '"..last_element.."', "..HDZJsonError(elem).what);
 			}
-			obj.set(HDZJJsonString(key).s, HDZJJsonElement(elem));
+			obj.set(HDZJsonString(key).s, HDZJsonElement(elem));
 			skipWhitespace(data, i, len, line);
 			if(i >= len)
 			{
-				return HDZJJsonError.make("After Object value '"..last_element.."', expected ',', got EOF after element '"..last_element.."'");
+				return HDZJsonError.make("After Object value '"..last_element.."', expected ',', got EOF after element '"..last_element.."'");
 			}
 			[c, next_i] = data.getNextCodePoint(i);
 			if(c != ",")
@@ -256,31 +256,31 @@ class HDZJJSON
 				{
 					continue;
 				}
-				return HDZJJsonError.make("After Object value '"..last_element.."', expected ',', got '"..data.mid(i, 1).."'");
+				return HDZJsonError.make("After Object value '"..last_element.."', expected ',', got '"..data.mid(i, 1).."'");
 			}
 			i = next_i;
 		}
         if(has_last_element)
 		{
-            return HDZJJsonError.make("After Object value '"..last_element.."', expected }, got EOF");
+            return HDZJsonError.make("After Object value '"..last_element.."', expected }, got EOF");
         }
 		else
 		{
-            return HDZJJsonError.make("On Empty Object, expected }, got EOF");
+            return HDZJsonError.make("On Empty Object, expected }, got EOF");
         }
 	}
 	
-	private static HDZJJsonElementOrError parseArray(out string data, out uint i, uint len, out uint line) 
+	private static HDZJsonElementOrError parseArray(out string data, out uint i, uint len, out uint line) 
 	{ // parse a json array, allows trailing commas
-		if(i >= len) return HDZJJsonError.make("Expected Array, got EOF");
+		if(i >= len) return HDZJsonError.make("Expected Array, got EOF");
 		uint c, next_i;
 		[c, next_i] = data.getNextCodePoint(i);
 		if(c != "[")
 		{
-			return HDZJJsonError.make("Expected '[' (Array), got '"..data.mid(i, 1).."'");
+			return HDZJsonError.make("Expected '[' (Array), got '"..data.mid(i, 1).."'");
 		}
 		i = next_i;
-		HDZJJsonArray arr=HDZJJsonArray.make();
+		HDZJsonArray arr=HDZJsonArray.make();
 		while(i<len)
 		{
 			skipWhitespace(data, i, len, line);
@@ -291,15 +291,15 @@ class HDZJJSON
 				return arr;
 			}
 			let elem = parseElement(data, i, len, line);
-			if(elem is "HDZJJsonError")
+			if(elem is "HDZJsonError")
 			{
-				return HDZJJsonError.make("On Array index "..arr.size()..", "..HDZJJsonError(elem).what);
+				return HDZJsonError.make("On Array index "..arr.size()..", "..HDZJsonError(elem).what);
 			}
-			arr.push(HDZJJsonElement(elem));
+			arr.push(HDZJsonElement(elem));
 			skipWhitespace(data, i, len, line);
 			if(i >= len)
 			{
-				return HDZJJsonError.make("On Array index "..(arr.size() - 1)..", expected ',', got EOF");
+				return HDZJsonError.make("On Array index "..(arr.size() - 1)..", expected ',', got EOF");
 			}
 			[c, next_i] = data.getNextCodePoint(i);
 			if(c != ",")
@@ -308,29 +308,29 @@ class HDZJJSON
 				{
 					continue;
 				}
-				return HDZJJsonError.make("After Array index "..(arr.size() - 1)..", expected ',', got '"..data.mid(i, 1).."'");
+				return HDZJsonError.make("After Array index "..(arr.size() - 1)..", expected ',', got '"..data.mid(i, 1).."'");
 			}
 			i = next_i;
 		}
         if(arr.size() == 0)
 		{
-            return HDZJJsonError.make("On Empty Array, expected ], got EOF");
+            return HDZJsonError.make("On Empty Array, expected ], got EOF");
         }
 		else
 		{
-            return HDZJJsonError.make("After Array index "..(arr.size() - 1)..", expected ], got EOF");
+            return HDZJsonError.make("After Array index "..(arr.size() - 1)..", expected ], got EOF");
             
         }
 	}
 	
     
-	private static HDZJJsonElementOrError parseNumber(out string data, out uint i, uint len)
+	private static HDZJsonElementOrError parseNumber(out string data, out uint i, uint len)
 	{ // parse a number in the format [0-9]+(?:\.[0-9]+)?
 	  // TODO match floating point numbers in exponent format
-		if(i >= len) return HDZJJsonError.make("Expected Number, got EOF");
+		if(i >= len) return HDZJsonError.make("Expected Number, got EOF");
 		uint next_i, i3, c;
 		[c, next_i] = data.getNextCodePoint(i);
-		if(!isNumber(c)) return HDZJJsonError.make("Expected '0'-'9' (Number), got '"..data.mid(i, 1).."'");
+		if(!isNumber(c)) return HDZJsonError.make("Expected '0'-'9' (Number), got '"..data.mid(i, 1).."'");
 		next_i = i;
 		bool is_double=false;
 		while(next_i < data.length())
@@ -340,7 +340,7 @@ class HDZJJSON
 			{
 				if(is_double)
 				{
-					return HDZJJsonError.make("On Number, duplicate dot");
+					return HDZJsonError.make("On Number, duplicate dot");
 				}
 				is_double = true;
 			}
@@ -351,33 +351,33 @@ class HDZJJSON
 			next_i = i3;
 		}
 		uint n = next_i - i;
-		HDZJJsonElement o;
+		HDZJsonElement o;
 		if(is_double)
 		{
-			o = HDZJJsonDouble.make(data.mid(i,n).toDouble());
+			o = HDZJsonDouble.make(data.mid(i,n).toDouble());
 		}
 		else
 		{
-			o = HDZJJsonInt.make(data.mid(i,n).toInt());
+			o = HDZJsonInt.make(data.mid(i,n).toInt());
 		}
 		i = next_i;
 		return o;
 	}
 	
 	
-	private static HDZJJsonElementOrError parseElement(out string data,out uint i,uint len,out uint line)
+	private static HDZJsonElementOrError parseElement(out string data,out uint i,uint len,out uint line)
 	{ // returns one of:
-	  //	HDZJJsonArray
-	  //	HDZJJsonObject
-	  //	HDZJJsonString
-	  //	HDZJJsonInt
-	  //	HDZJJsonDouble
-	  //	HDZJJsonNull
-	  //	HDZJJsonError
+	  //	HDZJsonArray
+	  //	HDZJsonObject
+	  //	HDZJsonString
+	  //	HDZJsonInt
+	  //	HDZJsonDouble
+	  //	HDZJsonNull
+	  //	HDZJsonError
 		skipWhitespace(data, i, len, line);
 		if(i >= len)
 		{
-			return HDZJJsonError.make("Expected JSON Element, got EOF");
+			return HDZJsonError.make("Expected JSON Element, got EOF");
 		}
 		uint c, next_i;
 		[c, next_i] = data.getNextCodePoint(i);
@@ -390,9 +390,9 @@ class HDZJJSON
 			i = next_i;
 			skipWhitespace(data,i,len,line);
 			let num = parseNumber(data,i,len);
-			if(c == "-" && num is "HDZJJsonNumber")
+			if(c == "-" && num is "HDZJsonNumber")
 			{
-				return HDZJJsonNumber(num).negate();
+				return HDZJsonNumber(num).negate();
 			}
 			else
 			{
@@ -414,31 +414,31 @@ class HDZJJSON
 		else if(data.mid(i, 4) == "true")
 		{ // bool, true
 			i+=4;
-			return HDZJJsonBool.make(true);
+			return HDZJsonBool.make(true);
 		}
 		else if(data.mid(i, 5) == "false")
 		{ // bool, false
 			i+=5;
-			return HDZJJsonBool.make(false);
+			return HDZJsonBool.make(false);
 		}
 		else if(data.mid(i, 4) == "null")
 		{ // null
 			i+=4;
-			return HDZJJsonNull.make();
+			return HDZJsonNull.make();
 		}
 		else
 		{
-			return HDZJJsonError.make("Expected JSON Element, got '"..data.mid(i, 1).."'");
+			return HDZJsonError.make("Expected JSON Element, got '"..data.mid(i, 1).."'");
 		}
 	}
 	
-	static HDZJJsonElementOrError parse(string json_string,bool allow_data_past_end=false)
+	static HDZJsonElementOrError parse(string json_string,bool allow_data_past_end=false)
 	{ // roughly O(n), has extra complexity from data structures (DynArray, HashTable) and string copying
 		uint index = 0;
 		uint line = 1;
 		uint len = json_string.length();
-		HDZJJsonElementOrError elem = parseElement(json_string, index, len, line);
-		if(!(elem is "HDZJJsonError"))
+		HDZJsonElementOrError elem = parseElement(json_string, index, len, line);
+		if(!(elem is "HDZJsonError"))
 		{
 			skipWhitespace(json_string, index, len, line);
 			if(
@@ -449,12 +449,12 @@ class HDZJJSON
 				)
 			  )
 			{
-				return HDZJJsonError.make("On JSON line "..line.." - expected EOF, got '"..json_string.mid(index, 1).."'");
+				return HDZJsonError.make("On JSON line "..line.." - expected EOF, got '"..json_string.mid(index, 1).."'");
 			}
 		}
 		else
 		{
-			return HDZJJsonError.make("On JSON line "..line.." - "..HDZJJsonError(elem).what);
+			return HDZJsonError.make("On JSON line "..line.." - "..HDZJsonError(elem).what);
 		}
 		return elem;
 	}
