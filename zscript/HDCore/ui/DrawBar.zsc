@@ -1,6 +1,22 @@
+enum HDCoreDrawBarDirections {
+
+    // Axis bits
+    DRAWBAR_HORIZONTAL = 0,
+    DRAWBAR_VERTICAL = 2,
+
+    // Reverse Direction bit
+    DRAWBAR_FLIPPED = 1,
+
+    // Helper Constants
+    DRAWBAR_WE = DRAWBAR_HORIZONTAL,
+    DRAWBAR_EW = DRAWBAR_HORIZONTAL|DRAWBAR_FLIPPED,
+    DRAWBAR_SN = DRAWBAR_VERTICAL,
+    DRAWBAR_NS = DRAWBAR_VERTICAL|DRAWBAR_FLIPPED
+}
+
 extend class HDCore {
     
-    static ui void DrawBar(HDStatusBar sb, name fgName, name bgName, double ratio, Vector2 pos, int flags = 0, int direction = 0, Vector2 scale = (1.0, 1.0), double alpha = 1.0) {
+    static ui void DrawBar(HDStatusBar sb, name fgName, name bgName, double ratio, Vector2 pos, int flags = 0, int direction = DRAWBAR_HORIZONTAL, Vector2 scale = (1.0, 1.0), double alpha = 1.0) {
 
         // Get registered textures for both foreground and background assets
         TextureID fgTex = TexMan.CheckForTexture(fgName, TexMan.TYPE_MISCPATCH);
@@ -14,12 +30,12 @@ extend class HDCore {
         Vector2 bgPos = pos + GetAlignOffs(sb, bgSize, flags, scale);
 
         // If Vertical
-        if (direction & 2) {
+        if (direction&DRAWBAR_VERTICAL) {
             fgSize = (fgSize.x, fgSize.y * ratio);
             bgSize = (bgSize.x, bgSize.y * (1.0 - ratio));
 
             // If Flipped
-            if (direction & 1) {
+            if (direction&DRAWBAR_FLIPPED) {
                 bgPos += (0, fgSize.y * scale.y);
             } else {
                 fgPos += (0, bgSize.y * scale.y);
@@ -31,7 +47,7 @@ extend class HDCore {
             bgSize = (bgSize.x * (1.0 - ratio), bgSize.y);
 
             // If Flipped
-            if (direction & 1) {
+            if (direction&DRAWBAR_FLIPPED) {
                 fgPos += (bgSize.x * scale.x, 0);
             } else {
                 bgPos += (fgSize.x * scale.x, 0);
