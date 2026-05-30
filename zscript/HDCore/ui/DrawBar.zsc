@@ -71,8 +71,8 @@ extend class HDCore {
         let yAlign = flags&(sb.DI_ITEM_TOP|sb.DI_ITEM_VCENTER|sb.DI_ITEM_BOTTOM);
 
         // Calculate the alignment flags into offsets based on the size of the texture
-        let xOffs = xAlign == sb.DI_ITEM_RIGHT ? -size.x : xAlign == sb.DI_ITEM_HCENTER ? -(size.x / 2.0) : 0.0;
-        let yOffs = yAlign == sb.DI_ITEM_BOTTOM ? -size.y : yAlign == sb.DI_ITEM_VCENTER ? -(size.y / 2.0) : 0.0;
+        let xOffs = xAlign == sb.DI_ITEM_RIGHT ? -size.x : xAlign == sb.DI_ITEM_HCENTER ? -(size.x * 0.5) : 0.0;
+        let yOffs = yAlign == sb.DI_ITEM_BOTTOM ? -size.y : yAlign == sb.DI_ITEM_VCENTER ? -(size.y * 0.5) : 0.0;
 
         // Return the offsets based on the provided scaling ratio
         return (xOffs * scale.x, yOffs * scale.y);
