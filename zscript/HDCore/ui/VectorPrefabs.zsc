@@ -48,16 +48,16 @@ class HDVectorPrefab ui {
                     if (rect.z == 0 || rect.w == 0) continue;
 
                     switch (rotation) {
-                        case DRAWPREFAB_EW:
+                        case DRAWPREFAB_NS: // 3
                             prefab.rects[i] = (-rect.y, rect.x, -rect.w, rect.z);
                             break;
-                        case DRAWPREFAB_SN:
+                        case DRAWPREFAB_EW: // 1
                             prefab.rects[i] = (-rect.x, -rect.y, -rect.z, -rect.w);
                             break;
-                        case DRAWPREFAB_NS:
+                        case DRAWPREFAB_SN: // 2
                             prefab.rects[i] = (rect.y, -rect.x, rect.w, -rect.z);
                             break;
-                        case DRAWPREFAB_WE:
+                        case DRAWPREFAB_WE: // 0
                         default:
                             prefab.rects[i] = rect;
                             break;
