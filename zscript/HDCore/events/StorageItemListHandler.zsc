@@ -14,7 +14,7 @@ class HDCoreStorageItemListHandler : HDCoreEventHandler {
     override void processCommand(HDCoreCommand cmd) {
         switch (cmd.command) {
             case 'addBPSpawnPoolFilter':
-                HDCore.Log('HDCoreLib', LOGGING_WARN, "HDCINFO Command 'addBPSpawnPoolFilter' is deprecated, contact developer to update!");
+                HDCore.Log('HDCoreLib', LOGGING_INFO, "HDCINFO Command 'addBPSpawnPoolFilter' is deprecated, contact developer to update!");
             case 'addStorageItemListFilter': {
                 // FIXME: Find a better command/logic to handle existing CVARs
 
@@ -35,7 +35,7 @@ class HDCoreStorageItemListHandler : HDCoreEventHandler {
                 break;
             }
             case 'addBPSpawnPoolWhitelist':
-                HDCore.Log('HDCoreLib', LOGGING_WARN, "HDCINFO Command 'addBPSpawnPoolWhitelist' is deprecated, contact developer to update!");
+                HDCore.Log('HDCoreLib', LOGGING_INFO, "HDCINFO Command 'addBPSpawnPoolWhitelist' is deprecated, contact developer to update!");
             case 'addStorageItemListWhitelist': {
                 let item = cmd.getNameParam("name");
                 Class<Inventory> invClass = item;
@@ -47,7 +47,7 @@ class HDCoreStorageItemListHandler : HDCoreEventHandler {
                 break;
             }
             case 'removeBPSpawnPoolWhitelist':
-                HDCore.Log('HDCoreLib', LOGGING_WARN, "HDCINFO Command 'removeBPSpawnPoolWhitelist' is deprecated, contact developer to update!");
+                HDCore.Log('HDCoreLib', LOGGING_INFO, "HDCINFO Command 'removeBPSpawnPoolWhitelist' is deprecated, contact developer to update!");
             case 'removeStorageItemListWhitelist': {
                 let item = cmd.getNameParam("name");
                 Class<Inventory> invClass = item;
@@ -60,13 +60,13 @@ class HDCoreStorageItemListHandler : HDCoreEventHandler {
                 break;
             }
             case 'clearBPSpawnPoolWhitelist':
-                HDCore.Log('HDCoreLib', LOGGING_WARN, "HDCINFO Command 'clearBPSpawnPoolWhitelist' is deprecated, contact developer to update!");
+                HDCore.Log('HDCoreLib', LOGGING_INFO, "HDCINFO Command 'clearBPSpawnPoolWhitelist' is deprecated, contact developer to update!");
             case 'clearStorageItemListWhitelist': {
                 whitelist.clear();
                 break;
             }
             case 'addBPSpawnPoolBlacklist':
-                HDCore.Log('HDCoreLib', LOGGING_WARN, "HDCINFO Command 'addBPSpawnPoolBlacklist' is deprecated, contact developer to update!");
+                HDCore.Log('HDCoreLib', LOGGING_INFO, "HDCINFO Command 'addBPSpawnPoolBlacklist' is deprecated, contact developer to update!");
             case 'addStorageItemListBlacklist': {
                 let item = cmd.getNameParam("name");
                 Class<Inventory> invClass = item;
@@ -78,7 +78,7 @@ class HDCoreStorageItemListHandler : HDCoreEventHandler {
                 break;
             }
             case 'removeBPSpawnPoolBlacklist':
-                HDCore.Log('HDCoreLib', LOGGING_WARN, "HDCINFO Command 'removeBPSpawnPoolBlacklist' is deprecated, contact developer to update!");
+                HDCore.Log('HDCoreLib', LOGGING_INFO, "HDCINFO Command 'removeBPSpawnPoolBlacklist' is deprecated, contact developer to update!");
             case 'removeStorageItemListBlacklist': {
                 let item = cmd.getNameParam("name");
                 Class<Inventory> invClass = item;
@@ -91,7 +91,7 @@ class HDCoreStorageItemListHandler : HDCoreEventHandler {
                 break;
             }
             case 'clearBPSpawnPoolBlacklist':
-                HDCore.Log('HDCoreLib', LOGGING_WARN, "HDCINFO Command 'clearBPSpawnPoolBlacklist' is deprecated, contact developer to update!");
+                HDCore.Log('HDCoreLib', LOGGING_INFO, "HDCINFO Command 'clearBPSpawnPoolBlacklist' is deprecated, contact developer to update!");
             case 'clearStorageItemListBlacklist': {
                 blacklist.clear();
                 break;
