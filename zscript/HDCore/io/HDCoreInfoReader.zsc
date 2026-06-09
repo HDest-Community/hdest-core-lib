@@ -99,7 +99,7 @@ class HDCoreInfoReader : StaticEventHandler {
                 // If the params are an inline JSON Object, parse them directly.
                 // Otherwise, if the text after the delimiter is the path to the JSON File containing the parameters, read that in and parse that instead.
                 // TODO: Enhance check against params text being inline JSON?
-                if (tokens[1].left(1) == "{" && tokens[1].mid(tokens[1].length() - 2, 1) == "}") {
+                if (tokens[1].left(1) == "{" && tokens[1].mid(tokens[1].length() - 1, 1) == "}") {
                     HDCore.Log('HDCoreLib', LOGGING_TRACE, "Processing referenced inline Command '"..tokens[0].." => "..tokens[1].."'");
 
                     output.push(HDCoreCommand.create(tokens[0], tokens[1]));
