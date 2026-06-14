@@ -44,8 +44,6 @@ class HDCoreCommand {
 
                 switch (i.getValue().getClassName()) {
                     case 'HDZJsonArray':
-                        HDCore.log('HDCoreLib.Command.ParseParams', LOGGING_WARN, "Parameter '"..key.."' is of unhandled type Array!");
-                        return;
                     case 'HDZJsonBool':
                     case 'HDZJsonInt':
                     case 'HDZJsonDouble':
@@ -80,6 +78,8 @@ class HDCoreCommand {
                         if ((obj.get("name") is 'HDZJsonString') && (obj.get("params") is 'HDZJsonObject')) {
                             providerClassName = "HDCoreFunctionProvider_"..HDZJsonString(obj.get("name")).s;
                             val = obj.get("params").serialize();
+                        } else {
+                            val = obj.serialize();
                         }
 
                         break;
@@ -196,7 +196,7 @@ class HDCoreCommand {
                     if ((obj.get("name") is 'HDZJsonString') && (obj.get("params") is 'HDZJsonObject')) {
                         arr.push(HDCoreDataProvider.create("HDCoreFunctionProvider_"..HDZJsonString(obj.get("name")).s, obj.get("params").serialize()));
                     } else {
-                        HDCore.log("HDCoreLib."..GetClassName().."."..command, LOGGING_ERROR, "getArrayParamValue(\""..key.."\") => "..obj.serialize());
+                        arr.push(HDCoreDataProvider.create('HDCoreStaticProvider', obj.serialize()));
                     }
 
                     break;
