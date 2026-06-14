@@ -146,7 +146,6 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
             let obj = HDZJsonObject(json);
 
             // Create Spawn Table itself
-            // TODO: Refactor command processing
             processNewSpawnTableCmd(HDCoreCommand.create('newSpawnTable', obj.serialize()));
 
             if (obj.get("entries") is 'HDZJsonArray') {
