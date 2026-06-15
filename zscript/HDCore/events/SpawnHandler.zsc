@@ -162,21 +162,13 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
                     }
 
                     let entryObj = HDZJsonObject(entry);
-                    if (entryObj.get("type") is 'HDZJsonString') {
+                    
+                    entryObj.set("tableName", obj.data.checkKey("tableName") ? obj.get("tableName") : obj.get("spawnName"));
 
-                        name entryType = HDZJsonString(entryObj.get("type")).s;
-
-                        entryObj.set("tableName", obj.get("tableName") ? obj.get("tableName") : obj.get("spawnName"));
-
-                        switch (entryType) {
-                            case 'nested':
-                                processAddSpawnTableNestedEntryCmd(HDCoreCommand.create('AddSpawnTableNestedEntry', entryObj.serialize()));
-                                break;
-                            case 'single':
-                            default:
-                                processAddSpawnTableSingleEntryCmd(HDCoreCommand.create('AddSpawnTableSingleEntry', entryObj.serialize()));
-                                break;
-                        }
+                    if ((entryObj.get("type") is 'HDZJsonString') && HDZJsonString(entryObj.get("type")).s ~== "nested") {
+                        processAddSpawnTableNestedEntryCmd(HDCoreCommand.create('AddSpawnTableNestedEntry', entryObj.serialize()));
+                    } else {
+                        processAddSpawnTableSingleEntryCmd(HDCoreCommand.create('AddSpawnTableSingleEntry', entryObj.serialize()));
                     }
                 }
             }
