@@ -29,85 +29,146 @@ class HDCoreStorageItemListHandler : HDCoreEventHandler {
 
     override void processCommand(HDCoreCommand cmd) {
         switch (cmd.command) {
+            case 'configureStorageItemListHandler': {
+                processConfigureStorageItemListHandlerCmd(cmd);
+                break;
+            }
             case 'addBPSpawnPoolFilter':
             case 'addStorageItemListFilter': {
-                // FIXME: Find a better command/logic to handle existing CVARs
-
-                let ammo = cmd.getNameParam("name");
-                Class<Inventory> invClass = ammo;
-
-                if (!invClass) break;
-
-                // If the filter entry is allowed, remove from blacklist,
-                // Otherwise add to blacklist.
-                let index = blacklist.find(invClass.getClassName());
-                if (cmd.getBoolParam("allowed")) {
-                    if (index < blacklist.size()) blacklist.delete(index);
-                } else {
-                    if (index >= blacklist.size()) blacklist.push(invClass.getClassName());
-                }
-
+                processAddStorageItemListFilterCmd(cmd);
                 break;
             }
             case 'addBPSpawnPoolWhitelist':
             case 'addStorageItemListWhitelist': {
-                let item = cmd.getNameParam("name");
-                Class<Inventory> invClass = item;
-
-                if (!invClass) break;
-
-                if (whitelist.find(invClass.getClassName()) >= whitelist.size()) whitelist.push(invClass.getClassName());
-
+                processAddStorageItemListWhitelistCmd(cmd);
                 break;
             }
             case 'removeBPSpawnPoolWhitelist':
             case 'removeStorageItemListWhitelist': {
-                let item = cmd.getNameParam("name");
-                Class<Inventory> invClass = item;
-
-                if (!invClass) break;
-
-                let index = whitelist.find(invClass.getClassName());
-                if (index < whitelist.size()) whitelist.delete(index);
-
+                processRemoveStorageItemListWhitelistCmd(cmd);
                 break;
             }
             case 'clearBPSpawnPoolWhitelist':
             case 'clearStorageItemListWhitelist': {
-                whitelist.clear();
+                processClearStorageItemListWhitelistCmd(cmd);
                 break;
             }
             case 'addBPSpawnPoolBlacklist':
             case 'addStorageItemListBlacklist': {
-                let item = cmd.getNameParam("name");
-                Class<Inventory> invClass = item;
-
-                if (!invClass) break;
-
-                if (blacklist.find(invClass.getClassName()) >= blacklist.size()) blacklist.push(invClass.getClassName());
-
+                processAddStorageItemListBlacklistCmd(cmd);
                 break;
             }
             case 'removeBPSpawnPoolBlacklist':
             case 'removeStorageItemListBlacklist': {
-                let item = cmd.getNameParam("name");
-                Class<Inventory> invClass = item;
-
-                if (!invClass) break;
-
-                let index = blacklist.find(invClass.getClassName());
-                if (index < blacklist.size()) blacklist.delete(index);
-
+                processRemoveStorageItemListBlacklistCmd(cmd);
                 break;
             }
             case 'clearBPSpawnPoolBlacklist':
-            case 'clearStorageItemListBlacklist': {
-                blacklist.clear();
+            case 'clearStorageItemListBlacklist':
+                processClearStorageItemListBlacklistCmd(cmd);
                 break;
-            }
             default:
                 break;
         }
+    }
+
+    void processConfigureStorageItemListHandlerCmd(HDCoreCommand cmd) {
+
+        if (cmd.getBoolParam("clean")) {
+            processClearStorageItemListWhitelistCmd(cmd);
+            processClearStorageItemListBlacklistCmd(cmd);
+        }
+
+        Array<name> namesArr;
+
+        // Add all configured Blacklist Entries
+        cmd.getArrayNameParam("blacklist", namesArr);
+        forEach (name : namesArr) addBlacklist(name);
+
+        // Add all configured whitelist Entries
+        cmd.getArrayNameParam("whitelist", namesArr);
+        forEach (name : namesArr) addWhitelist(name);
+    }
+
+    void processAddStorageItemListFilterCmd(HDCoreCommand cmd) {
+        
+        // FIXME: Find a better command/logic to handle existing CVARs
+
+        // If the filter entry is allowed, remove from blacklist,
+        // Otherwise add to blacklist.
+        if (cmd.getBoolParam("allowed")) {
+            processRemoveStorageItemListBlacklistCmd(cmd);
+        } else {
+            processAddStorageItemListBlacklistCmd(cmd);
+        }
+    }
+
+    void processAddStorageItemListWhitelistCmd(HDCoreCommand cmd) {
+        
+        addWhitelist(cmd.getNameParam("name"));
+    }
+
+    void processRemoveStorageItemListWhitelistCmd(HDCoreCommand cmd) {
+        
+        removeWhitelist(cmd.getNameParam("name"));
+    }
+
+    void processClearStorageItemListWhitelistCmd(HDCoreCommand cmd) {
+
+        whitelist.clear();
+    }
+
+    void processAddStorageItemListBlacklistCmd(HDCoreCommand cmd) {
+
+        addBlacklist(cmd.getNameParam("name"));
+    }
+
+    void processRemoveStorageItemListBlacklistCmd(HDCoreCommand cmd) {
+
+        removeBlacklist(cmd.getNameParam("name"));
+    }
+
+    void processClearStorageItemListBlacklistCmd(HDCoreCommand cmd) {
+
+        blacklist.clear();
+    }
+
+    void addBlacklist(name bl) {
+
+        Class<Inventory> invClass = bl;
+
+        if (!invClass) return;
+
+        if (blacklist.find(invClass.getClassName()) >= blacklist.size()) blacklist.push(invClass.getClassName());
+    }
+
+    void removeBlacklist(name bl) {
+
+        Class<Inventory> invClass = bl;
+
+        if (!invClass) return;
+
+        let index = blacklist.find(invClass.getClassName());
+        if (index < blacklist.size()) blacklist.delete(index);
+    }
+
+    void addWhitelist(name wl) {
+        
+        Class<Inventory> invClass = wl;
+
+        if (!invClass) return;
+
+        if (whitelist.find(invClass.getClassName()) >= whitelist.size()) whitelist.push(invClass.getClassName());
+    }
+
+    void removeWhitelist(name wl) {
+
+        Class<Inventory> invClass = wl;
+
+        if (!invClass) return;
+
+        let index = whitelist.find(invClass.getClassName());
+        if (index < whitelist.size()) whitelist.delete(index);
     }
 
     override void afterProcessCommands() {
