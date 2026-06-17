@@ -93,6 +93,8 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
                 );
                 break;
             }
+            // FIXME: "replaces" is ambiguous here, adding a nested replacement table inside a non-replacement table isn't possible
+            //   and needs an existing actor to spawn instead, intending to be replaced by the nested table
             case 'addSpawnTableNestedEntry': {
                 let nestedTable = getSpawnTable(
                     cmd.getNameParam("name"),
