@@ -1,11 +1,9 @@
 enum HDCoreLoggingLevels {
-    LOGGING_OFF   = 0,
     LOGGING_ERROR = 100,
     LOGGING_WARN  = 200,
     LOGGING_INFO  = 300,
     LOGGING_DEBUG = 400,
-    LOGGING_TRACE = 500,
-    LOGGING_ALL   = 600
+    LOGGING_TRACE = 500
 }
 
 extend class HDCore {
@@ -26,8 +24,8 @@ extend class HDCore {
 
         // If the log is coming from the Playerpawn, use it to log to its player only,
         // otherise simply write to the console
-        if (recip && recip is 'PlayerPawn') recip.A_Log(msg);
-        else DoLog(msg);
+        if (recip && recip is 'PlayerPawn') recip.A_Log(msg, true);
+        else DoLog(level, msg);
     }
 
     static ui void LogUI(name ns = '', int level = LOGGING_INFO, string message = "") {
@@ -42,7 +40,7 @@ extend class HDCore {
         if (message == "") return;
 
         // Build Log Message
-        DoLog(FormatLogMessage(ns, level, message));
+        DoLog(level, FormatLogMessage(ns, level, message));
     }
 
     static clearscope void Log(name ns = '', int level = LOGGING_INFO, string message = "") {
@@ -57,15 +55,16 @@ extend class HDCore {
         if (message == "") return;
 
         // Build Log Message
-        DoLog(FormatLogMessage(ns, level, message));
+        DoLog(level, FormatLogMessage(ns, level, message));
     }
 
-    private static clearscope void DoLog(string message) {
-        Console.printF(message);
+    private static clearscope void DoLog(int level, string message) {
+        Console.debugPrintf(level / 100, message);
     }
 
     static clearscope bool ShouldLog(name ns, int level) {
-        return level > LOGGING_OFF && level <= CVar.GetCVar('hdc_logging_level').GetInt();
+        let lvl = max(CVar.GetCVar('developer').GetInt(), CVar.GetCVar('hd_debug').GetInt(), CVar.GetCVar('hdc_logging_level').GetInt() / 100);
+        return level > 0 && (level / 100) <= lvl;
     }
 
     static clearscope string GetLogTimestamp() {
