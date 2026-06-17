@@ -1,0 +1,123 @@
+{
+    "thingBlacklist": [
+        "BarrelGibs",
+        "BFGSpark",
+        "BloodSplatSilent",
+        "BloodTrail",
+        "btAdrenaline",
+        "CheckPuff",
+        "ClusterSpawner",
+        "ColonGibs",
+        "DecoPusher",
+        "DistanceCheckerCeiling",
+        "DummySpawner",
+        "DustCloud",
+        "DynamicLight",
+        "FragShard",
+        "Gibs",
+        "GrenadeSmokeTrail",
+        "hasHelmet",
+        "HDAIOverride",
+        "HDArmourWorn",
+        "HDBulletActor",
+        "HDBulletPuff",
+        "HDDebris",
+        "HDExplosion",
+        "HDFireball",
+        "HDFireballTail",
+        "HDFireDouse",
+        "HDFlameRed",
+        "HDFlameRedBig",
+        "HDFollower",
+        "HDLadderSection",
+        "HDMagicShield",
+        "HDMasterBlood",
+        "HDMerchant",
+        "HDPlayerCorpse",
+        "HDPlayerPawn",
+        "HDPuff",
+        "HDSmoke",
+        "HDSmokeChunk",
+        "HDTracerYellow",
+        "HHArmourNerf",
+        "HHelmet",
+        "HHelmetWorn",
+        "HideousBubble",
+        "IA_Sound",
+        "ImmunityToFire",
+        "LDLegendaryMonsterChooserHard",
+        "MapMarker",
+        "ParticleWhiteSmall",
+        "PlantBit",
+        "RainBase",
+        "RainSpawner",
+        "REItemGlow",
+        "ReverseImpBallTail",
+        "RocketSmokeTrail",
+        "ScopeCamera",
+        "ShieldSpark",
+        "SmallBloodPool",
+        "SoundEnvironment",
+        "SpicyAirSinkToken",
+        "SpicyAirSourceToken",
+        "TeleFog",
+        "TeleportDest",
+        "UaS_AI_Handler",
+        "UaS_VisWeps_Updater",
+        "VerySimpleRainItem",
+        "VisualFighterImp_Updater",
+        "VisualHealerImp_Updater",
+        "VisualJackboot_Updater",
+        "VisualMageImp_Updater",
+        "VisualOperator_Updater",
+        "VisualStormtrooper_Updater",
+        "WallChunk"
+    ],
+    "ammo": [
+        {
+            "ammoName": "BrontornisRound"
+        },
+        {
+            "ammoName": "FourMilAmmo"
+        },
+        {
+            "ammoName": "HD4mMag"
+        },
+        {
+            "ammoName": "HD7mClip"
+        },
+        {
+            "ammoName": "HD7mMag"
+        },
+        {
+            "ammoName": "HD9mMag15"
+        },
+        {
+            "ammoName": "HD9mMag30"
+        },
+        {
+            "ammoName": "HDBattery"
+        },
+        {
+            "ammoName": "HDPistolAmmo"
+        },
+        {
+            "ammoName": "HDRevolverAmmo"
+        },
+        {
+            "ammoName": "HDRocketAmmo"
+        },
+        {
+            "ammoName": "HDShellAmmo"
+        },
+        {
+            "ammoName": "HEATAmmo"
+        },
+        {
+            "ammoName": "SevenMilAmmo"
+        },
+        {
+            "ammoName": "SevenMilAmmoRecast"
+        }
+    ]
+}

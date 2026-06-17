@@ -1,0 +1,2432 @@
+{
+  "mapBlacklist": [
+    "RANGE"
+  ],
+  "thingBlacklist": [
+    "BFGSpark",
+    "BloodSplatSilent",
+    "BloodTrail",
+    "btAdrenaline",
+    "BulletSoundTrail",
+    "CheckPuff",
+    "DistanceCheckerCeiling",
+    "DustCloud",
+    "DynamicLight",
+    "FragShard",
+    "GrenadeSmokeTrail",
+    "hasHelmet",
+    "HDAIOverride",
+    "HDArmourWorn",
+    "HDBulletActor",
+    "HDBulletPuff",
+    "HDDebris",
+    "HDExplosion",
+    "HDFireball",
+    "HDFireballTail",
+    "HDFireDouse",
+    "HDFlameRed",
+    "HDFlameRedBig",
+    "HDFollower",
+    "HDLadderSection",
+    "HDMagicShield",
+    "HDMasterBlood",
+    "HDMerchant",
+    "HDPlayerCorpse",
+    "HDPlayerPawn",
+    "HDPuff",
+    "HDSmoke",
+    "HDSmokeChunk",
+    "HDTracerYellow",
+    "HHArmourNerf",
+    "HHelmet",
+    "HHelmetWorn",
+    "HideousBubble",
+    "IA_Sound",
+    "ImmunityToFire",
+    "LDLegendaryMonsterChooserHard",
+    "MapMarker",
+    "NullSpawner",
+    "ParticleWhiteSmall",
+    "PlantBit",
+    "RainBase",
+    "RainSpawner",
+    "REItemGlow",
+    "ReverseImpBallTail",
+    "RocketSmokeTrail",
+    "ScopeCamera",
+    "ShieldSpark",
+    "SoundEnvironment",
+    "SpicyAirSinkToken",
+    "SpicyAirSourceToken",
+    "TeleportDest",
+    "UaS_AI_Handler",
+    "UaS_VisWeps_Updater",
+    "VerySimpleRainItem",
+    "VisualFighterImp_Updater",
+    "VisualHealerImp_Updater",
+    "VisualJackboot_Updater",
+    "VisualMageImp_Updater",
+    "VisualOperator_Updater",
+    "VisualStormtrooper_Updater",
+    "WallChunk"
+  ],
+  "spawnTables": [
+    {
+      "spawnName": "HDAB",
+      "entries": [
+        {
+          "name": "HDAmBoxUnarmed",
+          "weight": 6,
+          "persists": true
+        },
+        {
+          "name": "HDAmBox",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDCasingBits",
+      "entries": [
+        {
+          "name": "HDSpent9mm",
+          "weight": 24,
+          "persists": true
+        },
+        {
+          "name": "HDSpentShell",
+          "weight": 9,
+          "persists": true
+        },
+        {
+          "name": "HDSpent7mm",
+          "weight": 6,
+          "persists": true
+        },
+        {
+          "name": "HDFumblingShell",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "TerrorCasing",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDGoreBits",
+      "entries": [
+        {
+          "type": "nested",
+          "name": "HDCasingBits",
+          "weight": 32,
+          "persists": true
+        },
+        {
+          "name": "SmallBloodPool",
+          "weight": 8,
+          "persists": true
+        },
+        {
+          "name": "BarrelGibs",
+          "weight": 8,
+          "persists": true
+        },
+        {
+          "name": "HDFumblingShell",
+          "weight": 8,
+          "persists": true
+        },
+        {
+          "name": "HD4mmMagEmpty",
+          "weight": 8,
+          "persists": true
+        },
+        {
+          "name": "Gibs",
+          "weight": 6,
+          "persists": true
+        },
+        {
+          "name": "ColonGibs",
+          "weight": 4,
+          "persists": true
+        },
+        {
+          "name": "HDSMGEmptyMag",
+          "weight": 3,
+          "persists": true
+        },
+        {
+          "name": "HDPistolEmptyMag",
+          "weight": 3,
+          "persists": true
+        },
+        {
+          "name": "DeadDemon",
+          "weight": 1,
+          "chance": 126,
+          "persists": true
+        },
+        {
+          "name": "DeadDoomImp",
+          "weight": 1,
+          "chance": 126,
+          "persists": true
+        },
+        {
+          "name": "DeadZombieMan",
+          "weight": 1,
+          "chance": 96,
+          "persists": true
+        },
+        {
+          "name": "DeadShotgunGuy",
+          "weight": 1,
+          "chance": 96,
+          "persists": true
+        },
+        {
+          "name": "DeadRifleman",
+          "weight": 1,
+          "chance": 96,
+          "persists": true
+        },
+        {
+          "name": "LiberatorEmptyMag",
+          "weight": 1,
+          "chance": 96,
+          "persists": true
+        },
+        {
+          "name": "ReallyDeadRifleman",
+          "weight": 1,
+          "chance": 46,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDHandgunRandomDrop",
+      "entries": [
+        {
+          "name": "HDPistol",
+          "weight": 5,
+          "chance": 16,
+          "persists": true
+        },
+        {
+          "name": "HDRevolver",
+          "weight": 1,
+          "chance": 16,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "BFGReplaces",
+      "tableName": "BFG9000Replaces",
+      "entries": [
+        {
+          "name": "BFG9K",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ChaingunReplaces",
+      "entries": [
+        {
+          "name": "Vulcanette",
+          "weight": 9,
+          "persists": true
+        },
+        {
+          "name": "HERPUsable",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "name": "HDAutoPistol",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "LiberatorRandom",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ChainsawReplaces",
+      "entries": [
+        {
+          "name": "Lumberjack",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Fist",
+      "tableName": "FistReplaces",
+      "entries": [
+        {
+          "name": "HDFist",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "PistolReplaces",
+      "entries": [
+        {
+          "name": "HDPistol",
+          "weight": 5,
+          "persists": true
+        },
+        {
+          "name": "DeinoSpawn",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "PlasmaReplaces",
+      "tableName": "PlasmaRifleReplaces",
+      "entries": [
+        {
+          "name": "ThunderBuster",
+          "weight": 5,
+          "persists": true
+        },
+        {
+          "name": "LiberatorRandom",
+          "weight": 2,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "RLReplaces",
+      "tableName": "RocketLauncherReplaces",
+      "entries": [
+        {
+          "name": "BloopMapPickup",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HDRLMapPickup",
+          "weight": 4,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ShotgunReplaces",
+      "entries": [
+        {
+          "name": "HunterRandom",
+          "weight": 7,
+          "persists": true
+        },
+        {
+          "name": "SlayerRandom",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "name": "DeinoSpawn",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "SSGReplaces",
+      "tableName": "SuperShotgunReplaces",
+      "entries": [
+        {
+          "name": "SlayerRandom",
+          "weight": 4,
+          "persists": true
+        },
+        {
+          "name": "LiberatorRandom",
+          "weight": 3,
+          "persists": true
+        },
+        {
+          "name": "BloopMapPickup",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "name": "HunterRandom",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "name": "BossRifleSpawner",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HDJetpack",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HDAutoPistol",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "CellRandom",
+      "tableName": "CellReplaces",
+      "entries": [
+        {
+          "name": "HDBattery",
+          "weight": 7,
+          "persists": true
+        },
+        {
+          "name": "HD7mMag",
+          "weight": 3,
+          "persists": true
+        },
+        {
+          "name": "BrontornisRound",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "name": "BFGNecroShard",
+          "weight": 1,
+          "chance": 128,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "CellPackReplacer",
+      "tableName": "CellPackReplaces",
+      "entries": [
+        {
+          "name": "HDBattery",
+          "weight": 4,
+          "persists": true
+        },
+        {
+          "name": "HD7mMag",
+          "weight": 3,
+          "persists": true
+        },
+        {
+          "name": "BrontornisSpawner",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "type": "nested",
+          "name": "HDAB",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "PortableLadder",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "YokaiSpawner",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HDFragGrenadePickup",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HD9mBoxPickup",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HD7mBoxPickup",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "DoorBuster",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "BFGNecroShard",
+          "weight": 1,
+          "chance": 196,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ClipMagPickup",
+      "tableName": "ClipReplaces",
+      "entries": [
+        {
+          "name": "HD4mMag",
+          "weight": 24,
+          "persists": true
+        },
+        {
+          "name": "HD9mMag15",
+          "weight": 4,
+          "persists": true
+        },
+        {
+          "name": "HD9mMag30",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "name": "ArmorBonus",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "name": "HD9mBoxPickup",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HD355BoxPickup",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ClipBoxPickup",
+      "tableName": "ClipBoxReplaces",
+      "entries": [
+        {
+          "name": "ClipBoxPickup1",
+          "weight": 14,
+          "persists": true
+        },
+        {
+          "type": "nested",
+          "name": "HDAB",
+          "weight": 6,
+          "persists": true
+        },
+        {
+          "name": "ClipBoxPickup2",
+          "weight": 4,
+          "persists": true
+        },
+        {
+          "name": "BossRifleSpawner",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HD9mBoxPickup",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HD7mBoxPickup",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HD355BoxPickup",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "RocketAmmoReplaces",
+      "entries": [
+        {
+          "name": "HDRocketAmmo",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "RocketBoxRandom",
+      "tableName": "RocketBoxReplaces",
+      "entries": [
+        {
+          "name": "RocketBigPickup",
+          "weight": 14,
+          "persists": true
+        },
+        {
+          "name": "HDFragGrenadePickup",
+          "weight": 3,
+          "persists": true
+        },
+        {
+          "name": "PortableLadder",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HD9mBoxPickup",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HD7mBoxPickup",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HDIEDPack",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ShellRandom",
+      "tableName": "ShellReplaces",
+      "entries": [
+        {
+          "name": "ShellPickup",
+          "weight": 8,
+          "persists": true
+        },
+        {
+          "name": "HDFumblingShell",
+          "weight": 4,
+          "persists": true
+        },
+        {
+          "name": "DecoPusher",
+          "weight": 4,
+          "chance": 200,
+          "persists": true
+        },
+        {
+          "name": "HDBattery",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HD4mMag",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "DoorBuster",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HDIEDPack",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "BFGNecroShard",
+          "weight": 1,
+          "chance": 200,
+          "persists": true
+        },
+        {
+          "type": "nested",
+          "name": "HDAB",
+          "weight": 1,
+          "chance": 200,
+          "persists": true
+        },
+        {
+          "name": "YokaiSpawner",
+          "weight": 1,
+          "chance": 128,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ShellBoxRandom",
+      "tableName": "ShellBoxReplaces",
+      "entries": [
+        {
+          "name": "ShellBoxPickup",
+          "weight": 10,
+          "persists": true
+        },
+        {
+          "name": "HDBattery",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "type": "nested",
+          "name": "HDAB",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HDFragGrenadePickup",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HD9mBoxPickup",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HD7mBoxPickup",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "DecoPusher",
+          "weight": 1,
+          "chance": 200,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDMap",
+      "tableName": "AllMapReplaces",
+      "entries": [
+        {
+          "name": "HDMap",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HelmFrag",
+      "tableName": "ArmorBonusReplaces",
+      "entries": [
+        {
+          "name": "DecoPusher",
+          "weight": 20,
+          "chance": 96,
+          "persists": true
+        },
+        {
+          "name": "ShieldCore",
+          "weight": 2,
+          "chance": 100,
+          "persists": true
+        },
+        {
+          "name": "BFGNecroShard",
+          "weight": 1,
+          "chance": 96,
+          "persists": true
+        },
+        {
+          "name": "HDFragGrenades",
+          "weight": 1,
+          "chance": 72,
+          "persists": true
+        },
+        {
+          "name": "HD7mMag",
+          "weight": 1,
+          "chance": 48,
+          "persists": true
+        },
+        {
+          "name": "HD4mMag",
+          "weight": 1,
+          "chance": 48,
+          "persists": true
+        },
+        {
+          "name": "HDBattery",
+          "weight": 1,
+          "chance": 48,
+          "persists": true
+        },
+        {
+          "name": "PortableStimpack",
+          "weight": 1,
+          "chance": 48,
+          "persists": true
+        },
+        {
+          "name": "ClipBox",
+          "weight": 1,
+          "chance": 48,
+          "persists": true
+        },
+        {
+          "type": "nested",
+          "name": "HDAB",
+          "weight": 1,
+          "chance": 48,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "WildBackpack",
+      "tableName": "BackpackReplaces",
+      "entries": [
+        {
+          "name": "HDCoreWildBackpack",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "PortableHealingItemBigger",
+      "tableName": "BerserkReplaces",
+      "entries": [
+        {
+          "name": "PortableBerserkPack",
+          "weight": 5,
+          "persists": true
+        },
+        {
+          "name": "BattleArmour",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "name": "HEATAmmo",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HD4mMag",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HDJetpack",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "BattleArmour",
+      "tableName": "BlueArmorReplaces",
+      "entries": [
+        {
+          "name": "BattleArmour",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "BlurSphereReplacer",
+      "tableName": "BlurSphereReplaces",
+      "entries": [
+        {
+          "name": "SquadSummoner",
+          "weight": 14,
+          "persists": true
+        },
+        {
+          "name": "HDFragGrenades",
+          "weight": 6,
+          "persists": true
+        },
+        {
+          "name": "GarrisonArmour",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "name": "HDHealingPotion",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "name": "HDBlurSphere",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HDJetpack",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "GarrisonArmour",
+      "tableName": "GreenArmorReplaces",
+      "entries": [
+        {
+          "name": "GarrisonArmour",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "BlueFrag",
+      "tableName": "HealthBonusReplaces",
+      "entries": [
+        {
+          "name": "DecoPusher",
+          "weight": 20,
+          "chance": 96,
+          "persists": true
+        },
+        {
+          "name": "HDHealingPotion",
+          "weight": 2,
+          "chance": 96,
+          "persists": true
+        },
+        {
+          "name": "BFGNecroShard",
+          "weight": 1,
+          "chance": 96,
+          "persists": true
+        },
+        {
+          "name": "HDFragGrenades",
+          "weight": 1,
+          "chance": 72,
+          "persists": true
+        },
+        {
+          "name": "HDBattery",
+          "weight": 1,
+          "chance": 72,
+          "persists": true
+        },
+        {
+          "name": "HD9mMag15",
+          "weight": 1,
+          "chance": 48,
+          "persists": true
+        },
+        {
+          "name": "PortableMedikit",
+          "weight": 1,
+          "chance": 48,
+          "persists": true
+        },
+        {
+          "name": "PortableStimpack",
+          "weight": 1,
+          "chance": 48,
+          "persists": true
+        },
+        {
+          "type": "nested",
+          "name": "HDAB",
+          "weight": 1,
+          "chance": 48,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "PortableLiteAmp",
+      "tableName": "InfraredReplaces",
+      "entries": [
+        {
+          "name": "PortableLiteAmp",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDInvulnerabilitySphere",
+      "tableName": "InvulnerabilitySphereReplaces",
+      "entries": [
+        {
+          "name": "HDInvulnerabilitySphere",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "PortableHealingItemBig",
+      "tableName": "MedikitReplaces",
+      "entries": [
+        {
+          "name": "PortableMedikit",
+          "weight": 30,
+          "persists": true
+        },
+        {
+          "name": "PortableStimpack",
+          "weight": 10,
+          "persists": true
+        },
+        {
+          "name": "HD4mMag",
+          "weight": 5,
+          "persists": true
+        },
+        {
+          "name": "HDHealingPotion",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDMegaSphere",
+      "tableName": "MegaSphereReplaces",
+      "entries": [
+        {
+          "name": "HDMegaSphere",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "PortableRadSuit",
+      "tableName": "RadSuitReplaces",
+      "entries": [
+        {
+          "name": "PortableRadsuit",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDSoulSphere",
+      "tableName": "SoulSphereReplaces",
+      "entries": [
+        {
+          "name": "HDSoulSphere",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "PortableHealingItem",
+      "tableName": "StimpackReplaces",
+      "entries": [
+        {
+          "name": "PortableStimpack",
+          "weight": 4,
+          "persists": true
+        },
+        {
+          "name": "PortableMedikit",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "name": "HD4mMag",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "SecondBlood",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDBlueKey",
+      "tableName": "BlueCardReplaces",
+      "entries": [
+        {
+          "name": "HDBlueKey",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDBlueSkull",
+      "tableName": "BlueSkullReplaces",
+      "entries": [
+        {
+          "name": "HDBlueSkull",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDRedKey",
+      "tableName": "RedCardReplaces",
+      "entries": [
+        {
+          "name": "HDRedKey",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDRedSkull",
+      "tableName": "RedSkullReplaces",
+      "entries": [
+        {
+          "name": "HDRedSkull",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDYellowKey",
+      "tableName": "YellowCardReplaces",
+      "entries": [
+        {
+          "name": "HDYellowKey",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDYellowSkull",
+      "tableName": "YellowSkullReplaces",
+      "entries": [
+        {
+          "name": "HDYellowSkull",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Balor",
+      "tableName": "ArachnotronReplaces",
+      "entries": [
+        {
+          "name": "Balor",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Necromancer",
+      "tableName": "ArchVileReplaces",
+      "entries": [
+        {
+          "name": "Necromancer",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Baron",
+      "tableName": "BaronOfHellReplaces",
+      "entries": [
+        {
+          "name": "Baron",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDBossBrain",
+      "tableName": "BossBrainReplaces",
+      "entries": [
+        {
+          "name": "HDBossBrain",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDBossEye",
+      "tableName": "BossEyeReplaces",
+      "entries": [
+        {
+          "name": "HDBossEye",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "FlyZapper",
+      "tableName": "CacodemonReplaces",
+      "entries": [
+        {
+          "name": "FlyZapper",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDChainReplacer",
+      "tableName": "ChaingunGuyReplaces",
+      "entries": [
+        {
+          "name": "VulcanetteZombie",
+          "weight": 6,
+          "persists": true
+        },
+        {
+          "name": "UndeadRifleman",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "name": "EnemyHERP",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "EnemyDERP",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HDLizardJar",
+      "tableName": "CommanderKeenReplaces",
+      "entries": [
+        {
+          "name": "HDLizardJar",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "SatanRobo",
+      "tableName": "CyberdemonReplaces",
+      "entries": [
+        {
+          "name": "SatanRobo",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "BabuSpectreSpawner",
+      "tableName": "DemonReplaces",
+      "entries": [
+        {
+          "name": "Babuin",
+          "weight": 17,
+          "persists": true
+        },
+        {
+          "name": "SpecBabuin",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "name": "NinjaPirate",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ImpSpawner",
+      "tableName": "DoomImpReplaces",
+      "entries": [
+        {
+          "name": "FighterImp",
+          "weight": 5,
+          "persists": true
+        },
+        {
+          "name": "MageImp",
+          "weight": 3,
+          "persists": true
+        },
+        {
+          "name": "HealerImp",
+          "weight": 2,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Mancubus",
+      "tableName": "FatsoReplaces",
+      "entries": [
+        {
+          "name": "Mancubus",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Knave",
+      "tableName": "HellKnightReplaces",
+      "entries": [
+        {
+          "name": "Knave",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Hatchling",
+      "tableName": "LostSoulReplaces",
+      "entries": [
+        {
+          "name": "Hatchling",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "FlySpitter",
+      "tableName": "PainElementalReplaces",
+      "entries": [
+        {
+          "name": "FlySpitter",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Boner",
+      "tableName": "RevenantReplaces",
+      "entries": [
+        {
+          "name": "Boner",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HideousJackbootReplacer",
+      "tableName": "ShotgunGuyReplaces",
+      "entries": [
+        {
+          "name": "Jackboot",
+          "weight": 120,
+          "persists": true
+        },
+        {
+          "name": "UndeadJackbootman",
+          "weight": 60,
+          "persists": true
+        },
+        {
+          "name": "JackAndJillboot",
+          "weight": 40,
+          "persists": true
+        },
+        {
+          "name": "EnemyHERP",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "EnemyDERP",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "SpectreSpawner",
+      "tableName": "SpectreReplaces",
+      "entries": [
+        {
+          "name": "SpecBabuin",
+          "weight": 20,
+          "persists": true
+        },
+        {
+          "name": "NinjaPirate",
+          "weight": 5,
+          "persists": true
+        },
+        {
+          "name": "ShellShade",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "SpiderDemon",
+      "tableName": "SpiderMastermindReplaces",
+      "entries": [
+        {
+          "name": "SpiderDemon",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HoopBubble",
+      "tableName": "WolfensteinSSReplaces",
+      "entries": [
+        {
+          "name": "HoopBubble",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ZombieHideousTrooper",
+      "tableName": "ZombieManReplaces",
+      "entries": [
+        {
+          "name": "ZombieAutoStormtrooper",
+          "weight": 100,
+          "persists": true
+        },
+        {
+          "name": "ZombieSemiStormtrooper",
+          "weight": 20,
+          "persists": true
+        },
+        {
+          "name": "ZombieSMGStormtrooper",
+          "weight": 10,
+          "persists": true
+        },
+        {
+          "name": "UndeadHomeboy",
+          "weight": 14,
+          "persists": true
+        },
+        {
+          "name": "EnemyHERP",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "DeadCacodemon",
+      "tableName": "DeadCacodemonReplaces",
+      "entries": [
+        {
+          "name": "DeadFlyZapper",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "DeadDemon",
+      "tableName": "DeadDemonReplaces",
+      "entries": [
+        {
+          "name": "DeadBabuin",
+          "weight": 5,
+          "persists": true
+        },
+        {
+          "name": "DeadSpecBabuin",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "name": "DeadSpectre",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "DeadDoomImp",
+      "tableName": "DeadDoomImpReplaces",
+      "entries": [
+        {
+          "name": "DeadFighterImp",
+          "weight": 5,
+          "persists": true
+        },
+        {
+          "name": "DeadMageImp",
+          "weight": 3,
+          "persists": true
+        },
+        {
+          "name": "DeadHealerImp",
+          "weight": 2,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "DeadShotgunGuy",
+      "tableName": "DeadShotgunGuyReplaces",
+      "entries": [
+        {
+          "name": "DeadZombieShotgunner",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "DeadZombieMan",
+      "tableName": "DeadZombieManReplaces",
+      "entries": [
+        {
+          "name": "DeadZombieStormtrooper",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "StealthArachnotron",
+      "tableName": "StealthArachnotronReplaces",
+      "entries": [
+        {
+          "name": "HDStealthArachnotron",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "StealthArchVile",
+      "tableName": "StealthArchVileReplaces",
+      "entries": [
+        {
+          "name": "HDStealthArchvile",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "StealthBaronOfHell",
+      "tableName": "StealthBaronOfHellReplaces",
+      "entries": [
+        {
+          "name": "HDStealthBaron",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "StealthCacodemon",
+      "tableName": "StealthCacodemonReplaces",
+      "entries": [
+        {
+          "name": "HDStealthCacodemon",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "StealthChaingunGuy",
+      "tableName": "StealthChaingunGuyReplaces",
+      "entries": [
+        {
+          "name": "HDStealthChaingunGuy",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "StealthDemon",
+      "tableName": "StealthDemonReplaces",
+      "entries": [
+        {
+          "name": "NinjaPirate",
+          "weight": 20,
+          "persists": true
+        },
+        {
+          "name": "SpecBabuin",
+          "weight": 5,
+          "persists": true
+        },
+        {
+          "name": "StealthPortBabuin",
+          "weight": 4,
+          "persists": true
+        },
+        {
+          "name": "ShellShade",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "StealthDoomImp",
+      "tableName": "StealthDoomImpReplaces",
+      "entries": [
+        {
+          "name": "HDStealthDoomImp",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "StealthFatso",
+      "tableName": "StealthFatsoReplaces",
+      "entries": [
+        {
+          "name": "HDStealthMancubus",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "StealthHellKnight",
+      "tableName": "StealthHellKnightReplaces",
+      "entries": [
+        {
+          "name": "HDStealthHellKnight",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "StealthRevenant",
+      "tableName": "StealthRevenantReplaces",
+      "entries": [
+        {
+          "name": "HDStealthBoner",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "StealthShotgunGuy",
+      "tableName": "StealthShotgunGuyReplaces",
+      "entries": [
+        {
+          "name": "HDStealthShotgunGuy",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "StealthZombieMan",
+      "tableName": "StealthZombieManReplaces",
+      "entries": [
+        {
+          "name": "HDStealthZombieMan",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "BigTree",
+      "tableName": "BigTreeReplaces",
+      "entries": [
+        {
+          "name": "HDBigTree",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Blood",
+      "tableName": "BloodReplaces",
+      "entries": [
+        {
+          "name": "BloodSplat",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "BloodSplatter",
+      "tableName": "BloodSplatterReplaces",
+      "entries": [
+        {
+          "name": "BloodSplattest",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "BloodyTwitch",
+      "tableName": "BloodyTwitchReplaces",
+      "entries": [
+        {
+          "name": "HDTwitchHang",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "BlueTorch",
+      "tableName": "BlueTorchReplaces",
+      "entries": [
+        {
+          "name": "HDBlueTorch",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "BurningBarrel",
+      "tableName": "BurningBarrelReplaces",
+      "entries": [
+        {
+          "name": "HDFireCan",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Candelabra",
+      "tableName": "CandelabraReplaces",
+      "entries": [
+        {
+          "name": "HDCandelabra",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Candlestick",
+      "tableName": "CandlestickReplaces",
+      "entries": [
+        {
+          "name": "HDCandle",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Column",
+      "tableName": "ColumnReplaces",
+      "entries": [
+        {
+          "name": "HDColumn",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "DeadStick",
+      "tableName": "DeadStickReplaces",
+      "entries": [
+        {
+          "name": "HDDeadStick",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "EvilEye",
+      "tableName": "EvilEyeReplaces",
+      "entries": [
+        {
+          "name": "HDEvilEye",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ExplosiveBarrel",
+      "tableName": "ExplosiveBarrelReplaces",
+      "entries": [
+        {
+          "name": "HDBarrel",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "FloatingSkull",
+      "tableName": "FloatingSkullReplaces",
+      "entries": [
+        {
+          "name": "HDFloatingSkull",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "GreenTorch",
+      "tableName": "GreenTorchReplaces",
+      "entries": [
+        {
+          "name": "HDGreenTorch",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HangNoGuts",
+      "tableName": "HangNoGutsReplaces",
+      "entries": [
+        {
+          "name": "HDHTNoGuts",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HangTLookingDown",
+      "tableName": "HangTLookingDownReplaces",
+      "entries": [
+        {
+          "name": "HDHTLkDown",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HangTLookingUp",
+      "tableName": "HangTLookingUpReplaces",
+      "entries": [
+        {
+          "name": "HDHTLkUp",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HangTNoBrain",
+      "tableName": "HangTNoBrainReplaces",
+      "entries": [
+        {
+          "name": "HDHTNoBrain",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HangTSkull",
+      "tableName": "HangTSkullReplaces",
+      "entries": [
+        {
+          "name": "HDHTSkull",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HeadCandles",
+      "tableName": "HeadCandlesReplaces",
+      "entries": [
+        {
+          "name": "HDHeadCandles",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HeadOnAStick",
+      "tableName": "HeadOnAStickReplaces",
+      "entries": [
+        {
+          "name": "HDHeadStickBase",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HDHeadStickOld",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HDHeadStickBlack",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HeadsOnAStick",
+      "tableName": "HeadsOnAStickReplaces",
+      "entries": [
+        {
+          "name": "HDHeadsStickBase",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HDHeadsStickOld",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "HeartColumn",
+      "tableName": "HeartColumnReplaces",
+      "entries": [
+        {
+          "name": "HDHeartColumn",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "LiveStick",
+      "tableName": "LiveStickReplaces",
+      "entries": [
+        {
+          "name": "HDTwitchStick",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Meat2",
+      "tableName": "Meat2Replaces",
+      "entries": [
+        {
+          "name": "HDMt2",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Meat3",
+      "tableName": "Meat3Replaces",
+      "entries": [
+        {
+          "name": "HDMt3",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Meat4",
+      "tableName": "Meat4Replaces",
+      "entries": [
+        {
+          "name": "HDMt4",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Meat5",
+      "tableName": "Meat5Replaces",
+      "entries": [
+        {
+          "name": "HDMt5",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "NonSolidMeat2",
+      "tableName": "NonSolidMeat2Replaces",
+      "entries": [
+        {
+          "name": "HDMt2NS",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "NonSolidMeat3",
+      "tableName": "NonSolidMeat3Replaces",
+      "entries": [
+        {
+          "name": "HDMt3NS",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "NonSolidMeat4",
+      "tableName": "NonSolidMeat4Replaces",
+      "entries": [
+        {
+          "name": "HDMt4NS",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "NonSolidMeat5",
+      "tableName": "NonSolidMeat5Replaces",
+      "entries": [
+        {
+          "name": "HDMt5NS",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "NonSolidTwitch",
+      "tableName": "NonSolidTwitchReplaces",
+      "entries": [
+        {
+          "name": "HDTwitchHangNS",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "RedTorch",
+      "tableName": "RedTorchReplaces",
+      "entries": [
+        {
+          "name": "HDRedTorch",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ShortBlueTorch",
+      "tableName": "ShortBlueTorchReplaces",
+      "entries": [
+        {
+          "name": "HDShortBlueTorch",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ShortGreenColumn",
+      "tableName": "ShortGreenColumnReplaces",
+      "entries": [
+        {
+          "name": "HDShortGreenColumn",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ShortGreenTorch",
+      "tableName": "ShortGreenTorchReplaces",
+      "entries": [
+        {
+          "name": "HDShortGreenTorch",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ShortRedColumn",
+      "tableName": "ShortRedColumnReplaces",
+      "entries": [
+        {
+          "name": "HDShortRedColumn",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ShortRedTorch",
+      "tableName": "ShortRedTorchReplaces",
+      "entries": [
+        {
+          "name": "HDShortRedTorch",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "SkullColumn",
+      "tableName": "SkullColumnReplaces",
+      "entries": [
+        {
+          "name": "HDSkullColumn",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Stalagmite",
+      "tableName": "StalagmiteReplaces",
+      "entries": [
+        {
+          "name": "HDStalagmite",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "Stalagtite",
+      "tableName": "StalagtiteReplaces",
+      "entries": [
+        {
+          "name": "HDStalagtite",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "TallGreenColumn",
+      "tableName": "TallGreenColumnReplaces",
+      "entries": [
+        {
+          "name": "HDTallGreenColumn",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "TallRedColumn",
+      "tableName": "TallRedColumnReplaces",
+      "entries": [
+        {
+          "name": "HDTallRedColumn",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "TechLamp",
+      "tableName": "TechLampReplaces",
+      "entries": [
+        {
+          "name": "HDTechLamp",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "TechLamp2",
+      "tableName": "TechLamp2Replaces",
+      "entries": [
+        {
+          "name": "HDTechLamp2",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "TechPillar",
+      "tableName": "TechPillarReplaces",
+      "entries": [
+        {
+          "name": "HDTechPillar",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "TeleportFog",
+      "tableName": "TeleportFogReplaces",
+      "entries": [
+        {
+          "name": "TeleFog",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "TorchTree",
+      "tableName": "TorchTreeReplaces",
+      "entries": [
+        {
+          "name": "HDTorchTree",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "ScriptedMarine",
+      "tableName": "ScriptedMarineReplaces",
+      "entries": [
+        {
+          "name": "HDOperator",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "MarineFist",
+      "tableName": "MarineFistReplaces",
+      "entries": [
+        {
+          "name": "RifleFistman",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "MarineChaingun",
+      "tableName": "MarineChaingunReplaces",
+      "entries": [
+        {
+          "name": "RifleChaingunman",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "MarineShotgun",
+      "tableName": "MarineShotgunReplaces",
+      "entries": [
+        {
+          "name": "EnforcerShot",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "MarineSSG",
+      "tableName": "MarineSSGReplaces",
+      "entries": [
+        {
+          "name": "EnforcerSuperShot",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "MarineBerserk",
+      "tableName": "MarineBerserkReplaces",
+      "entries": [
+        {
+          "name": "EnforcerNoShot",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "MarinePistol",
+      "tableName": "MarinePistolReplaces",
+      "entries": [
+        {
+          "name": "InfiltratorPistol",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "MarineChainsaw",
+      "tableName": "MarineChainsawReplaces",
+      "entries": [
+        {
+          "name": "InfiltratorChainsaw",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "MarineRocket",
+      "tableName": "MarineRocketReplaces",
+      "entries": [
+        {
+          "name": "RRocketeer",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "MarineBFG",
+      "tableName": "MarineBFGReplaces",
+      "entries": [
+        {
+          "name": "BFuglyteer",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "MarinePlasma",
+      "tableName": "MarinePlasmaReplaces",
+      "entries": [
+        {
+          "name": "Plasmateer",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "MarineRailgun",
+      "tableName": "MarineRailgunReplaces",
+      "entries": [
+        {
+          "name": "Railgunteer",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "DeadMarine",
+      "tableName": "DeadMarineReplaces",
+      "entries": [
+        {
+          "name": "DeadRifleman",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "GibbedMarine",
+      "tableName": "GibbedMarineReplaces",
+      "entries": [
+        {
+          "name": "ReallyDeadRifleman",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "GibbedMarineExtra",
+      "tableName": "GibbedMarineExtraReplaces",
+      "entries": [
+        {
+          "name": "ReallyDeadRiflemanCrouched",
+          "weight": 1,
+          "persists": true
+        }
+      ]
+    },
+    {
+      "spawnName": "DeathMatchSpawner",
+      "tableName": "DeathMatchSpawnerReplaces",
+      "replaces": true
+    },
+    {
+      "spawnName": "HurtfloorSectorSpawner",
+      "tableName": "HurtfloorSectorSpawnerReplaces",
+      "replaces": true
+    },
+    {
+      "spawnName": "OutdoorSectorSpawner",
+      "tableName": "OutdoorSectorSpawnerReplaces",
+      "replaces": true
+    },
+    {
+      "spawnName": "SecretSectorSpawner",
+      "tableName": "SecretSectorSpawnerReplaces",
+      "replaces": true
+    },
+    {
+      "spawnName": "BrightestSectorSpawner",
+      "tableName": "BrightestSectorSpawnerReplaces",
+      "replaces": true
+    },
+    {
+      "spawnName": "BrighterSectorSpawner",
+      "tableName": "BrighterSectorSpawnerReplaces",
+      "replaces": true
+    },
+    {
+      "spawnName": "BrightSectorSpawner",
+      "tableName": "BrightSectorSpawnerReplaces",
+      "replaces": true
+    },
+    {
+      "spawnName": "DarkSectorSpawner",
+      "tableName": "DarkSectorSpawnerReplaces",
+      "replaces": true
+    },
+    {
+      "spawnName": "DarkerSectorSpawner",
+      "tableName": "DarkerSectorSpawnerReplaces",
+      "replaces": true
+    },
+    {
+      "spawnName": "DarkestSectorSpawner",
+      "tableName": "DarkestSectorSpawnerReplaces",
+      "replaces": true
+    }
+  ]
+}
