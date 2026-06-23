@@ -4,11 +4,121 @@ extend class HDCore {
     * Gets the Color of the given charge value for a battery
     */
     static clearscope Color getBatteryColor(int charge) {
-        if (charge > 13) return Color(255,   0, 255, 0);
-        if (charge > 6)  return Color(255, 255, 255, 0);
-        if (charge > 0)  return Color(255, 255,   0, 0);
+        return charge > 0
+            ? GetPercentColor(clamp(charge, 0, 20) * 0.05)
+            : Color(64, 64, 64);
+    }
 
-        return Color(255, 64, 64, 64);
+    /**
+     * Gets the Color of the given percent value
+     */
+    static clearscope Color GetPercentColor(double percent, int alpha = 255, bool linear = false) {
+
+        // If we're interpolating linearly, simply calculate the HSV-to-RGB directly
+        if (linear) return hsvToRgb(HDGMGlobalMaths.lerpDouble(0, 120, percent), 1.0, 1.0);
+
+        // Otherwise, check the preset thresholds
+        if (percent >= 0.75) return Color(192,   0, 224, 0);
+        if (percent >= 0.50) return Color(192, 255, 255, 0);
+        if (percent >= 0.25) return Color(192, 255, 128, 0);
+
+        return Color(192, 255, 0, 0);
+    }
+
+    /**
+     * Returns a new Color instance whose RGB values match the given hue in degrees (0 - 359),
+     * and given saturation & lightness percentage (0.0 - 1.0)
+     * @see https://en.wikipedia.org/wiki/HSL_and_HSV#HSL_to_RGB
+     */
+    static clearscope Color hslToRgb(int h, double s, double l, int a = 255) {
+
+        // normalize parameters
+        h = h % 360;
+        s = clamp(s, 0.0, 1.0);
+        l = clamp(l, 0.0, 1.0);
+
+        // calculate intermediary variables;
+        let c = (1 - abs((2 * l) - 1)) * s;
+        let x = c * (1 - abs(((h / 60.0) % 2) - 1));
+        let m = l - (c * 0.5);
+
+        // Convert Hue into raw RGB
+        let r = 0.0;
+        let g = 0.0;
+        let b = 0.0;
+
+        if (h < 60) {
+            r = c;
+            g = x;
+        } else if (h < 120) {
+            r = x;
+            g = c;
+        } else if (h < 180) {
+            g = c;
+            b = x;
+        } else if (h < 240) {
+            g = x;
+            b = c;
+        } else if (h < 300) {
+            r = x;
+            b = c;
+        } else {
+            r = c;
+            b = x;
+        }
+
+        // Return final color
+        let color = Color(clamp(a, 0, 255), int(round((r + m) * 255.0)), int(round((g + m) * 255.0)), int(round((b + m) * 255.0)));
+        HDCore.log('HDCoreLib', LOGGING_DEBUG, "hslToRgb("..h..", "..s..", "..l..") => "..color);
+        return color;
+    }
+
+    /**
+     * Returns a new Color instance whose RGB values match the given hue in degrees (0 - 359),
+     * and given saturation & value percentage (0.0 - 1.0)
+     * @see https://en.wikipedia.org/wiki/HSL_and_HSV#HSV_to_RGB
+     */
+    static clearscope Color hsvToRgb(int h, double s, double v, int a = 255) {
+
+        // normalize parameters
+        h = h % 360;
+        s = clamp(s, 0.0, 1.0);
+        v = clamp(v, 0.0, 1.0);
+
+        // calculate intermediary variables;
+        let c = s * v;
+        let x = c * (1 - abs(((h / 60.0) % 2) - 1));
+        let m = v - c;
+
+        // Convert Hue into raw RGB
+        let r = 0.0;
+        let g = 0.0;
+        let b = 0.0;
+
+        if (h < 60) {
+            r = c;
+            g = x;
+        } else if (h < 120) {
+            r = x;
+            g = c;
+        } else if (h < 180) {
+            g = c;
+            b = x;
+        } else if (h < 240) {
+            g = x;
+            b = c;
+        } else if (h < 300) {
+            r = x;
+            b = c;
+        } else {
+            r = c;
+            b = x;
+        }
+
+        // Return final color
+        let color = Color(clamp(a, 0, 255), int(round((r + m) * 255.0)), int(round((g + m) * 255.0)), int(round((b + m) * 255.0)));
+        HDCore.log('HDCoreLib', LOGGING_DEBUG, "hsvToRgb("..h..", "..s..", "..v..") => "..color);
+        return color;
     }
 
     /**
