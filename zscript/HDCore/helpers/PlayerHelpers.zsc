@@ -1,4 +1,4 @@
-extend class HDCore {
+extend struct HDCore {
 
     static clearscope int playerCount() {
         int total = 0;

@@ -14,7 +14,7 @@ enum HDCoreDrawBarDirections {
     DRAWBAR_NS = DRAWBAR_VERTICAL|DRAWBAR_FLIPPED
 }
 
-extend class HDCore {
+extend struct HDCore {
     
     static ui void DrawBar(HDStatusBar sb, name fgName, name bgName, double ratio, Vector2 pos, int flags = 0, int direction = DRAWBAR_HORIZONTAL, Vector2 scale = (1.0, 1.0), double alpha = 1.0) {
 
