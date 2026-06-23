@@ -1,4 +1,4 @@
-extend class HDCore {
+extend struct HDCore {
 
     /**
      * Emits a line of particles from the caller's position, with the given color.
