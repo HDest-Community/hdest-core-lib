@@ -29,40 +29,33 @@ class HDCoreStorageItemListHandler : HDCoreEventHandler {
 
     override void processCommand(HDCoreCommand cmd) {
         switch (cmd.command) {
-            case 'configureStorageItemListHandler': {
+            case 'configureStorageItemListHandler':
                 processConfigureStorageItemListHandlerCmd(cmd);
                 break;
-            }
             case 'addBPSpawnPoolFilter':
-            case 'addStorageItemListFilter': {
+            case 'addStorageItemListFilter':
                 processAddStorageItemListFilterCmd(cmd);
                 break;
-            }
             case 'addBPSpawnPoolWhitelist':
-            case 'addStorageItemListWhitelist': {
+            case 'addStorageItemListWhitelist':
                 processAddStorageItemListWhitelistCmd(cmd);
                 break;
-            }
             case 'removeBPSpawnPoolWhitelist':
-            case 'removeStorageItemListWhitelist': {
+            case 'removeStorageItemListWhitelist':
                 processRemoveStorageItemListWhitelistCmd(cmd);
                 break;
-            }
             case 'clearBPSpawnPoolWhitelist':
-            case 'clearStorageItemListWhitelist': {
+            case 'clearStorageItemListWhitelist':
                 processClearStorageItemListWhitelistCmd(cmd);
                 break;
-            }
             case 'addBPSpawnPoolBlacklist':
-            case 'addStorageItemListBlacklist': {
+            case 'addStorageItemListBlacklist':
                 processAddStorageItemListBlacklistCmd(cmd);
                 break;
-            }
             case 'removeBPSpawnPoolBlacklist':
-            case 'removeStorageItemListBlacklist': {
+            case 'removeStorageItemListBlacklist':
                 processRemoveStorageItemListBlacklistCmd(cmd);
                 break;
-            }
             case 'clearBPSpawnPoolBlacklist':
             case 'clearStorageItemListBlacklist':
                 processClearStorageItemListBlacklistCmd(cmd);
