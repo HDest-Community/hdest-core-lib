@@ -30,6 +30,21 @@ class HDCoreSpawnHandler : HDCoreStaticEventHandler {
         mapBlacklist.clear();
         thingBlacklist.clear();
         spawnTables.clear();
+
+        cmdWhitelist.push('configureSpawnHandler');
+        cmdWhitelist.push('addSpawnHandlerMapBlacklist');
+        cmdWhitelist.push('addSpawnHandlerThingBlacklist');
+        cmdWhitelist.push('clearSpawnHandlerMapBlacklist');
+        cmdWhitelist.push('clearSpawnHandlerThingBlacklist');
+        cmdWhitelist.push('newSpawnTable');
+        cmdWhitelist.push('addSpawnTableSingleEntry');
+        cmdWhitelist.push('addSpawnTableNestedEntry');
+        cmdWhitelist.push('removeSpawnTableEntry');
+        cmdWhitelist.push('clearSpawnTable');
+        cmdWhitelist.push('appendSpawnTableEntries');
+        cmdWhitelist.push('setSpawnTableEntryWeight');
+        cmdWhitelist.push('removeSpawnTable');
+        cmdWhitelist.push('removeAllSpawnTables');
     }
 
     override void processCommand(HDCoreCommand cmd) {

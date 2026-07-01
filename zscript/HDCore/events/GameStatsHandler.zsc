@@ -17,6 +17,10 @@ class HDCoreGameStatsHandler : HDCoreEventHandler {
 
         blacklist.clear();
     }
+
+    override bool shouldProcessCommand(HDCoreCommand cmd) {
+        return false;
+    }
     
     override void afterProcessCommands() {
         blacklist.copy(HDCoreSpawnHandler(StaticEventHandler.find('HDCoreSpawnHandler')).thingBlacklist);

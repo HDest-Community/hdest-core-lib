@@ -9,6 +9,22 @@ class HDCoreStorageItemListHandler : HDCoreEventHandler {
     override void beforeProcessCommands() {
         whitelist.clear();
         blacklist.clear();
+
+        cmdWhitelist.push('configureStorageItemListHandler');
+        cmdWhitelist.push('addBPSpawnPoolFilter');
+        cmdWhitelist.push('addStorageItemListFilter');
+        cmdWhitelist.push('addBPSpawnPoolWhitelist');
+        cmdWhitelist.push('addStorageItemListWhitelist');
+        cmdWhitelist.push('removeBPSpawnPoolWhitelist');
+        cmdWhitelist.push('removeStorageItemListWhitelist');
+        cmdWhitelist.push('clearBPSpawnPoolWhitelist');
+        cmdWhitelist.push('clearStorageItemListWhitelist');
+        cmdWhitelist.push('addBPSpawnPoolBlacklist');
+        cmdWhitelist.push('addStorageItemListBlacklist');
+        cmdWhitelist.push('removeBPSpawnPoolBlacklist');
+        cmdWhitelist.push('removeStorageItemListBlacklist');
+        cmdWhitelist.push('clearBPSpawnPoolBlacklist');
+        cmdWhitelist.push('clearStorageItemListBlacklist');
     }
 
     override void processCommand(HDCoreCommand cmd) {

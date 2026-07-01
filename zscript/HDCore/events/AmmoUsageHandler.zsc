@@ -10,6 +10,17 @@ class HDCoreAmmoUsesHandler : HDCoreEventHandler {
     override void beforeProcessCommands() {
         thingBlacklist.clear();
         ammoSpawnList.clear();
+
+        cmdWhitelist.push('configureAmmoUsesHandler');
+        cmdWhitelist.push('addAmmoThingBlacklist');
+        cmdWhitelist.push('removeAmmoThingBlacklist');
+        cmdWhitelist.push('clearAmmoThingBlacklist');
+        cmdWhitelist.push('newAmmo');
+        cmdWhitelist.push('addAmmo');
+        cmdWhitelist.push('removeAmmo');
+        cmdWhitelist.push('addAmmoUser');
+        cmdWhitelist.push('removeAmmoUser');
+        cmdWhitelist.push('removeAllAmmo');
     }
 
     override void processCommand(HDCoreCommand cmd) {

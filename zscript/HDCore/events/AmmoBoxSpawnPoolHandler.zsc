@@ -13,6 +13,15 @@ class HDCoreAmmoBoxSpawnPoolHandler : HDCoreEventHandler {
         ammoBoxWhitelist.clear();
         ammoBoxBlacklist.clear();
 
+        cmdWhitelist.push('configureAmmoBoxSpawnPoolHandler');
+        cmdWhitelist.push('addAmmoBoxFilter');
+        cmdWhitelist.push('addAmmoBoxWhitelist');
+        cmdWhitelist.push('removeAmmoBoxWhitelist');
+        cmdWhitelist.push('clearAmmoBoxWhitelist');
+        cmdWhitelist.push('addAmmoBoxBlacklist');
+        cmdWhitelist.push('removeAmmoBoxBlacklist');
+        cmdWhitelist.push('clearAmmoBoxBlacklist');
+
         // If the AmmoBox List hasn't been cached, attempt to get it
         if (!ammoBoxList) ammoBoxList = HDAmBoxList.Get();
     }

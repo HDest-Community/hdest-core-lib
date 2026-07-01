@@ -2,6 +2,9 @@ class HDCoreStaticEventHandler : StaticEventHandler abstract {
 
     protected bool initialized;
 
+    Array<name> cmdWhitelist;
+    Array<name> cmdBlacklist;
+
     protected void init() {
         if (initialized) return;
 
@@ -38,7 +41,9 @@ class HDCoreStaticEventHandler : StaticEventHandler abstract {
      * @returns {bool} If true, the `HDCoreCommand` will be processed.
      */
     virtual bool shouldProcessCommand(HDCoreCommand cmd) {
-        return cmd.getBoolParam("enabled", true);
+        return (!cmdWhitelist.size() || cmdWhitelist.find(cmd.command) < cmdWhitelist.size())
+            && (!cmdBlacklist.size() || cmdBlacklist.find(cmd.command) >= cmdBlacklist.size())
+            && cmd.getBoolParam("enabled", true);
     }
 
     /**
