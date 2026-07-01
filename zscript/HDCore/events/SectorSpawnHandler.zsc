@@ -119,7 +119,7 @@ class HDCoreSectorSpawnerHandler : EventHandler {
 
         let width = maxX - minX;
         let height = maxY - minY;
-        let k = 100;
+        let k = hdc_sector_spawner_sampleTries;
 
         let inner = radius * radius;
         let outer = 3 * inner;
