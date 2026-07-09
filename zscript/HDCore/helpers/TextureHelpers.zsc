@@ -7,4 +7,12 @@ extend class HDCore {
 
         return "CELLD0";
     }
+
+    static clearscope string getMicroCellIcon(int charge) {
+        if (charge > 6) return "MCLLA0";
+        if (charge > 3) return "MCLLB0";
+        if (charge > 0) return "MCLLC0";
+
+        return "MCLLD0";
+    }
 }
