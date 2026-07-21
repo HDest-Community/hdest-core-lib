@@ -10,6 +10,15 @@ extend class HDCore {
     }
 
     /**
+    * Gets the Color of the given charge value for a battery
+    */
+    static clearscope Color getMicroCellColor(int charge) {
+        return charge > 0
+            ? GetPercentColor(clamp(charge, 0, 10) * 0.1)
+            : Color(64, 64, 64);
+    }
+
+    /**
      * Gets the Color of the given percent value
      */
     static clearscope Color GetPercentColor(double percent, int alpha = 255, bool linear = false) {
