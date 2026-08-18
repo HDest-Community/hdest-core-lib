@@ -79,3 +79,6 @@ version "4.14"
 #include "zscript/HDCore/events/SectorSpawnHandler.zsc"
 #include "zscript/HDCore/events/SpawnHandler.zsc"
 #include "zscript/HDCore/events/StorageItemListHandler.zsc"
+
+// Services
+#include "zscript/HDCore/services/LoggingService.zsc"

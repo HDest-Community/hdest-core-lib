@@ -1,0 +1,59 @@
+class HDCoreLoggingService : Service {
+
+    override string GetStringUI(
+        String request,
+        String stringArg,
+        int intArg,
+        double doubleArg,
+        Object objectArg
+    ) {
+        return HandleGetString(request, stringArg, intArg, doubleArg, objectArg);
+    }
+
+    override string GetString(
+        String request,
+        String stringArg,
+        int intArg,
+        double doubleArg,
+        Object objectArg
+    ) {
+        return HandleGetString(request, stringArg, intArg, doubleArg, objectArg);
+    }
+
+    clearscope string HandleGetString(
+        String request,
+        String stringArg,
+        int intArg,
+        double doubleArg,
+        Object objectArg
+    ) {
+        Array<String> strArgs;
+        stringArg.split(strArgs, ":", TOK_SKIPEMPTY);
+
+        if (strArgs.size() != 2) return "Invalid StringArgs, LoggingService requires a value in the format of 'Namespace:log message'.";
+
+        name reqName = request;
+        switch (reqName) {
+            case 'Error':
+                HDCore.log(strArgs[0], LOGGING_ERROR, strArgs[1]);
+                break;
+            case 'Warn':
+                HDCore.log(strArgs[0], LOGGING_WARN, strArgs[1]);
+                break;
+            case 'Info':
+                HDCore.log(strArgs[0], LOGGING_INFO, strArgs[1]);
+                break;
+            case 'Debug':
+                HDCore.log(strArgs[0], LOGGING_DEBUG, strArgs[1]);
+                break;
+            case 'Trace':
+                HDCore.log(strArgs[0], LOGGING_TRACE, strArgs[1]);
+                break;
+            default:
+                HDCore.log(strArgs[0], intArg, strArgs[1]);
+                break;
+        }
+
+        return "";
+    }
+}
