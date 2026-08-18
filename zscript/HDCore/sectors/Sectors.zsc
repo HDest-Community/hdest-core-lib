@@ -1,4 +1,4 @@
-extend class HDCore {
+extend struct HDCore {
     
     /**
      * Returns details about the given sector's size.

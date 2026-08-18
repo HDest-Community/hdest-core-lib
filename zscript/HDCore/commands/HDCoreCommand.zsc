@@ -19,26 +19,73 @@ class HDCoreCommand {
     static void parseParams(out Map<name, HDCoreCommandParam> paramsMap, string paramsStr = "") {
         if (paramsStr.length() > 0) {
 
-            let dict = Dictionary.fromString(paramsStr);
-            let i = DictionaryIterator.create(dict);
+            let json = HDZJSON.parse(paramsStr);
+
+            if (!(json is 'HDZJsonObject')){
+                if (json is 'HDZJsonError') {
+                    HDCore.log('HDCoreLib.Command.ParseParams', LOGGING_ERROR, HDZJsonError(json).what);
+                } else {
+                    HDCore.log('HDCoreLib.Command.ParseParams', LOGGING_ERROR, "Invalid Parameters: "..HDZJsonElement(json).serialize());
+                }
+
+                return;
+            }
+
+            MapIterator<string, HDZJsonElement> i;
+            i.init(HDZJsonObject(json).data);
 
             while (i.next()) {
 
                 // Default to a basic Static Value Provider
                 let providerClassName = "HDCoreStaticProvider";
-                let key = i.key();
-                let val = i.value();
+                let key = i.getKey();
+                let prefix = "";
+                let val = "";
 
-                // Detect any delegate values and defer to their Providers
-                if (val.indexOf("$") == 0) {
-                    providerClassName = "HDCoreLocalizedStringProvider";
-                    val = val.mid(1);
-                } else if (val.indexOf("#") == 0) {
-                    providerClassName = "HDCoreCVarProvider";
-                    val = val.mid(1);
-                } else if (val.indexOf("@") == 0) {
-                    providerClassName = "HDCoreFunctionProvider_"..val.mid(1);
-                    val = paramsStr;
+                switch (i.getValue().getClassName()) {
+                    case 'HDZJsonArray':
+                    case 'HDZJsonBool':
+                    case 'HDZJsonInt':
+                    case 'HDZJsonDouble':
+                        val = i.getValue().serialize();
+                        break;
+                    case 'HDZJsonString':
+
+                        let str = HDZJsonString(i.getValue()).s;
+
+                        // Detect any delegate values and defer to their Providers
+                        if (str.indexOf("$") == 0) {
+                            providerClassName = "HDCoreLocalizedStringProvider";
+                            val = str.mid(1);
+                        } else if (str.indexOf("#") == 0) {
+                            providerClassName = "HDCoreCVarProvider";
+                            val = str.mid(1);
+                        } else if (str.indexOf("@") == 0) {
+                            providerClassName = "HDCoreFunctionProvider_"..str.mid(1);
+                            prefix = key;
+                            val = paramsStr;
+                        } else {
+                            val = str;
+                        }
+
+                        break;
+                    case 'HDZJsonObject':
+
+                        let obj = HDZJsonObject(i.getValue());
+
+                        // If the child object has both a FunctionProvider name and a sibling params object,
+                        // store the class name & serialized parameters
+                        if ((obj.get("name") is 'HDZJsonString') && (obj.get("params") is 'HDZJsonObject')) {
+                            providerClassName = "HDCoreFunctionProvider_"..HDZJsonString(obj.get("name")).s;
+                            val = obj.get("params").serialize();
+                        } else {
+                            val = obj.serialize();
+                        }
+
+                        break;
+                    default:
+                        HDCore.log('HDCoreLib.Command.ParseParams', LOGGING_WARN, "Unknown Parameter Type '"..key.."': '"..val.."'!");
+                        return;
                 }
 
                 // If the specific Provider Class doesn't exist, quit.
@@ -53,7 +100,7 @@ class HDCoreCommand {
                 // If we're building a Nested Provider Class, pass in the param prefix
                 // to filter out irrelevant parameters.
                 let provider = providerClassName.indexOf("HDCoreFunctionProvider_") == 0
-                    ? HDCoreFunctionProvider.create(providerClassName, key, val)
+                    ? HDCoreFunctionProvider.create(providerClassName, prefix, val)
                     : HDCoreDataProvider.create(providerClassName, val);
 
                 if (provider) {
@@ -115,6 +162,105 @@ class HDCoreCommand {
         return v;
     }
 
+    void getArrayParamValue(string key, out Array<HDCoreDataProvider> arr) {
+        let v = hasParam(key) ? getParam(key).getStringValue() : "[]";
+        let json = HDZJSON.parse(v);
+
+        if (!(json is 'HDZJsonArray')) {
+            if (json is 'HDZJsonError') {
+                HDCore.log("HDCoreLib."..GetClassName().."."..command, LOGGING_ERROR, "getArrayParamValue(\""..key.."\") => "..HDZJsonError(json).what);
+            } else {
+                HDCore.log("HDCoreLib."..GetClassName().."."..command, LOGGING_ERROR, "getArrayParamValue(\""..key.."\") => Invalid Parameter: "..HDZJsonElement(json).serialize());
+            }
+
+            return;
+        }
+
+        arr.clear();
+
+        forEach (item : HDZJsonArray(json).arr) {
+            switch (item.getClassName()) {
+                case 'HDZJsonInt':
+                case 'HDZJsonDouble':
+                case 'HDZJsonBool':
+                    arr.push(HDCoreDataProvider.create('HDCoreStaticProvider', item.serialize()));
+                    break;
+                case 'HDZJsonString':
+                    arr.push(HDCoreDataProvider.create('HDCoreStaticProvider', HDZJsonString(item).s));
+                    break;
+                case 'HDZJsonObject':
+                    let obj = HDZJsonObject(item);
+
+                    // If the child object has both a FunctionProvider name and a sibling params object,
+                    // store the class name & serialized parameters
+                    if ((obj.get("name") is 'HDZJsonString') && (obj.get("params") is 'HDZJsonObject')) {
+                        arr.push(HDCoreDataProvider.create("HDCoreFunctionProvider_"..HDZJsonString(obj.get("name")).s, obj.get("params").serialize()));
+                    } else {
+                        arr.push(HDCoreDataProvider.create('HDCoreStaticProvider', obj.serialize()));
+                    }
+
+                    break;
+                case 'HDZJsonError':
+                    HDCore.log("HDCoreLib."..GetClassName().."."..command, LOGGING_ERROR, "getArrayParamValue(\""..key.."\") => "..HDZJsonError(item).what);
+                    return;
+                case 'HDZJsonNull':
+                default:
+                    HDCore.log("HDCoreLib."..GetClassName().."."..command, LOGGING_ERROR, "getArrayParamValue(\""..key.."\") => Invalid Parameter: "..HDZJsonElement(item).serialize());
+                    continue;
+            }
+        }
+    }
+
+    void getArrayStringParam(string key, out Array<string> arr) {
+        Array<HDCoreDataProvider> jsonArr;
+
+        arr.clear();
+
+        getArrayParamValue(key, jsonArr);
+
+        forEach (item : jsonArr) arr.push(item.getStringValue());
+    }
+
+    void getArrayNameParam(string key, out Array<name> arr) {
+        Array<HDCoreDataProvider> jsonArr;
+
+        arr.clear();
+
+        getArrayParamValue(key, jsonArr);
+
+        forEach (item : jsonArr) arr.push(item.getNameValue());
+    }
+
+    void getArrayIntParam(string key, out Array<int> arr) {
+        Array<HDCoreDataProvider> jsonArr;
+
+        arr.clear();
+
+        getArrayParamValue(key, jsonArr);
+
+        forEach (item : jsonArr) arr.push(item.getIntValue());
+    }
+
+    void getArrayDoubleParam(string key, out Array<double> arr) {
+        Array<HDCoreDataProvider> jsonArr;
+
+        arr.clear();
+
+        getArrayParamValue(key, jsonArr);
+
+        forEach (item : jsonArr) arr.push(item.getDoubleValue());
+    }
+
+    void getArrayBoolParam(string key, out Array<bool> arr) {
+        Array<HDCoreDataProvider> jsonArr;
+
+        arr.clear();
+
+        getArrayParamValue(key, jsonArr);
+
+        forEach (item : jsonArr) arr.push(item.getBoolValue());
+    }
+
     bool equals(HDCoreCommand other) {
         HDCore.log("HDCoreLib."..GetClassName().."."..command, LOGGING_TRACE, "equals(\""..other.toString().."\")...");
 
@@ -122,7 +268,7 @@ class HDCoreCommand {
         let isEqual = command == other.command && params.countUsed() == other.params.countUsed();
 
         // If they are, check if each param matches the other, and quit early if they are not
-        if (isEqual) forEach(k, v : params) if (!other.params.checkKey(k) || other.params.getIfExists(k) != v) return false;
+        if (isEqual) forEach (k, v : params) if (!other.params.checkKey(k) || other.params.getIfExists(k) != v) return false;
 
         HDCore.log("HDCoreLib."..GetClassName().."."..command, LOGGING_TRACE, "equals(\""..other.toString().."\") => "..isEqual);
 

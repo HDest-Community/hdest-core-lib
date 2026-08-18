@@ -1,4 +1,4 @@
-extend class HDCore {
+extend struct HDCore {
     /**
      * Simple Damped Spring Formula
      * @param {p} p Current Position

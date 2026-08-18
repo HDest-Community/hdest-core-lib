@@ -96,7 +96,40 @@ class HDCoreInfoReader : StaticEventHandler {
                 tokens[0].stripLeftRight();
                 tokens[1].stripLeftRight();
 
-                output.push(HDCoreCommand.create(tokens[0], tokens[1]));
+                // If the params are an inline JSON Object, parse them directly.
+                // Otherwise, if the text after the delimiter is the path to the JSON File containing the parameters, read that in and parse that instead.
+                // TODO: Enhance check against params text being inline JSON?
+                if (tokens[1].left(1) == "{" && tokens[1].mid(tokens[1].length() - 1, 1) == "}") {
+                    HDCore.Log('HDCoreLib', LOGGING_TRACE, "Processing referenced inline Command '"..tokens[0].." => "..tokens[1].."'");
+
+                    output.push(HDCoreCommand.create(tokens[0], tokens[1]));
+                } else {
+                    Array<string> path;
+                    tokens[1].split(path, "/");
+
+                    let lump = Wads.findLump(path[path.size() - 1], 0, Wads.AnyNamespace);
+
+                    if (lump < 0) {
+                        HDCore.Log('HDCoreLib', LOGGING_WARN, "Command located at '"..tokens[1].."' not found!");
+
+                        return;
+                    }
+
+                    let jsonStr = Wads.readLump(lump);
+
+                    jsonStr.stripLeftRight();
+                    jsonStr.replace("\n", "");
+
+                    if (jsonStr == "" || (jsonStr.left(1) != "{" && jsonStr.mid(jsonStr.length() - 2, 1) != "}")) {
+                        HDCore.Log('HDCoreLib', LOGGING_WARN, "Command located at '"..tokens[1].."' not valid JSON!");
+
+                        return;
+                    }
+
+                    HDCore.Log('HDCoreLib', LOGGING_TRACE, "Processing referenced Command located at '"..tokens[1].."': "..tokens[0].." => "..jsonStr);
+
+                    output.push(HDCoreCommand.create(tokens[0], jsonStr));
+                }
             } else if (tokens.size()) {
                 tokens[0].stripLeftRight();
 

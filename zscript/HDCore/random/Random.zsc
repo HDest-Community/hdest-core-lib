@@ -1,4 +1,4 @@
-extend class HDCore {
+extend struct HDCore {
 
     /**
      * Rolls a random number between 0 and the sum total of all given weights.

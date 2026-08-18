@@ -1,4 +1,4 @@
-extend class HDCore {
+extend struct HDCore {
     
 	static int GetScaledChanceInt(int lowest, int highest, int minLevel, int maxLevel) {
 
