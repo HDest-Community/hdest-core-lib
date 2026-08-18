@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.1.0] - 2026-08-18
+
 ## [v1.0.0] - 2026-02-24
 
 ### Added
@@ -42,6 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     -   [ZForms Library](./zscript/libs/HDZForms/LICENSE.md)
     -   [ZJSON Library](https://github.com/RicardoLuis0/ZJSON/blob/9a6be707c26ef14e276f09ff1ad6948ca44cb5e2/LICENSE)
 
-[Unreleased]: https://github.com/HDest-Community/hdest-core-lib/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/HDest-Community/hdest-core-lib/compare/v1.1.0...HEAD
+
+[v1.1.0]: https://github.com/HDest-Community/hdest-core-lib/compare/v1.0.0...v1.1.0
 
 [v1.0.0]: https://github.com/HDest-Community/hdest-core-lib/releases/tag/v1.0.0
