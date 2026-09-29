@@ -954,7 +954,34 @@
       "entries": [
         {
           "name": "PortableLiteAmp",
+          "weight": 5,
+          "persists": true
+        },
+        {
+          "name": "HDBattery",
+          "weight": 2,
+          "persists": true
+        },
+        {
+          "name": "AutoReloader",
           "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HDJetpack",
+          "weight": 1,
+          "persists": true
+        },
+        {
+          "name": "HDHealingPotion",
+          "weight": 1,
+          "chance": 128,
+          "persists": true
+        },
+        {
+          "name": "HDBlurSphere",
+          "weight": 1,
+          "chance": 128,
           "persists": true
         }
       ]
