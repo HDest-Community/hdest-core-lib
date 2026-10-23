@@ -13,22 +13,84 @@ class HDCoreFunctionProvider : HDCoreDataProvider abstract {
 
             provider._prefix = prefix;
 
-            HDCore.log('HDCoreLib.FunctionProvider', LOGGING_TRACE, "Filtering out irrelevant parameters...");
+            let json = HDZJSON.parse(value);
 
-            Dictionary oldDict = Dictionary.fromString(value);
-            let i = DictionaryIterator.create(oldDict);
-            
-            let newDict = Dictionary.create();
-            while (i.next()) {
-                let key = i.key();
-                let val = i.value();
-                
-                HDCore.log('HDCoreLib.FunctionProvider', LOGGING_TRACE, "Key="..key..", value="..val..", prefix="..prefix..", Keep? "..(key.left((prefix..".").length()) ~== prefix.."."));
+            if (!(json is 'HDZJsonObject')){
+                if (json is 'HDZJsonError') {
+                    HDCore.log('HDCoreLib.FunctionProvider', LOGGING_ERROR, HDZJsonError(json).what);
+                } else {
+                    HDCore.log('HDCoreLib.FunctionProvider', LOGGING_ERROR, "Invalid Parameters: "..HDZJsonElement(json).serialize());
+                }
 
-                if (key.left((prefix..".").length()) ~== prefix..".") newDict.insert(key, val);
+                return null;
             }
 
-            provider.setValue(newDict.toString());
+            // TODO: Replace with ZJSON
+            let newDict = Dictionary.create();
+
+            MapIterator<string, HDZJsonElement> i;
+            i.init(HDZJsonObject(json).data);
+
+            while (i.next()) {
+
+                HDCore.log('HDCoreLib.FunctionProvider', LOGGING_TRACE, "Filtering out irrelevant parameters...");
+                if (prefix != "" && !(i.getKey().left(prefix.length() + 1) ~== prefix..".")) {
+                    HDCore.log('HDCoreLib.FunctionProvider', LOGGING_TRACE, "Key="..i.getKey()..", value="..i.getValue()..", prefix="..prefix..", Keep? "..(i.getKey().left((prefix..".").length()) ~== prefix.."."));
+
+                    continue;
+                }
+
+                // Default to a basic Static Value Provider
+                // let providerClassName = "HDCoreStaticProvider";
+                let key = i.getKey().mid(prefix.length() + 1);
+                let val = "";
+
+                switch (i.getValue().getClassName()) {
+                    case 'HDZJsonArray':
+                        HDCore.log('HDCoreLib.FunctionProvider', LOGGING_WARN, "Parameter '"..key.."' is of unhandled type Array!");
+                        return null;
+                    case 'HDZJsonBool':
+                    case 'HDZJsonInt':
+                    case 'HDZJsonDouble':
+                        newDict.insert(key, i.getValue().serialize());
+                        break;
+                    case 'HDZJsonString':
+
+                        // let str = i.getValue().s;
+
+                        // // Detect any delegate values and defer to their Providers
+                        // if (str.indexOf("$") == 0) {
+                        //     providerClassName = "HDCoreLocalizedStringProvider";
+                        //     str = str.mid(1);
+                        // } else if (str.indexOf("#") == 0) {
+                        //     providerClassName = "HDCoreCVarProvider";
+                        //     str = str.mid(1);
+                        // } else if (str.indexOf("@") == 0) {
+                        //     providerClassName = "HDCoreFunctionProvider_"..str.mid(1);
+                        //     str = paramsStr;
+                        // }
+
+                        newDict.insert(key, HDZJsonString(i.getValue()).s);
+
+                        break;
+                    case 'HDZJsonObject':
+
+                        let obj = HDZJsonObject(i.getValue());
+
+                        // If the child object has both a FunctionProvider name and a sibling params object,
+                        // store the class name & serialized parameters
+                        if ((obj.get("name") is 'HDZJsonString') && (obj.get("params") is 'HDZJsonObject')) {
+                            newDict.insert(key, obj.get("params").serialize());
+                        }
+
+                        break;
+                    default:
+                        HDCore.log('HDCoreLib.FunctionProvider', LOGGING_WARN, "Unknown Parameter Type '"..key.."': '"..i.getValue().."'!");
+                        return null;
+                }
+
+                provider.setValue(newDict.toString());
+            }
         }
 
         return provider;

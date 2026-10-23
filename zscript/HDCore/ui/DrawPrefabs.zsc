@@ -16,7 +16,7 @@
 
 
 
-extend class HDCore {
+extend struct HDCore {
 
     static ui void drawSpentShell(HDStatusBar sb, Color color, Vector2 pos, int rotation = DRAWPREFAB_WE, float scale = 1.0, int flags = 0) {
         HDVectorPrefab.create('spentShell', rotation).draw(sb, color, pos, scale, flags);

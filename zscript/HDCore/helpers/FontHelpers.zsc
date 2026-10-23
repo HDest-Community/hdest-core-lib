@@ -1,4 +1,4 @@
-extend class HDCore {
+extend struct HDCore {
 
     static clearscope int getBatteryFontColor(int charge) {
         if (charge > 13) return Font.CR_GREEN;

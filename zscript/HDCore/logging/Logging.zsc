@@ -6,7 +6,7 @@ enum HDCoreLoggingLevels {
     LOGGING_TRACE = 500
 }
 
-extend class HDCore {
+extend struct HDCore {
 
     static play void LogPlay(name ns = '', int level = LOGGING_INFO, string message = "", actor recip = null) {
         // TODO: Leverage Namespace beyond message injection
@@ -68,7 +68,7 @@ extend class HDCore {
     }
 
     static clearscope string GetLogTimestamp() {
-        return String.Format("%s.%02d", Level.TimeFormatted(), Level.time % TICRATE);
+        return String.Format("%s.%02d", Level.TimeFormatted(), Level.time % Object.TICRATE);
     }
 
     static clearscope string FormatLogMessage(name ns, int level, string message) {
