@@ -475,15 +475,15 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
         // whether attack resulted in a headshot,
         // and whether the actor hit is dead
         dmg *= (strength * frandom(1.0, 1.2))
-            * (atkLine.hitActor && shouldDoHeadShot(atkLine, flags) ? getWeaponHeadShotDamageBonus() : 1.0)
-            * (atkLine.hitActor && HDMath.isDead(atkLine.hitActor)) ? getWeaponCorpseDamageBonus() : 1.0;
+            * ((atkLine.hitActor && shouldDoHeadShot(atkLine, flags)) ? getWeaponHeadShotDamageBonus() : 1.0)
+            * ((atkLine.hitActor && HDMath.isDead(atkLine.hitActor)) ? getWeaponCorpseDamageBonus() : 1.0);
 
         return dmg;
     }
 
     virtual protected bool shouldDoAttackSound(FLineTraceData atkLine, int dmg) {
         return atkLine.hitType == TRACE_HitActor
-            && dmg * 2 > atkLine.hitActor.health;
+            && (dmg * 2) > atkLine.hitActor.health;
     }
 
     virtual protected bool shouldDoFourthWallEscape(FLineTraceData atkLine, int flags) {
@@ -499,7 +499,7 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
             && !atkLine.hitActor.bNOPAIN
             && atkLine.hitActor.health > 0
             && !(HDMobBase(atkLine.hitActor) && HDMobBase(atkLine.hitActor).bHEADLESS)
-            && atkLine.hitLocation.z > (atkLine.hitActor.pos.z + atkLine.hitActor.height * 0.75);
+            && atkLine.hitLocation.z > (atkLine.hitActor.pos.z + (atkLine.hitActor.height * 0.75));
     }
 
     virtual protected bool shouldDoHitRecoil(FLineTraceData atkLine, int flags) {
@@ -508,10 +508,10 @@ class HDCoreBaseMeleeWeapon : HDFist abstract {
             && owner
             && !atkLine.hitActor.bDONTTHRUST
             && (
-                atkLine.hitActor.mass < 2 * owner.mass
+                atkLine.hitActor.mass < (2 * owner.mass)
                 || (
-                    atkLine.hitActor.radius * 2 < atkLine.hitActor.height
-                    && atkLine.hitLocation.z > (atkLine.hitActor.pos.z + atkLine.hitActor.height * 0.6)
+                    ((atkLine.hitActor.radius * 2) < atkLine.hitActor.height)
+                    && (atkLine.hitLocation.z > (atkLine.hitActor.pos.z + (atkLine.hitActor.height * 0.6)))
                 )
             );
     }
