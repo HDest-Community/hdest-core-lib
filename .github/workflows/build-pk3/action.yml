@@ -1,9 +1,23 @@
 name: Build PK3
 description: Builds the PK3
+
+inputs:
+  name:
+    description: The base name of the PK3 being built.  For example, a mod_name of "MyCoolMod" would result in a built file named "MyCoolMod-suffix.pk3".
+    required: false
+    type: string
+    default: ${{ github.event.repository.name }}
+  suffix:
+    description: The specific identifier added onto the resulting PK3.  For example, a suffix of "v1.2.3" would result in a built file named "MyCoolMod-v1.2.3.pk3".
+    required: false
+    type: string
+    default: ${{ github.ref_name }}-$(date +'%Y%m%d')
+
 runs:
   using: "composite"
   steps:
   - uses: actions/checkout@v4
-  - uses: montudor/action-zip@v1
-    with:
-      args: zip -r "HDCoreLib-${{ env.SUFFIX }}.pk3" . -i filter/* graphics/* sprites/* zscript/* CHANGELOG.md CVARINFO HDCINFO KEYCONF LANGUAGE LICENSE MAPINFO MENUDEF README.md ZSCRIPT.zsc
+  - shell:
+    run: 
+  - shell:
+    run: git archive --format=zip --output=${{ inputs.mod_name }}-${{ inputs.suffix }}.pk3 ${{ github.ref_name }}

@@ -1,21 +1,19 @@
-name: Nightly Build
+name: CI Build
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * *"
+  push:
+    branches:
+      - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@v4
-      - id: build-suffix
-        shell: bash
-        run: echo "SUFFIX=${{ github.ref_name }}-$(date +'%Y%m%d')" >> "$GITHUB_OUTPUT"
       - uses: ./.github/workflows/build-pk3
-        env:
-          SUFFIX: ${{ steps.build-suffix.outputs.SUFFIX }}
+        with:
+          name: HDCoreLib
+          suffix: ${{ github.ref_name }}-$(date +'%Y%m%d')
       - uses: actions/upload-artifact@v4
         with:
           name: Artifacts
