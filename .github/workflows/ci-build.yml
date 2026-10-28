@@ -7,10 +7,12 @@ on:
 
 jobs:
   build:
+    name: CI Build
     runs-on: ubuntu-slim
+
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/workflows/build-pk3
+      - uses: HDest-Community/.github/.github/workflows/build-pk3@main
         with:
           name: HDCoreLib
           suffix: ${{ github.ref_name }}-$(date +'%Y%m%d')
