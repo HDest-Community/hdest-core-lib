@@ -16,7 +16,7 @@ jobs:
       (startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/'))
 
     steps:
-      - uses: HDest-Community/.github/.github/workflows/publish-release@main
+      - uses: HDest-Community/.github/workflows/publish-release@main
         with:
           name: HDCoreLib
           base: ${{ github.event.pull_request.head.ref }}
