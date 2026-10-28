@@ -20,4 +20,4 @@ runs:
   - shell:
     run: 
   - shell:
-    run: git archive --format=zip --output=${{ inputs.mod_name }}-${{ inputs.suffix }}.pk3 ${{ github.ref_name }}
+    run: git archive --format=zip --output=${{ inputs.name }}-${{ inputs.suffix }}.pk3 ${{ github.ref_name }}
