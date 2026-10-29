@@ -11,12 +11,6 @@ jobs:
     runs-on: ubuntu-slim
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: HDest-Community/.github/workflows/build-pk3@main
+      - uses: HDest-Community/.github/workflows/ci-build@main
         with:
           name: HDCoreLib
-          suffix: ${{ github.ref_name }}-$(date +'%Y%m%d')
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Artifacts
-          path: ./*.pk3
