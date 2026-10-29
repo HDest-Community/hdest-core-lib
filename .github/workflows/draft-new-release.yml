@@ -15,5 +15,4 @@ jobs:
     steps:
       - uses: HDest-Community/.github/workflows/draft-new-release@main
         with:
-          name: HDCoreLib
           version: ${{ inputs.version }}
