@@ -1,5 +1,7 @@
 # HDCoreLib
 
+[![CI Build](https://github.com/HDest-Community/hdest-core-lib/actions/workflows/ci-build.yml/badge.svg)](https://github.com/HDest-Community/hdest-core-lib/actions/workflows/ci-build.yml)
+
 This is a collection of shared utility methods, classes, and libraries used by the HDest Community.
 
 ## Features
