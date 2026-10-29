@@ -6,6 +6,8 @@
 *.gitattributes text
 .gitignore      text
 *.md            text diff=markdown
+*.zs            text
+*.zsc           text
 
 # Exclude files from being exported during `git archive`
 .gitattributes  export-ignore
@@ -17,3 +19,11 @@
 *.gitattributes linguist-language=gitattributes
 *.gitattributes linguist-detectable=true
 *.gitattributes linguist-documentation=false
+
+# Enable syntax highlighting for files with '.zs' and '.zsc' extensions
+*.zs            linguist-language=C#
+*.zs            linguist-detectable=true
+*.zs            linguist-documentation=false
+*.zsc           linguist-language=C#
+*.zsc           linguist-detectable=true
+*.zsc           linguist-documentation=false
