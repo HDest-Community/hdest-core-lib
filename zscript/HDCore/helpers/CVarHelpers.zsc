@@ -1,0 +1,16 @@
+extend struct HDCore {
+    
+	static play bool CheckCVar(string toCheck, int pNum = -1) {
+		CVar tempCheckCVar = null;
+
+		if (pnum >= 0) tempCheckCVar = CVar.GetCVar(toCheck, players[pnum]);
+		else           tempCheckCVar = CVar.GetCVar(toCheck);
+
+		if (!tempCheckCVar) {
+            HDCore.log('HDCoreLib', LOGGING_WARN, "CVar "..toCheck.." not found.");
+			return false;
+		}
+
+		return true;
+	}
+}
