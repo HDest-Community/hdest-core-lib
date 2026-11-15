@@ -2,6 +2,6 @@
  * The Main Library Class,
  * all utility functions will extend this class.
  */
-class HDCore play {
+struct HDCore play {
 
 }

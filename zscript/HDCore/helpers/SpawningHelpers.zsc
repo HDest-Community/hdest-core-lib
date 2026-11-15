@@ -1,4 +1,4 @@
-extend class HDCore {
+extend struct HDCore {
 
     /**
      * Helper method to check if current level is still in "pre-spawn"

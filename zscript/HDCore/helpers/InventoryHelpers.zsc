@@ -1,4 +1,4 @@
-extend class HDCore {
+extend struct HDCore {
 
     static clearscope bool checkForItem(Actor a, name item, int amount = 1) {
         let hasItem = HDCore.checkClassExists(item) && a && a.countInv(item) >= amount;

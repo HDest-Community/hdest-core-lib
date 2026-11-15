@@ -1,4 +1,4 @@
-extend class HDCore {
+extend struct HDCore {
 
     /**
     * Gets the Color of the given charge value for a battery

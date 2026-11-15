@@ -12,7 +12,6 @@ version "4.14"
 #include "zscript/HDCore/base/data/providers/FunctionProvider.zsc"
 #include "zscript/HDCore/base/events/BaseEventHandler.zsc"
 #include "zscript/HDCore/base/events/BaseStaticEventHandler.zsc"
-#include "zscript/HDCore/base/weapons/BaseMeleeWeapon.zsc"
 
 // Data Providers
 #include "zscript/HDCore/data/providers/StaticProvider.zsc"
@@ -52,6 +51,7 @@ version "4.14"
 #include "zscript/HDCore/io/HDCoreInfoReader.zsc"
 #include "zscript/HDCore/logging/Logging.zsc"
 #include "zscript/HDCore/math/DampedSpring.zsc"
+#include "zscript/HDCore/math/OctalArrays.zsc"
 #include "zscript/HDCore/math/ScaledChances.zsc"
 #include "zscript/HDCore/random/Random.zsc"
 #include "zscript/HDCore/random/WeightedRandomTables.zsc"
@@ -61,6 +61,10 @@ version "4.14"
 #include "zscript/HDCore/spawning/SpawnTables.zsc"
 #include "zscript/HDCore/ui/DrawBar.zsc"
 #include "zscript/HDCore/ui/DrawPrefabs.zsc"
+
+// Base Weapon Classes
+#include "zscript/HDCore/base/weapons/BaseMeleeWeapon.zsc"
+#include "zscript/HDCore/base/weapons/BaseShotgun.zsc"
 
 // Custom Menus
 #include "zscript/HDCore/menus/SpawnTableEntryFrame.zsc"

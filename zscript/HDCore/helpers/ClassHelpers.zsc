@@ -1,4 +1,4 @@
-extend class HDCore {
+extend struct HDCore {
 
     /**
      * Checks if the given ClassName exists as a class

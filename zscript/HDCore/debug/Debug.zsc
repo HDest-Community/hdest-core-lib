@@ -1,4 +1,4 @@
-extend class HDCore {
+extend struct HDCore {
     
     /**
      * Draws a collection of debug information about the given actor

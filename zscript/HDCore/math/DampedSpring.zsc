@@ -1,4 +1,4 @@
-extend class HDCore {
+extend struct HDCore {
     /**
      * Simple Damped Spring Formula
      * @param {p} p Current Position
@@ -8,11 +8,11 @@ extend class HDCore {
      * @param {d} d Damping Coefficient
      * @See https://gist.github.com/caligari87/39d1cec3aad776860b4148cc3c659f70
      */
-    static double DampedSpringDouble(double p, double r, double v, double k, double d) {
+    clearscope static double DampedSpringDouble(double p, double r, double v, double k, double d) {
         return -(d * v) - (k * (p - r));
     }
 
-    static vector3 DampedSpringVec3D(Vector3 p, Vector3 r, Vector3 v, double k, double d) {
+    clearscope static vector3 DampedSpringVec3D(Vector3 p, Vector3 r, Vector3 v, double k, double d) {
         return -(d * v) - (k * (p - r));
     }
 }

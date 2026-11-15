@@ -1,0 +1,100 @@
+extend struct HDCore {
+
+    clearscope static uint wrapIndex(uint index, uint wrapSize) {
+        if (index > wrapSize) return index - wrapSize;
+        if (index < 0)        return index + wrapSize;
+        return index;
+    }
+
+    // Gets value at index from an uint arr
+    clearscope static uint octalArrayGet(uint arr, uint index = 0) {
+        let val = (arr >> (3 * index)) & 7;
+
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "octalArrayGet("..HDCore.octalArrayToString(arr)..", "..index..") => "..HDCore.octalToString(val));
+
+        return val;
+    }
+
+    // Sets value at index in an uint arr and returns its new value
+    clearscope static uint octalArraySet(uint arr, uint index, uint value) {
+        let val = arr + ((value & 7) << (3 * index)) - (((arr >> (3 * index)) & 7) << (3 * index));
+
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "octalArraySet("..HDCore.octalArrayToString(arr)..", "..index..", "..HDCore.octalToString(value)..") => "..HDCore.octalToString(val));
+
+        return val;
+    }
+
+    // Shifts the given Octal Array by one, inserts the given Octal value and returning the new array
+    clearscope static uint octalArrayPush(uint arr, uint value) {
+        return (arr << 3) + (value & 7);
+    }
+
+    // Removes the lowest (rightmost) Octal from the given array, and returns both the removed value as well as the new state of the array
+    clearscope static uint, uint octalArrayPop(uint arr) {
+        let val = arr & 7;
+
+        return val, arr >> 3;
+    }
+
+    // Cyclic shift left (wrap around)
+    clearscope static uint octalArrayShiftLeft(uint arr, uint wrapSize) {
+        uint highest = HDCore.octalArrayGet(arr, wrapSize - 1);
+
+        let val = arr - (highest << (3 * wrapSize)) + highest;
+
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "octalArrayShiftLeft("..HDCore.octalArrayToString(arr)..", "..wrapSize..") => "..HDCore.octalArrayToString(val));
+
+        return val;
+    }
+
+    // Cyclic shift right (wrap around)
+    clearscope static uint octalArrayShiftRight(uint arr, uint wrapSize) {
+        uint lowest = HDCore.octalArrayGet(arr);
+
+        let val = (arr >> 3) + (lowest << (3 * (wrapSize - 1)));
+
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "octalArrayShiftRight("..HDCore.octalArrayToString(arr)..", "..wrapSize..") => "..HDCore.octalArrayToString(val));
+
+        return val;
+    }
+    
+    // Gets the number of Octals in (length of) the Octal Array
+    clearscope static uint octalArrayLength(uint arr) {
+        int count = 0;
+
+        let v = arr;
+        while (v && count < 10) {
+            v = v >> 3;
+            count++;
+        }
+
+        HDCore.log('HDCoreLib', LOGGING_TRACE, "octalArrayLength("..HDCore.octalArrayToString(arr)..") => "..count);
+
+        return count;
+    }
+
+    clearscope static string octalArrayToString(uint arr) {
+        let s = "";
+
+        for (int i = 0; i < 32; i++) {
+            s = ((arr % 2) ? "1" : "0")..(!i || (i % 3) ? "" : " ")..s;
+            arr = arr >> 1;
+        }
+
+        return s;
+    }
+
+    clearscope static string octalToString(uint octal) {
+        let s = "";
+
+        // Force the incoming value to just the lowest 3 bits.
+        octal = octal & 7;
+
+        for (int i = 0; i < 3; i++) {
+            s = ((octal % 2) ? "1" : "0")..((i % 3) ? "" : " ")..s;
+            octal = octal >> 1;
+        }
+
+        return s;
+    }
+}
