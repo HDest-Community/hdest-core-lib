@@ -738,7 +738,7 @@ class HDCoreShotgun : HDShotgun abstract {
         if (num > 1) HDBulletActor.FireBullet(owner, "HDB_wad");
 		HDBulletActor.FireBullet(owner, rnd, spread: num > 1 ? spread : 0.0, speedfactor: speedFactor, amount: num);
 		DistantNoise.make(owner, distantSound);
-		A_StartSound(shotSound, CHAN_WEAPON, CHANF_OVERLAP);
+		owner.A_StartSound(shotSound, CHAN_WEAPON, CHANF_OVERLAP);
 
 		return shotPower;
 	}
