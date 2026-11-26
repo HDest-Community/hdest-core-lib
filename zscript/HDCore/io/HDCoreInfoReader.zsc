@@ -120,6 +120,7 @@ class HDCoreInfoReader : StaticEventHandler {
 
                     if (jsonStr == "" || (jsonStr.left(1) != "{" && jsonStr.mid(jsonStr.length() - 2, 1) != "}")) {
                         HDCore.Log('HDCoreLib', LOGGING_WARN, "Command located at '"..tokens[1].."' not valid JSON!");
+                        HDCore.Log('HDCoreLib', LOGGING_DEBUG, tokens[1]..": "..jsonStr);
 
                         return;
                     }
