@@ -104,10 +104,8 @@ class HDCoreInfoReader : StaticEventHandler {
 
                     output.push(HDCoreCommand.create(tokens[0], tokens[1]));
                 } else {
-                    Array<string> path;
-                    tokens[1].split(path, "/");
 
-                    let lump = Wads.findLump(path[path.size() - 1], 0, Wads.AnyNamespace);
+                    let lump = Wads.findLumpFullName(tokens[1]);
 
                     if (lump < 0) {
                         HDCore.Log('HDCoreLib', LOGGING_WARN, "Command located at '"..tokens[1].."' not found!");
