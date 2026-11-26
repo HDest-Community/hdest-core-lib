@@ -201,5 +201,5 @@
 //
 // clearStorageItemListBlacklist => {}
 
-configureAmmoUsesHandler => commands/HDCoreAmmoUsagesHandler.json
+configureAmmoUsesHandler => commands/HDCoreAmmoUsageHandler.json
 configureSpawnHandler => commands/HDCoreSpawnHandler.json
