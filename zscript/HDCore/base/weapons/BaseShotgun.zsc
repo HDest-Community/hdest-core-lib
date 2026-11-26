@@ -513,10 +513,12 @@ class HDCoreShotgun : HDShotgun abstract {
         } else if (round) {
             Vector3 gunofs = HDMath.RotateVec3D((9, -1, -2), angle, pitch);
 
-            Actor rrr = spawn(
+            Actor rrr = A_EjectCasing(
                 live ? invoker.getFumblingShell(type) : invoker.getSpentShell(type),
-                (pos.xy, pos.z + height * 0.85) + gunofs + viewpos.offset
-            );
+				frandom(-1, 2),
+				live ? (frandom(0.2, 0.25), -frandom(5, 5.2), frandom(0, 0.15)) : (frandom(0.25, 0.3), -frandom(6, 6.5), frandom(0, 0.2)),
+				(0, 0, -2)
+			);
 
             if (!rrr) return;
 
