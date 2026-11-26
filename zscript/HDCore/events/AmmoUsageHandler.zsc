@@ -25,45 +25,149 @@ class HDCoreAmmoUsesHandler : HDCoreEventHandler {
 
     override void processCommand(HDCoreCommand cmd) {
         switch (cmd.command) {
-            case 'addAmmoThingBlacklist': {
-                let name = cmd.getNameParam("name");
-
-                if (name) thingBlacklist.push(name);
+            case 'configureAmmoUsesHandler':
+                processConfigureAmmoUsesHandlerCmd(cmd);
                 break;
-            }
-            case 'newAmmo': {
-                let ammo = HDCoreSpawnAmmo.create(cmd.getNameParam("ammoName"));
-
-                if (ammo) addAmmo(ammo);
+            case 'addAmmoThingBlacklist':
+                processAddAmmoThingBlacklistCmd(cmd);
                 break;
-            }
-            case 'addAmmoUser': {
-                addAmmoUser(cmd.getNameParam("ammoName"), cmd.getNameParam("name"));
-
+            case 'removeAmmoThingBlacklist':
+                processRemoveAmmoThingBlacklistCmd(cmd);
                 break;
-            }
-            case 'removeAmmo': {
-                removeAmmo(cmd.getNameParam("ammoName"));
-
+            case 'clearAmmoThingBlacklist':
+                processClearAmmoThingBlacklistCmd(cmd);
                 break;
-            }
-            case 'removeAllAmmo': {
-                ammoSpawnList.clear();
+            case 'newAmmo':
+            case 'addAmmo':
+                processAddAmmoCmd(cmd);
                 break;
-            }
+            case 'removeAmmo':
+                processRemoveAmmoCmd(cmd);
+                break;
+            case 'addAmmoUser':
+                processAddAmmoUserCmd(cmd);
+                break;
+            case 'removeAmmoUser':
+                processRemoveAmmoUserCmd(cmd);
+                break;
+            case 'removeAllAmmo':
+                processClearAmmoSpawnListCmd(cmd);
+                break;
             default:
                 break;
         }
     }
 
+    void processConfigureAmmoUsesHandlerCmd(HDCoreCommand cmd) {
+
+        if (cmd.getBoolParam("clean")) {
+            processClearAmmoThingBlacklistCmd(cmd);
+            processClearAmmoSpawnListCmd(cmd);
+        }
+
+        Array<name> namesArr;
+
+        // Add all configured Thing Blacklist Entries
+        cmd.getArrayNameParam("thingBlacklist", namesArr);
+        forEach (name : namesArr) addBlacklist(name);
+
+        // Add all configured Ammo Usage Entries
+        Array<string> ammoArr;
+        cmd.getArrayStringParam("ammo", ammoArr);
+        forEach (ammoStr : ammoArr) {
+
+            let json = HDZJSON.parse(ammoStr);
+
+            if (!(json is 'HDZJsonObject')){
+                if (json is 'HDZJsonError') {
+                    HDCore.Log('HDCoreLib.SpawnHandler', LOGGING_ERROR, HDZJsonError(json).what);
+                } else {
+                    HDCore.Log('HDCoreLib.SpawnHandler', LOGGING_ERROR, "Invalid Spawn Table Config: "..HDZJsonElement(json).serialize());
+                }
+
+                continue;
+            }
+
+            let obj = HDZJsonObject(json);
+
+            // If invalid "name" property, skip.
+            if (!(obj.get("ammoName") is 'HDZJsonString')) continue;
+
+            // Create Ammo Entry itself
+            processAddAmmoCmd(HDCoreCommand.create('addAmmo', obj.serialize()));
+
+            if (obj.get("users") is 'HDZJsonArray') {
+                forEach (user : HDZJsonArray(obj.get("users")).arr) {
+
+                    if (!(user is 'HDZJsonString')) continue;
+
+                    addAmmoUser(HDZJsonString(obj.get("ammoName")).s, HDZJsonString(user).s);
+                }
+            }
+        }
+    }
+
+    void processAddAmmoThingBlacklistCmd(HDCoreCommand cmd) {
+
+        removeBlacklist(cmd.getNameParam("name"));
+    }
+
+    void processRemoveAmmoThingBlacklistCmd(HDCoreCommand cmd) {
+
+        removeBlacklist(cmd.getNameParam("name"));
+    }
+
+    void processClearAmmoThingBlacklistCmd(HDCoreCommand cmd) {
+
+        thingBlacklist.clear();
+    }
+
+    void processAddAmmoCmd(HDCoreCommand cmd) {
+
+        let ammo = HDCoreSpawnAmmo.create(cmd.getNameParam("ammoName"));
+
+        if (ammo) addAmmo(ammo);
+    }
+
+    void processRemoveAmmoCmd(HDCoreCommand cmd) {
+
+        removeAmmo(cmd.getNameParam("ammoName"));
+    }
+
+    void processAddAmmoUserCmd(HDCoreCommand cmd) {
+
+        addAmmoUser(cmd.getNameParam("ammoName"), cmd.getNameParam("name"));
+    }
+
+    void processRemoveAmmoUserCmd(HDCoreCommand cmd) {
+
+        removeAmmoUser(cmd.getNameParam("ammoName"), cmd.getNameParam("name"));
+    }
+
+    void processClearAmmoSpawnListCmd(HDCoreCommand cmd) {
+
+        ammoSpawnList.clear();
+    }
+
+    void addBlacklist(name name) {
+
+        if (thingBlacklist.find(name) >= thingBlacklist.size()) thingBlacklist.push(name);
+    }
+
+    void RemoveBlacklist(name name) {
+        
+        let index = thingBlacklist.find(name);
+        if (index < thingBlacklist.size()) thingBlacklist.delete(index);
+    }
+
     override void afterProcessCommands() {
-        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
+        if (HDCore.ShouldLog('HDCoreLib.AmmoUsesHandler', LOGGING_DEBUG)) {
 
             let msg = "Configured Ammo Usage List:\n";
 
             forEach(ammo : ammoSpawnList) msg = msg..ammo.toString().."\n";
             
-            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
+            HDCore.Log('HDCoreLib.AmmoUsesHandler', LOGGING_DEBUG, msg);
         }
     }
 
@@ -80,13 +184,13 @@ class HDCoreAmmoUsesHandler : HDCoreEventHandler {
     // appends an entry to ammoSpawnList;
     void addAmmo(HDCoreSpawnAmmo ammo) {
 
-        if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
+        if (HDCore.ShouldLog('HDCoreLib.AmmoUsesHandler', LOGGING_DEBUG)) {
 
             let msg = "Adding Ammo Association Entry for "..ammo.ammoName..": [";
 
             if (ammo.userNames.size()) forEach (userName : ammo.userNames) msg = msg..", "..userName;
 
-            HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg.."]");
+            HDCore.Log('HDCoreLib.AmmoUsesHandler', LOGGING_DEBUG, msg.."]");
         }
 
         let existingAmmo = getAmmo(ammo.ammoName);
@@ -111,14 +215,14 @@ class HDCoreAmmoUsesHandler : HDCoreEventHandler {
     // appends an entry to ammoSpawnList;
     void addAmmoUser(name ammoName, name userName) {
 
-        HDCore.Log('HDCoreLib', LOGGING_DEBUG, "Adding \""..userName.."\" to Ammo Association Entry for "..ammoName);
+        HDCore.Log('HDCoreLib.AmmoUsesHandler', LOGGING_DEBUG, "Adding \""..userName.."\" to Ammo Association Entry for "..ammoName);
         
         let existingAmmo = getAmmo(ammoName);
 
         // If we find an existing Ammo Association, simply add the new entry
         if (existingAmmo) {
 
-            existingAmmo.userNames.push(userName);
+            if (existingAmmo.userNames.find(userName) >= existingAmmo.userNames.size()) existingAmmo.userNames.push(userName);
 
             return;
         }
@@ -128,6 +232,21 @@ class HDCoreAmmoUsesHandler : HDCoreEventHandler {
         ammo.userNames.push(userName);
 
         ammoSpawnList.push(ammo);
+    }
+
+    // removes an entry from ammoSpawnList;
+    void removeAmmoUser(name ammoName, name userName) {
+
+        HDCore.Log('HDCoreLib.AmmoUsesHandler', LOGGING_DEBUG, "Removing \""..userName.."\" from Ammo Association Entry for "..ammoName);
+        
+        let existingAmmo = getAmmo(ammoName);
+
+        // If we find an existing Ammo Association, simply add the new entry
+        if (existingAmmo) {
+
+            let index = existingAmmo.userNames.find(userName);
+            if (index < existingAmmo.userNames.size()) existingAmmo.userNames.delete(index);
+        }
     }
 
     override void worldThingSpawned(WorldEvent e) {
@@ -155,13 +274,13 @@ class HDCoreAmmoUsesHandler : HDCoreEventHandler {
         foreach (ammoSpawn : ammoSpawnList) {
             if (ammo.getClassName() == ammoSpawn.ammoName && ammoSpawn.userNames.size() > 0) {
 
-                if (HDCore.ShouldLog('HDCoreLib', LOGGING_DEBUG)) {
+                if (HDCore.ShouldLog('HDCoreLib.AmmoUsesHandler', LOGGING_DEBUG)) {
 
                     let msg = "Adding the following to the list of items that use "..ammo.getClassName().."\n";
     
                     foreach (weapon : ammoSpawn.userNames) msg = msg.." * "..weapon.."\n";
                     
-                    HDCore.Log('HDCoreLib', LOGGING_DEBUG, msg);
+                    HDCore.Log('HDCoreLib.AmmoUsesHandler', LOGGING_DEBUG, msg);
                 }
 
                 forEach(userName : ammoSpawn.userNames) ammo.itemsThatUseThis.push(userName);
